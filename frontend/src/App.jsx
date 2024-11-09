@@ -2,28 +2,27 @@ import { Routes, Route, Outlet } from "react-router-dom";
 
 import { useAuth } from "./context/AuthContext";
 import { TaskProvider } from "./context/TaskContext";
+import { UsersProvider } from "./context/UsersContext";
+import { MoviesProvider } from "./context/MoviesContext";
 
 import Navbar from "./components/navbar/Navbar";
 import { Container } from "./components/ui";
 import { ProtectedRoute } from "./components/ProtectedRoute";
-import { UsersProvider } from "./context/UsersContext";
 
 import HomePage from "./pages/HomePage";
-
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import TasksPage from "./pages/TasksPage";
 import TaskFormPage from "./pages/TaskFormPage";
 import ProfilePage from "./pages/ProfilePage";
 import AdminPage from "./pages/AdminPage";
+import MoviesPage from "./pages/MoviesPage";
 import NotFound from "./pages/NotFound";
 
 function App() {
   const { isAuth, user, loading } = useAuth();
 
-  if (loading) return <h1>
-    Cargando...
-  </h1>
+  if (loading) return <h1>Cargando...</h1>;
 
   return (
     <>
@@ -67,6 +66,17 @@ function App() {
                 <UsersProvider>
                   <AdminPage />
                 </UsersProvider>
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/movies"
+            element={
+              <ProtectedRoute isAllowed={isAuth && user?.is_admin} redirectTo="/">
+                <MoviesProvider>
+                  <MoviesPage />
+                </MoviesProvider>
               </ProtectedRoute>
             }
           />

@@ -21,3 +21,12 @@ ALTER TABLE task ADD COLUMN user_id INTEGER REFERENCES users(id);
 ALTER TABLE users ADD COLUMN gravatar VARCHAR(255);
 
 ALTER TABLE users ADD COLUMN is_admin BOOLEAN DEFAULT FALSE;
+
+CREATE TABLE movies (
+    id BIGINT PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    overview TEXT,
+    genre_ids INTEGER[],
+    release_date DATE,
+    poster_path VARCHAR(255)
+);
