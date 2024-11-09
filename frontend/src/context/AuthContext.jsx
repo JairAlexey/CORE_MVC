@@ -21,7 +21,7 @@ export function AuthProvider({ children }) {
   const signin = async (data) => {
     try {
       const res = await axios.post("/signin", data);
-      setUser(res.data);
+      setUser(res.data); // Asegúrate de que res.data incluya is_admin
       setIsAuth(true);
 
       return res.data;
@@ -37,7 +37,6 @@ export function AuthProvider({ children }) {
   const signup = async (data) => {
     try {
       const res = await axios.post("/signup", data);
-      setUser(res.data);
       setUser(res.data);
       setIsAuth(true);
 
@@ -63,7 +62,7 @@ export function AuthProvider({ children }) {
       axios
         .get("/profile")
         .then((res) => {
-          setUser(res.data);
+          setUser(res.data); //res.data incluya is_admin
           setIsAuth(true);
         })
         .catch((err) => {

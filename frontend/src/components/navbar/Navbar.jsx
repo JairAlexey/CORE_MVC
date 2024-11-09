@@ -1,5 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
-import { publicRoutes, privateRoutes } from "./navigation";
+import { MdMovie } from 'react-icons/md';
+import { publicRoutes, privateRoutes, adminRoutes } from "./navigation";
 import { Container } from "../ui";
 import { useAuth } from "../../context/AuthContext";
 import { twMerge } from "tailwind-merge";
@@ -11,7 +12,7 @@ function Navbar() {
   const { isAuth, signout, user } = useAuth();
 
   return (
-    <nav className="bg-gray-800 rounded-lg m-4"> 
+    <nav className="bg-gray-800 rounded-lg m-4">
       <Container className="flex justify-between py-3">
         <Link to="/">
           <BiHome className="w-7 h-7" />
@@ -20,21 +21,37 @@ function Navbar() {
         <ul className="flex items-center justify-center md:gap-x-1">
           {isAuth ? (
             <>
-              {privateRoutes.map(({ path, name, icon }) => (
-                <li key={path}>
-                  <Link
-                    to={path}
-                    className={twMerge(
-                      "text-slate-300 flex items-center px-3 py-1 gap-x-1",
-                      location.pathname === path && "bg-red-500 rounded-lg"
-                    )}
-                  >
-                    {icon}
-
-                    <span className="hidden sm:block">{name}</span>
-                  </Link>
-                </li>
-              ))}
+              {user?.is_admin ? (
+                adminRoutes.map(({ path, name, icon }) => (
+                  <li key={path}>
+                    <Link
+                      to={path}
+                      className={twMerge(
+                        "text-slate-300 flex items-center px-3 py-1 gap-x-1",
+                        location.pathname === path && "bg-red-500 rounded-lg"
+                      )}
+                    >
+                      {icon}
+                      <span className="hidden sm:block">{name}</span>
+                    </Link>
+                  </li>
+                ))
+              ) : (
+                privateRoutes.map(({ path, name, icon }) => (
+                  <li key={path}>
+                    <Link
+                      to={path}
+                      className={twMerge(
+                        "text-slate-300 flex items-center px-3 py-1 gap-x-1",
+                        location.pathname === path && "bg-red-500 rounded-lg"
+                      )}
+                    >
+                      {icon}
+                      <span className="hidden sm:block">{name}</span>
+                    </Link>
+                  </li>
+                ))
+              )}
 
               <li
                 className="text-slate-300 flex items-center px-3 py-1 hover:cursor-pointer"
@@ -47,14 +64,14 @@ function Navbar() {
               </li>
 
               <Link to="/profile">
-              <li className="flex gap-x-1 items-center justify-center">
-                <img
-                  src={user.gravatar}
-                  alt=""
-                  className="h-8 w-8 rounded-full"
-                />
-                <span className="font-medium">{user.name}</span>
-              </li>
+                <li className="flex gap-x-1 items-center justify-center">
+                  <img
+                    src={user.gravatar}
+                    alt=""
+                    className="h-8 w-8 rounded-full"
+                  />
+                  <span className="font-medium">{user.name}</span>
+                </li>
               </Link>
             </>
           ) : (

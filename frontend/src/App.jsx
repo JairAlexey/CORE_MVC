@@ -6,6 +6,7 @@ import { TaskProvider } from "./context/TaskContext";
 import Navbar from "./components/navbar/Navbar";
 import { Container } from "./components/ui";
 import { ProtectedRoute } from "./components/ProtectedRoute";
+import { UsersProvider } from "./context/UsersContext";
 
 import HomePage from "./pages/HomePage";
 
@@ -14,11 +15,11 @@ import RegisterPage from "./pages/RegisterPage";
 import TasksPage from "./pages/TasksPage";
 import TaskFormPage from "./pages/TaskFormPage";
 import ProfilePage from "./pages/ProfilePage";
+import AdminPage from "./pages/AdminPage";
 import NotFound from "./pages/NotFound";
 
 function App() {
-  const { isAuth, loading } = useAuth();
-  console.log(loading)
+  const { isAuth, user, loading } = useAuth();
 
   if (loading) return <h1>
     Cargando...
@@ -55,6 +56,20 @@ function App() {
 
             <Route path="/profile" element={<ProfilePage />} />
           </Route>
+
+          <Route
+            path="/admin"
+            element={
+              <ProtectedRoute
+                isAllowed={isAuth && user?.is_admin}
+                redirectTo="/"
+              >
+                <UsersProvider>
+                  <AdminPage />
+                </UsersProvider>
+              </ProtectedRoute>
+            }
+          />
 
           <Route path="*" element={<NotFound />} />
         </Routes>
