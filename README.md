@@ -1,4 +1,4 @@
-# MovieMatch - Aplicación de Gestión de Películas y Tareas
+# MovieMatch - Aplicación para  calificar peliculas, ocomentarlas y recibir recomendaciones por gustos
 
 [![Estado del Proyecto](https://img.shields.io/badge/Estado-Activo-brightgreen)](https://github.com/JairAlexey/CORE_MVC)
 [![Licencia](https://img.shields.io/badge/Licencia-MIT-blue.svg)](LICENSE)
