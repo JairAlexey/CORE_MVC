@@ -8,6 +8,10 @@ import authRoutes from "./routes/auth.routes.js";
 import adminRoutes from "./routes/admin.routes.js";
 import moviesRoutes from "./routes/movies.routes.js";
 
+import { ORIGIN } from "./config.js";
+import { pool } from "./db.js";
+
+
 const app = express();
 
 // Middlewares
