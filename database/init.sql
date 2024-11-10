@@ -22,11 +22,14 @@ ALTER TABLE users ADD COLUMN gravatar VARCHAR(255);
 
 ALTER TABLE users ADD COLUMN is_admin BOOLEAN DEFAULT FALSE;
 
+DROP TABLE IF EXISTS movies;
 CREATE TABLE movies (
-    id BIGINT PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
-    overview TEXT,
-    genre_ids INTEGER[],
-    release_date DATE,
-    poster_path VARCHAR(255)
+    overview TEXT NOT NULL,
+    genre_ids INTEGER[] NOT NULL,
+    release_date DATE NOT NULL,
+    poster_path VARCHAR(1000)
 );
+
+ALTER TABLE movies ALTER COLUMN poster_path TYPE VARCHAR(1000);

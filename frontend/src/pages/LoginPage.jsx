@@ -19,7 +19,7 @@ function LoginPage() {
       if (user.is_admin) {
         navigate("/admin");
       } else {
-        navigate("/tasks");
+        navigate("/user-movies");
       }
     }
   });

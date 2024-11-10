@@ -17,7 +17,9 @@ import TaskFormPage from "./pages/TaskFormPage";
 import ProfilePage from "./pages/ProfilePage";
 import AdminPage from "./pages/AdminPage";
 import MoviesPage from "./pages/MoviesPage";
+import CreateMoviePage from "./pages/CreatedMoviePage";
 import NotFound from "./pages/NotFound";
+import UserMoviePage from "./pages/UserMoviePage";
 
 function App() {
   const { isAuth, user, loading } = useAuth();
@@ -57,6 +59,17 @@ function App() {
           </Route>
 
           <Route
+            path="/user-movies"
+            element={
+              <ProtectedRoute isAllowed={isAuth} redirectTo="/login">
+                <MoviesProvider>
+                  <UserMoviePage />
+                </MoviesProvider>
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
             path="/admin"
             element={
               <ProtectedRoute
@@ -76,6 +89,17 @@ function App() {
               <ProtectedRoute isAllowed={isAuth && user?.is_admin} redirectTo="/">
                 <MoviesProvider>
                   <MoviesPage />
+                </MoviesProvider>
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/create-movie"
+            element={
+              <ProtectedRoute isAllowed={isAuth && user?.is_admin} redirectTo="/">
+                <MoviesProvider>
+                  <CreateMoviePage />
                 </MoviesProvider>
               </ProtectedRoute>
             }

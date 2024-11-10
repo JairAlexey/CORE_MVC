@@ -1,5 +1,5 @@
 import { createContext, useState, useContext, useEffect } from "react";
-import { getAllMoviesRequest, updateMovieRequest } from "../api/movies.api";
+import { getAllMoviesRequest, updateMovieRequest, deleteMovieRequest, createMovieRequest } from "../api/movies.api";
 
 const MoviesContext = createContext();
 
@@ -14,6 +14,16 @@ export const useMovies = () => {
 export const MoviesProvider = ({ children }) => {
     const [movies, setMovies] = useState([]);
     const [errors, setErrors] = useState([]);
+    const [successMessage, setSuccessMessage] = useState("");
+
+    useEffect(() => {
+        if (errors.length > 0) {
+            const timer = setTimeout(() => {
+                setErrors([]);
+            }, 3000);
+            return () => clearTimeout(timer);
+        }
+    }, [errors]);
 
     const loadMovies = async () => {
         try {
@@ -32,7 +42,31 @@ export const MoviesProvider = ({ children }) => {
             ));
             return res.data;
         } catch (error) {
-            setErrors([error.response?.data?.message || "Error al actualizar la película"]);
+            const errorMessage = error.response?.data?.message || "Error al actualizar la película";
+            setErrors([errorMessage]);
+            throw error; 
+        }
+    };
+
+    const deleteMovie = async (id) => {
+        try {
+            await deleteMovieRequest(id);
+            setMovies(movies.filter(movie => movie.id !== id));
+        } catch (error) {
+            setErrors([error.response?.data?.message || "Error al eliminar la película"]);
+        }
+    };
+
+    const createMovie = async (movieData) => {
+        try {
+            const res = await createMovieRequest(movieData);
+            setMovies([...movies, res.data]);
+            setSuccessMessage("¡Película creada exitosamente!");
+            return res.data;
+        } catch (error) {
+            const errorMessage = error.response?.data?.message || "Error al crear la película";
+            setErrors([errorMessage]);
+            throw error; // Importante: re-lanzar el error para manejarlo en el componente
         }
     };
 
@@ -41,7 +75,16 @@ export const MoviesProvider = ({ children }) => {
     }, []);
 
     return (
-        <MoviesContext.Provider value={{ movies, loadMovies, updateMovie, errors }}>
+        <MoviesContext.Provider value={{
+            movies,
+            errors,
+            successMessage,
+            setSuccessMessage,
+            loadMovies,
+            createMovie,
+            updateMovie,
+            deleteMovie
+        }}>
             {children}
         </MoviesContext.Provider>
     );
