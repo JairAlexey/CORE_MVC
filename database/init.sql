@@ -33,3 +33,12 @@ CREATE TABLE movies (
 );
 
 ALTER TABLE movies ALTER COLUMN poster_path TYPE VARCHAR(1000);
+
+CREATE TABLE user_movies (
+    user_id INTEGER REFERENCES users(id),
+    movie_id INTEGER REFERENCES movies(id),
+    watched BOOLEAN DEFAULT FALSE,
+    comment TEXT,
+    rating INTEGER CHECK (rating >= 1 AND rating <= 5),
+    PRIMARY KEY (user_id, movie_id)
+);
