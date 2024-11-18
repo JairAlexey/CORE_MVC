@@ -20,6 +20,8 @@ import MoviesPage from "./pages/MoviesPage";
 import CreateMoviePage from "./pages/CreatedMoviePage";
 import NotFound from "./pages/NotFound";
 import UserMoviePage from "./pages/UserMoviePage";
+import CommentAndRatePage from "./pages/CommentAndRatePage"; // Asegúrate de importar el nuevo componente
+
 
 function App() {
   const { isAuth, user, loading } = useAuth();
@@ -64,6 +66,17 @@ function App() {
               <ProtectedRoute isAllowed={isAuth} redirectTo="/login">
                 <MoviesProvider>
                   <UserMoviePage />
+                </MoviesProvider>
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/movies/:movieId/comment"
+            element={
+              <ProtectedRoute isAllowed={isAuth} redirectTo="/login">
+                <MoviesProvider>
+                  <CommentAndRatePage />
                 </MoviesProvider>
               </ProtectedRoute>
             }

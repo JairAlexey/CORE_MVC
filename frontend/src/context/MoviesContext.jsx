@@ -1,5 +1,13 @@
 import { createContext, useState, useContext, useEffect } from "react";
-import { getAllMoviesRequest, updateMovieRequest, deleteMovieRequest, createMovieRequest } from "../api/movies.api";
+import { 
+    getAllMoviesRequest, 
+    updateMovieRequest, 
+    deleteMovieRequest, 
+    createMovieRequest,
+    markMovieAsWatchedRequest,
+    unmarkMovieAsWatchedRequest,
+    commentAndRateMovieRequest
+} from "../api/movies.api";
 
 const MoviesContext = createContext();
 
@@ -37,14 +45,14 @@ export const MoviesProvider = ({ children }) => {
     const updateMovie = async (id, movieData) => {
         try {
             const res = await updateMovieRequest(id, movieData);
-            setMovies(movies.map(movie => 
+            setMovies(movies.map(movie =>
                 movie.id === id ? res.data : movie
             ));
             return res.data;
         } catch (error) {
             const errorMessage = error.response?.data?.message || "Error al actualizar la película";
             setErrors([errorMessage]);
-            throw error; 
+            throw error;
         }
     };
 
@@ -70,6 +78,58 @@ export const MoviesProvider = ({ children }) => {
         }
     };
 
+    const markMovieAsWatched = async (movieId) => {
+        try {
+            const res = await markMovieAsWatchedRequest(movieId);
+            setMovies(prevMovies => 
+                prevMovies.map(movie => 
+                    movie.id === parseInt(movieId) 
+                        ? { ...movie, watched: true } 
+                        : movie
+                )
+            );
+            return res.data;
+        } catch (error) {
+            setErrors([error.response?.data?.message || "Error al marcar la película como vista"]);
+            throw error;
+        }
+    };
+    
+    const unmarkMovieAsWatched = async (movieId) => {
+        try {
+            const res = await unmarkMovieAsWatchedRequest(movieId);
+            setMovies(prevMovies => 
+                prevMovies.map(movie => 
+                    movie.id === parseInt(movieId) 
+                        ? { ...movie, watched: false, commented: false, rating: null } 
+                        : movie
+                )
+            );
+            return res.data;
+        } catch (error) {
+            setErrors([error.response?.data?.message || "Error al desmarcar la película como vista"]);
+            throw error;
+        }
+    };
+    
+    const commentAndRateMovie = async (movieId, comment, rating) => {
+        try {
+            const res = await commentAndRateMovieRequest(movieId, comment, rating);
+            setMovies(prevMovies => 
+                prevMovies.map(movie => 
+                    movie.id === parseInt(movieId) 
+                        ? { ...movie, commented: true, rating } 
+                        : movie
+                )
+            );
+            return res.data;
+        } catch (error) {
+            setErrors([error.response?.data?.message || "Error al comentar o valorar la película"]);
+            throw error;
+        }
+    };
+
+
     useEffect(() => {
         loadMovies();
     }, []);
@@ -79,11 +139,15 @@ export const MoviesProvider = ({ children }) => {
             movies,
             errors,
             successMessage,
+            setMovies,
             setSuccessMessage,
             loadMovies,
             createMovie,
             updateMovie,
-            deleteMovie
+            deleteMovie,
+            markMovieAsWatched,
+            unmarkMovieAsWatched,
+            commentAndRateMovie
         }}>
             {children}
         </MoviesContext.Provider>

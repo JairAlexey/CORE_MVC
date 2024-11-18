@@ -180,7 +180,7 @@ function MoviesPage() {
                                 <p className="mt-2">Fecha de estreno: {formatDate(movie.release_date)}</p>
                                 <Button
                                     onClick={() => handleEdit(movie)}
-                                    className="mt-4"
+                                    className="mt-4 mr-2"
                                 >
                                     Editar
                                 </Button>

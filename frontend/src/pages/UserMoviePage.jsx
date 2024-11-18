@@ -1,19 +1,31 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useMovies } from "../context/MoviesContext";
-import { Card } from "../components/ui";
+import { Card, Button } from "../components/ui";
 import { getGenreNames } from "../utils/genres";
+import { useNavigate } from "react-router-dom";
 
 function UserMoviesPage() {
-    const { movies } = useMovies();
+    const { movies, markMovieAsWatched, unmarkMovieAsWatched } = useMovies();
+    const navigate = useNavigate();
 
-    const formatDate = (dateString) => {
-        if (!dateString) return '';
-        const date = new Date(dateString);
-        return date.toLocaleDateString('es-ES', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric'
-        });
+    const handleMarkAsWatched = async (movieId) => {
+        try {
+            await markMovieAsWatched(movieId);
+            console.log(`Redirigiendo a /movies/${movieId}/comment`);
+            navigate(`/movies/${movieId}/comment`);
+        } catch (error) {
+            console.error("Error al marcar como vista:", error);
+        }
+    };
+
+    const handleUnmarkAsWatched = async (movieId) => {
+        if (window.confirm("¿Estás seguro de que deseas desmarcar esta película como vista? Se eliminarán tus comentarios y valoraciones.")) {
+            try {
+                await unmarkMovieAsWatched(movieId);
+            } catch (error) {
+                console.error("Error al desmarcar como vista:", error);
+            }
+        }
     };
 
     return (
@@ -29,8 +41,34 @@ function UserMoviesPage() {
                         <div>
                             <h2 className="text-xl font-bold">{movie.title}</h2>
                             <p className="mt-2">{movie.overview}</p>
-                            <p className="mt-2">Géneros: {getGenreNames(movie.genre_ids)}</p>
-                            <p className="mt-2">Fecha de estreno: {formatDate(movie.release_date)}</p>
+                            {movie.watched ? (
+                                <>
+                                    <p className="text-green-500 mt-2">Vista ✓</p>
+                                    {movie.commented ? (
+                                        <p className="text-blue-500">Ya has comentado esta película</p>
+                                    ) : (
+                                        <Button 
+                                            onClick={() => navigate(`/movies/${movie.id}/comment`)}
+                                            className="mt-2"
+                                        >
+                                            Comentar y Valorar
+                                        </Button>
+                                    )}
+                                    <Button 
+                                        onClick={() => handleUnmarkAsWatched(movie.id)}
+                                        className="mt-2 bg-red-500"
+                                    >
+                                        Desmarcar como vista
+                                    </Button>
+                                </>
+                            ) : (
+                                <Button 
+                                    onClick={() => handleMarkAsWatched(movie.id)}
+                                    className="mt-2"
+                                >
+                                    Marcar como vista
+                                </Button>
+                            )}
                         </div>
                     </Card>
                 ))}
