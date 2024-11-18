@@ -63,17 +63,18 @@ export const updateMovie = async (req, res) => {
 
 
 export const getAllMovies = async (req, res) => {
+    const userId = req.userId;
     try {
         const result = await pool.query(`
             SELECT 
-                id, 
-                title, 
-                overview, 
-                genre_ids,
-                TO_CHAR(release_date, 'YYYY-MM-DD') as release_date,
-                poster_path 
-            FROM movies
-        `);
+                m.*,
+                um.watched,
+                um.comment IS NOT NULL as commented,
+                um.rating
+            FROM movies m
+            LEFT JOIN user_movies um ON m.id = um.movie_id AND um.user_id = $1
+            ORDER BY m.id DESC
+        `, [userId]);
         
         if (result.rowCount === 0) {
             const moviesFromAPI = await fetchMovies();
@@ -85,7 +86,16 @@ export const getAllMovies = async (req, res) => {
                 );
             }
             
-            const newResult = await pool.query("SELECT * FROM movies");
+            const newResult = await pool.query(`
+                SELECT 
+                    m.*,
+                    um.watched,
+                    um.comment IS NOT NULL as commented,
+                    um.rating
+                FROM movies m
+                LEFT JOIN user_movies um ON m.id = um.movie_id AND um.user_id = $1
+                ORDER BY m.id DESC
+            `, [userId]);
             return res.json(newResult.rows);
         }
         
@@ -112,5 +122,62 @@ export const deleteMovie = async (req, res) => {
     } catch (error) {
         console.error(error);
         return res.status(500).json({ message: "Error al eliminar la película" });
+    }
+};
+
+
+//Usuario funciones para manejar las acciones de marcar una película como vista, comentar y valorar.
+
+export const markMovieAsWatched = async (req, res) => {
+    const { movieId } = req.params;
+    const userId = req.userId;
+
+    try {
+        const result = await pool.query(
+            "INSERT INTO user_movies (user_id, movie_id, watched) VALUES ($1, $2, TRUE) ON CONFLICT (user_id, movie_id) DO UPDATE SET watched = TRUE RETURNING *",
+            [userId, movieId]
+        );
+        return res.json(result.rows[0]);
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: "Error al marcar la película como vista" });
+    }
+};
+
+export const unmarkMovieAsWatched = async (req, res) => {
+    const { movieId } = req.params;
+    const userId = req.userId;
+
+    try {
+        const result = await pool.query(
+            "DELETE FROM user_movies WHERE user_id = $1 AND movie_id = $2 RETURNING *",
+            [userId, movieId]
+        );
+        return res.json(result.rows[0]);
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: "Error al desmarcar la película como vista" });
+    }
+};
+
+export const commentAndRateMovie = async (req, res) => {
+    const { movieId } = req.params;
+    const { comment, rating } = req.body;
+    const userId = req.userId;
+
+    try {
+        const result = await pool.query(
+            "UPDATE user_movies SET comment = $1, rating = $2 WHERE user_id = $3 AND movie_id = $4 AND watched = TRUE RETURNING *",
+            [comment, rating, userId, movieId]
+        );
+
+        if (result.rowCount === 0) {
+            return res.status(400).json({ message: "Debes marcar la película como vista antes de comentar o valorar" });
+        }
+
+        return res.json(result.rows[0]);
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: "Error al comentar o valorar la película" });
     }
 };

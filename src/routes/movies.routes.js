@@ -3,7 +3,10 @@ import {
     getAllMovies,
     updateMovie,
     createMovie,
-    deleteMovie
+    deleteMovie,
+    markMovieAsWatched, 
+    unmarkMovieAsWatched, 
+    commentAndRateMovie
 } from "../controllers/movies.controller.js";
 import { isAuth, isAdmin } from "../middlewares/auth.middleware.js";
 import { validateSchema } from "../middlewares/validate.middleware.js";
@@ -19,5 +22,10 @@ router.get("/movies", isAuth, isAdmin, getAllMovies);
 router.put("/movies/:id", isAuth, isAdmin, validateSchema(updateMovieSchema), updateMovie);
 router.post("/movies", isAuth, isAdmin, validateSchema(createMovieSchema), createMovie);
 router.delete("/movies/:id", isAuth, isAdmin, deleteMovie);
+
+// Rutas para marcar y desmarcar películas como vistas
+router.post("/movies/:movieId/watched", isAuth, markMovieAsWatched);
+router.delete("/movies/:movieId/watched", isAuth, unmarkMovieAsWatched);
+router.post("/movies/:movieId/comment", isAuth, commentAndRateMovie);
 
 export default router;
