@@ -42,3 +42,5 @@ CREATE TABLE user_movies (
     rating INTEGER CHECK (rating >= 1 AND rating <= 5),
     PRIMARY KEY (user_id, movie_id)
 );
+
+ALTER TABLE user_movies ADD COLUMN IF NOT EXISTS created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP;
