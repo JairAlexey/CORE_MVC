@@ -204,10 +204,13 @@ export const getMovieDetails = async (req, res) => {
                             'user_id', um.user_id,
                             'comment', um.comment,
                             'rating', um.rating,
-                            'created_at', um.created_at
+                            'created_at', um.created_at,
+                            'user_name', u.name,
+                            'user_gravatar', u.gravatar
                         )
                     )
                     FROM user_movies um
+                    JOIN users u ON um.user_id = u.id
                     WHERE um.movie_id = m.id),
                     '[]'
                 ) as comments,
@@ -215,9 +218,12 @@ export const getMovieDetails = async (req, res) => {
                     SELECT json_build_object(
                         'comment', my_um.comment,
                         'rating', my_um.rating,
-                        'created_at', my_um.created_at
+                        'created_at', my_um.created_at,
+                        'user_name', u.name,
+                        'user_gravatar', u.gravatar
                     )
                     FROM user_movies my_um
+                    JOIN users u ON my_um.user_id = u.id
                     WHERE my_um.movie_id = m.id AND my_um.user_id = $1
                 ) as user_comment
             FROM movies m
