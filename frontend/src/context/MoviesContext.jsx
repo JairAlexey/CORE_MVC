@@ -6,7 +6,8 @@ import {
     createMovieRequest,
     markMovieAsWatchedRequest,
     unmarkMovieAsWatchedRequest,
-    commentAndRateMovieRequest
+    commentAndRateMovieRequest,
+    getMovieDetailsRequest
 } from "../api/movies.api";
 
 const MoviesContext = createContext();
@@ -129,6 +130,16 @@ export const MoviesProvider = ({ children }) => {
         }
     };
 
+    const getMovieDetails = async (movieId) => {
+        try {
+            const res = await getMovieDetailsRequest(movieId);
+            return res.data;
+        } catch (error) {
+            setErrors([error.response?.data?.message || "Error al obtener detalles de la película"]);
+            throw error;
+        }
+    };
+
 
     useEffect(() => {
         loadMovies();
@@ -147,7 +158,8 @@ export const MoviesProvider = ({ children }) => {
             deleteMovie,
             markMovieAsWatched,
             unmarkMovieAsWatched,
-            commentAndRateMovie
+            commentAndRateMovie,
+            getMovieDetails
         }}>
             {children}
         </MoviesContext.Provider>

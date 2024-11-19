@@ -3,6 +3,7 @@ import { useMovies } from "../context/MoviesContext";
 import { Card, Button } from "../components/ui";
 import { getGenreNames } from "../utils/genres";
 import { useNavigate } from "react-router-dom";
+import { Link } from 'react-router-dom';
 
 function UserMoviesPage() {
     const { movies, markMovieAsWatched, unmarkMovieAsWatched } = useMovies();
@@ -39,22 +40,28 @@ function UserMoviesPage() {
                             className="w-full h-auto mb-4"
                         />
                         <div>
-                            <h2 className="text-xl font-bold">{movie.title}</h2>
-                            <p className="mt-2">{movie.overview}</p>
+                            <h2 className="text-xl font-bold">
+                                <Link
+                                    to={`/movies/${movie.id}/details`}
+                                    className="hover:text-blue-400 transition-colors"
+                                >
+                                    {movie.title}
+                                </Link>
+                            </h2>                     <p className="mt-2">{movie.overview}</p>
                             {movie.watched ? (
                                 <>
                                     <p className="text-green-500 mt-2">Vista ✓</p>
                                     {movie.commented ? (
                                         <p className="text-blue-500">Ya has comentado esta película</p>
                                     ) : (
-                                        <Button 
+                                        <Button
                                             onClick={() => navigate(`/movies/${movie.id}/comment`)}
-                                            className="mt-2"
+                                            className="mt-2 mr-2"
                                         >
                                             Comentar y Valorar
                                         </Button>
                                     )}
-                                    <Button 
+                                    <Button
                                         onClick={() => handleUnmarkAsWatched(movie.id)}
                                         className="mt-2 bg-red-500"
                                     >
@@ -62,7 +69,7 @@ function UserMoviesPage() {
                                     </Button>
                                 </>
                             ) : (
-                                <Button 
+                                <Button
                                     onClick={() => handleMarkAsWatched(movie.id)}
                                     className="mt-2"
                                 >

@@ -14,3 +14,6 @@ export const createMovieRequest = (movieData) => axios.post(`/movies`, movieData
 export const markMovieAsWatchedRequest = (movieId) => axios.post(`/movies/${movieId}/watched`);
 export const unmarkMovieAsWatchedRequest = (movieId) => axios.delete(`/movies/${movieId}/watched`);
 export const commentAndRateMovieRequest = (movieId, comment, rating) => axios.post(`/movies/${movieId}/comment`, { comment, rating });
+
+//funcion para obtener los detalles de la peliculas
+export const getMovieDetailsRequest = (movieId) => axios.get(`/movies/${movieId}/details`);

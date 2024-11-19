@@ -20,7 +20,8 @@ import MoviesPage from "./pages/MoviesPage";
 import CreateMoviePage from "./pages/CreatedMoviePage";
 import NotFound from "./pages/NotFound";
 import UserMoviePage from "./pages/UserMoviePage";
-import CommentAndRatePage from "./pages/CommentAndRatePage"; // Asegúrate de importar el nuevo componente
+import CommentAndRatePage from "./pages/CommentAndRatePage";
+import MovieDetailsPage from './pages/MovieDetailsPage';
 
 
 function App() {
@@ -59,6 +60,17 @@ function App() {
 
             <Route path="/profile" element={<ProfilePage />} />
           </Route>
+
+          <Route
+            path="/movies/:movieId/details"
+            element={
+              <ProtectedRoute isAllowed={isAuth}>
+                <MoviesProvider>
+                  <MovieDetailsPage />
+                </MoviesProvider>
+              </ProtectedRoute>
+            }
+          />
 
           <Route
             path="/user-movies"
