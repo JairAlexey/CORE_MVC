@@ -181,3 +181,52 @@ export const commentAndRateMovie = async (req, res) => {
         return res.status(500).json({ message: "Error al comentar o valorar la película" });
     }
 };
+
+export const getMovieDetails = async (req, res) => {
+    const { movieId } = req.params;
+    const userId = req.userId;
+
+    try {
+        // Verificar si la película existe
+        const movieExists = await pool.query('SELECT * FROM movies WHERE id = $1', [movieId]);
+        
+        if (movieExists.rowCount === 0) {
+            return res.status(404).json({ message: "Película no encontrada" });
+        }
+
+        // Obtener detalles de la película y todos los comentarios
+        const result = await pool.query(`
+            SELECT 
+                m.*,
+                COALESCE(
+                    (SELECT json_agg(
+                        json_build_object(
+                            'user_id', um.user_id,
+                            'comment', um.comment,
+                            'rating', um.rating,
+                            'created_at', um.created_at
+                        )
+                    )
+                    FROM user_movies um
+                    WHERE um.movie_id = m.id),
+                    '[]'
+                ) as comments,
+                (
+                    SELECT json_build_object(
+                        'comment', my_um.comment,
+                        'rating', my_um.rating,
+                        'created_at', my_um.created_at
+                    )
+                    FROM user_movies my_um
+                    WHERE my_um.movie_id = m.id AND my_um.user_id = $1
+                ) as user_comment
+            FROM movies m
+            WHERE m.id = $2
+        `, [userId, movieId]);
+
+        return res.json(result.rows[0]);
+    } catch (error) {
+        console.error('Error al obtener detalles de la película:', error);
+        return res.status(500).json({ message: "Error al obtener detalles de la película" });
+    }
+};

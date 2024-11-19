@@ -6,7 +6,8 @@ import {
     deleteMovie,
     markMovieAsWatched, 
     unmarkMovieAsWatched, 
-    commentAndRateMovie
+    commentAndRateMovie,
+    getMovieDetails
 } from "../controllers/movies.controller.js";
 import { isAuth, isAdmin } from "../middlewares/auth.middleware.js";
 import { validateSchema } from "../middlewares/validate.middleware.js";
@@ -27,5 +28,8 @@ router.delete("/movies/:id", isAuth, isAdmin, deleteMovie);
 router.post("/movies/:movieId/watched", isAuth, markMovieAsWatched);
 router.delete("/movies/:movieId/watched", isAuth, unmarkMovieAsWatched);
 router.post("/movies/:movieId/comment", isAuth, commentAndRateMovie);
+
+// Ruta para obtener los detalles de una película
+router.get("/movies/:movieId/details", isAuth, getMovieDetails);
 
 export default router;
