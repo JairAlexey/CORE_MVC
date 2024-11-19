@@ -69,14 +69,20 @@ function MovieDetailsPage() {
                             {movieDetails.comments.map((comment) => (
                                 <div key={comment.user_id} className="bg-zinc-700 rounded-lg p-4">
                                     <div className="flex items-center justify-between mb-2">
-                                        <div className="text-yellow-400">
-                                            {"⭐".repeat(comment.rating)}
+                                        <div className="flex items-center">
+                                            <img
+                                                src={comment.user_gravatar}
+                                                alt={comment.user_name}
+                                                className="h-8 w-8 rounded-full mr-2"
+                                            />
+                                            <span className="text-white">{comment.user_name}</span>
                                         </div>
                                         <span className="text-gray-400">
                                             {formatDate(comment.created_at)}
                                         </span>
                                     </div>
                                     <p className="text-gray-200">{comment.comment}</p>
+                                    <p className='mt-2'>{"⭐".repeat(comment.rating)}</p>
                                 </div>
                             ))}
                             {(!movieDetails.comments || movieDetails.comments.length === 0) && (

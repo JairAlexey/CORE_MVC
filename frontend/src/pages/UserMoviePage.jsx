@@ -47,7 +47,10 @@ function UserMoviesPage() {
                                 >
                                     {movie.title}
                                 </Link>
-                            </h2>                     <p className="mt-2">{movie.overview}</p>
+                            </h2>                     
+                            
+                            <p className="mt-2">{movie.overview}</p>
+                            
                             {movie.watched ? (
                                 <>
                                     <p className="text-green-500 mt-2">Vista ✓</p>

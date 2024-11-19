@@ -7,8 +7,7 @@ function ProfilePage() {
   return (
     <div className="flex h-[80vh] justify-center items-center">
       <Card>
-        <h2 className="text-3xl font-bold my-4">Perfil de usuario
-        </h2>
+        <h2 className="text-3xl font-bold my-4">Perfil de usuario</h2>
         <div className="flex justify-between">
           <span className="font-medium">Nombre:</span>
           <span>{user?.name || "No disponible"}</span>
@@ -24,15 +23,17 @@ function ProfilePage() {
         <div className="flex justify-between">
           <span className="font-medium">Foto de usuario:</span>
           <img
-                  src={user.gravatar}
-                  alt=""
-                  className="h-8 w-8 rounded-full"
+            src={user.gravatar}
+            alt=""
+            className="h-8 w-8 rounded-full"
           />
         </div>
+        <p className="text-sm text-gray-500 mt-2">
+          Puedes cambiar tu foto de perfil en <a href="https://gravatar.com" target="_blank" rel="noopener noreferrer" className="text-blue-500 underline">Gravatar</a>.
+        </p>
       </Card>
     </div>
   );
-
 }
 
 export default ProfilePage;

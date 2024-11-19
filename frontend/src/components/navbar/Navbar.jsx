@@ -12,7 +12,7 @@ function Navbar() {
   const { isAuth, signout, user } = useAuth();
 
   return (
-    <nav className="bg-gray-800 rounded-lg m-4">
+    <nav className="bg-[#2B2A2A] rounded-lg m-4">
       <Container className="flex justify-between py-3">
         <Link to="/">
           <BiHome className="w-7 h-7" />
