@@ -6,31 +6,21 @@ function ProfilePage() {
 
   return (
     <div className="flex h-[80vh] justify-center items-center">
-      <Card>
-        <h2 className="text-3xl font-bold my-4">Perfil de usuario</h2>
-        <div className="flex justify-between">
-          <span className="font-medium">Nombre:</span>
-          <span>{user?.name || "No disponible"}</span>
-        </div>
-        <div className="flex justify-between">
-          <span className="font-medium">Email:</span>
-          <span>{user?.email || "No disponible"}</span>
-        </div>
-        <div className="flex justify-between">
-          <span className="font-medium">ID:</span>
-          <span>{user?.id || "No disponible"}</span>
-        </div>
-        <div className="flex justify-between">
-          <span className="font-medium">Foto de usuario:</span>
+      <Card className="max-w-md w-full p-6 shadow-lg rounded-lg">
+        <div className="flex flex-col items-center">
           <img
             src={user.gravatar}
             alt=""
-            className="h-8 w-8 rounded-full"
+            className="h-24 w-24 rounded-full mb-4"
           />
+          <h2 className="text-2xl font-bold mb-2 text-white">{user?.name || "No disponible"}</h2>
+          <p className="text-white">{user?.email || "No disponible"}</p>
         </div>
-        <p className="text-sm text-gray-500 mt-2">
-          Puedes cambiar tu foto de perfil en <a href="https://gravatar.com" target="_blank" rel="noopener noreferrer" className="text-blue-500 underline">Gravatar</a>.
-        </p>
+        <div className="mt-6">
+          <p className="text-sm text-white mt-4 text-center">
+            Puedes cambiar tu foto de perfil en <a href="https://gravatar.com" target="_blank" rel="noopener noreferrer" className="text-blue-200 underline">Gravatar</a>.
+          </p>
+        </div>
       </Card>
     </div>
   );
