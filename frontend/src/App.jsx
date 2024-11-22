@@ -1,7 +1,6 @@
 import { Routes, Route, Outlet } from "react-router-dom";
 
 import { useAuth } from "./context/AuthContext";
-import { TaskProvider } from "./context/TaskContext";
 import { UsersProvider } from "./context/UsersContext";
 import { MoviesProvider } from "./context/MoviesContext";
 
@@ -12,8 +11,6 @@ import { ProtectedRoute } from "./components/ProtectedRoute";
 import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
-import TasksPage from "./pages/TasksPage";
-import TaskFormPage from "./pages/TaskFormPage";
 import ProfilePage from "./pages/ProfilePage";
 import AdminPage from "./pages/AdminPage";
 import MoviesPage from "./pages/MoviesPage";
@@ -22,6 +19,7 @@ import NotFound from "./pages/NotFound";
 import UserMoviePage from "./pages/UserMoviePage";
 import CommentAndRatePage from "./pages/CommentAndRatePage";
 import MovieDetailsPage from './pages/MovieDetailsPage';
+import FavoriteGenresPage from './pages/FavoriteGenresPage';
 
 function App() {
   const { isAuth, user, loading } = useAuth();
@@ -39,7 +37,7 @@ function App() {
         <Container className="py-5">
           <Routes>
             <Route
-              element={<ProtectedRoute isAllowed={!isAuth} redirectTo="/tasks" />}
+              element={<ProtectedRoute isAllowed={!isAuth} redirectTo="/user-movies" />}
             >
               <Route path="/" element={<HomePage />} />
               <Route path="/login" element={<LoginPage />} />
@@ -49,17 +47,6 @@ function App() {
             <Route
               element={<ProtectedRoute isAllowed={isAuth} redirectTo="/login" />}
             >
-              <Route
-                element={
-                  <TaskProvider>
-                    <Outlet />
-                  </TaskProvider>
-                }
-              >
-                <Route path="/tasks" element={<TasksPage />} />
-                <Route path="/tasks/new" element={<TaskFormPage />} />
-                <Route path="/tasks/:id/edit" element={<TaskFormPage />} />
-              </Route>
 
               <Route path="/profile" element={<ProfilePage />} />
             </Route>
@@ -84,6 +71,14 @@ function App() {
                   </MoviesProvider>
                 </ProtectedRoute>
               }
+            />
+
+            <Route 
+              path="/favorite-genres" 
+              element=
+              {
+              <FavoriteGenresPage />
+              } 
             />
 
             <Route

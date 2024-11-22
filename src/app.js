@@ -3,7 +3,6 @@ import morgan from "morgan";
 import cookieParser from "cookie-parser";
 import cors from 'cors'
 
-import taskRoutes from "./routes/tasks.routes.js";
 import authRoutes from "./routes/auth.routes.js";
 import adminRoutes from "./routes/admin.routes.js";
 import moviesRoutes from "./routes/movies.routes.js";
@@ -28,7 +27,6 @@ app.use(express.urlencoded({ extended: false }));
 
 // Routes
 app.get("/", (req, res) => res.json({ message: "API de MovieMatch" }));
-app.use("/api", taskRoutes);
 app.use("/api", authRoutes);
 app.use("/api", adminRoutes); 
 app.use("/api", moviesRoutes);

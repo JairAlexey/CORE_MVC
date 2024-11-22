@@ -15,7 +15,7 @@ function RegisterPage() {
   const onSubmit = handleSubmit(async (data) => {
     const user = await signup(data);
 
-    if (user) navigate("/tasks");
+    if (user) navigate("/movies");
   });
 
   return (

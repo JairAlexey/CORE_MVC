@@ -79,3 +79,25 @@ export const profile = async (req, res) => {
   const result = await pool.query('SELECT * FROM users WHERE id = $1', [req.userId]);
   return res.json(result.rows[0]);
 } 
+
+
+export const updateFavoriteGenres = async (req, res) => {
+  const userId = req.userId;
+  const { favoriteGenres } = req.body;
+
+  try {
+      const result = await pool.query(
+          "UPDATE users SET favorite_genres = $1 WHERE id = $2 RETURNING *",
+          [favoriteGenres, userId]
+      );
+
+      if (result.rowCount === 0) {
+          return res.status(404).json({ message: "Usuario no encontrado" });
+      }
+
+      return res.json(result.rows[0]);
+  } catch (error) {
+      console.error("Error al actualizar géneros favoritos:", error);
+      return res.status(500).json({ message: "Error al actualizar géneros favoritos" });
+  }
+};

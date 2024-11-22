@@ -1,13 +1,14 @@
 import { useState } from "react";
 import { useMovies } from "../context/MoviesContext";
 import { Card, Button } from "../components/ui";
-import { getGenreNames } from "../utils/genres";
 import { useNavigate } from "react-router-dom";
-import { Link } from 'react-router-dom';
+import { FaSearch } from 'react-icons/fa'; 
+
 
 function UserMoviesPage() {
     const { movies, markMovieAsWatched, unmarkMovieAsWatched } = useMovies();
     const navigate = useNavigate();
+    const [searchTerm, setSearchTerm] = useState("");
 
     const handleMarkAsWatched = async (movieId) => {
         try {
@@ -29,10 +30,26 @@ function UserMoviesPage() {
         }
     };
 
+    const filteredMovies = movies.filter(movie =>
+        movie.title.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
     return (
         <div className="container mx-auto p-4">
+            <div className="flex justify-center mb-4">
+                <div className="relative w-1/2">
+                    <input
+                        type="text"
+                        placeholder="Buscar película..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="w-full p-2 pl-10 border-2 rounded-xl bg-[#2B2A2A] text-white placeholder-white focus:border-2 focus:border-white"
+                    />
+                    <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white" />
+                </div>
+            </div>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {movies.map((movie) => (
+                {filteredMovies.map((movie) => (
                     <Card key={movie.id} className="p-4">
                         <img
                             src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
@@ -40,30 +57,11 @@ function UserMoviesPage() {
                             className="w-full h-auto mb-4"
                         />
                         <div>
-                            <h2 className="text-xl font-bold">
-                                <Link
-                                    to={`/movies/${movie.id}/details`}
-                                    className="hover:text-blue-400 transition-colors"
-                                >
-                                    {movie.title}
-                                </Link>
-                            </h2>                     
-                            
+                            <h2 className="text-xl font-bold">{movie.title}</h2>
                             <p className="mt-2">{movie.overview}</p>
-                            
                             {movie.watched ? (
                                 <>
                                     <p className="text-green-500 mt-2">Vista ✓</p>
-                                    {movie.commented ? (
-                                        <p className="text-blue-500">Ya has comentado esta película</p>
-                                    ) : (
-                                        <Button
-                                            onClick={() => navigate(`/movies/${movie.id}/comment`)}
-                                            className="mt-2 mr-2"
-                                        >
-                                            Comentar y Valorar
-                                        </Button>
-                                    )}
                                     <Button
                                         onClick={() => handleUnmarkAsWatched(movie.id)}
                                         className="mt-2 bg-red-500"
