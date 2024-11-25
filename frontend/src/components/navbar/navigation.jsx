@@ -25,6 +25,11 @@ export const privateRoutes = [
     name: "Géneros Favoritos",
     path: "/favorite-genres",
     icon: <MdCategory className="w-5 h-5" />,
+  },
+  {
+    name: "Conexiones",
+    path: "/connections",
+    icon: <MdRecommend className="w-5 h-5" />,
   }
 ];
 

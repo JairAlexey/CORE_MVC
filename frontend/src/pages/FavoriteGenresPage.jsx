@@ -34,7 +34,7 @@ function FavoriteGenresPage() {
                             type="checkbox"
                             checked={selectedGenres.includes(genre.id)}
                             onChange={() => handleGenreChange(genre.id)}
-                            className="form-checkbox h-5 w-5 text-indigo-600"
+                            className="form-checkbox h-5 w-5 text-indigo-600 "
                         />
                         <label className="ml-2 text-white">{genre.name}</label>
                     </Card>

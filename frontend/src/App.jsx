@@ -3,6 +3,7 @@ import { Routes, Route, Outlet } from "react-router-dom";
 import { useAuth } from "./context/AuthContext";
 import { UsersProvider } from "./context/UsersContext";
 import { MoviesProvider } from "./context/MoviesContext";
+import { ConnectionProvider } from "./context/ConnectionsContext";
 
 import Navbar from "./components/navbar/Navbar";
 import { Container } from "./components/ui";
@@ -20,6 +21,7 @@ import UserMoviePage from "./pages/UserMoviePage";
 import CommentAndRatePage from "./pages/CommentAndRatePage";
 import MovieDetailsPage from './pages/MovieDetailsPage';
 import FavoriteGenresPage from './pages/FavoriteGenresPage';
+import ConnectionsPage from "./pages/ConnectionsPage";
 
 
 function App() {
@@ -80,6 +82,15 @@ function App() {
               {
               <FavoriteGenresPage />
               } 
+            />
+
+            <Route 
+                path="/connections" 
+                element={
+                    <ConnectionProvider>
+                        <ConnectionsPage />
+                    </ConnectionProvider>
+                } 
             />
 
             <Route

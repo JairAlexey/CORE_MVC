@@ -72,7 +72,7 @@ function UserMoviesPage() {
                                 <>
                                     <p className="text-green-500 mt-2">Vista ✓</p>
                                     {movie.commented ? (
-                                        <p className="text-blue-500 mt-2">Comentada ✓</p>
+                                        <p className="text-blue-500 mt-2">Comentada y valorada ✓</p>
                                     ) : (
                                         <Button
                                             onClick={() => navigate(`/movies/${movie.id}/comment`)}
