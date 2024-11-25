@@ -6,6 +6,9 @@ import cors from 'cors'
 import authRoutes from "./routes/auth.routes.js";
 import adminRoutes from "./routes/admin.routes.js";
 import moviesRoutes from "./routes/movies.routes.js";
+import connectionsRoutes from "./routes/connections.routes.js";
+import recommendationsRoutes from "./routes/recommendations.routes.js";
+
 
 import { ORIGIN } from "./config.js";
 import { pool } from "./db.js";
@@ -30,6 +33,10 @@ app.get("/", (req, res) => res.json({ message: "API de MovieMatch" }));
 app.use("/api", authRoutes);
 app.use("/api", adminRoutes); 
 app.use("/api", moviesRoutes);
+
+app.use("/api", connectionsRoutes);
+
+app.use("/api", recommendationsRoutes);
 
 // Error Hander
 app.use((err, req, res, next) => {
