@@ -38,21 +38,21 @@ ALTER TABLE user_movies ADD COLUMN IF NOT EXISTS created_at TIMESTAMP WITH TIME 
 
 ALTER TABLE users ADD COLUMN favorite_genres INTEGER[];
 
-
-CREATE TABLE IF NOT EXISTS matches (
-    user1 INTEGER REFERENCES users(id),
-    user2 INTEGER REFERENCES users(id),
-    compatibility DECIMAL(5, 2),
-    PRIMARY KEY (user1, user2)
+CREATE TABLE user_connections (
+    user1_id INTEGER REFERENCES users(id),
+    user2_id INTEGER REFERENCES users(id),
+    compatibility_score DECIMAL(5,2),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (user1_id, user2_id),
+    CHECK (user1_id < user2_id)
 );
 
-
-CREATE TABLE IF NOT EXISTS recommendations (
-    user_id INTEGER REFERENCES users(id),
+CREATE TABLE movie_recommendations (
+    id SERIAL PRIMARY KEY,
+    recommender_id INTEGER REFERENCES users(id),
+    receiver_id INTEGER REFERENCES users(id),
     movie_id INTEGER REFERENCES movies(id),
-    recommended_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (user_id, movie_id)
+    rating INTEGER,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(recommender_id, receiver_id, movie_id)
 );
-
-DROP TABLE IF EXISTS matches;
-DROP TABLE IF EXISTS recommendations;
