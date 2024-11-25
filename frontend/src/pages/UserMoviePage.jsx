@@ -30,6 +30,10 @@ function UserMoviesPage() {
         }
     };
 
+    const handleTitleClick = (movieId) => {
+        navigate(`/movies/${movieId}/details`);
+    };
+
     const filteredMovies = movies.filter(movie =>
         movie.title.toLowerCase().includes(searchTerm.toLowerCase())
     );
@@ -57,11 +61,26 @@ function UserMoviesPage() {
                             className="w-full h-auto mb-4"
                         />
                         <div>
-                            <h2 className="text-xl font-bold">{movie.title}</h2>
+                            <h2 
+                                className="text-xl font-bold cursor-pointer hover:text-blue-500 transition-colors"
+                                onClick={() => handleTitleClick(movie.id)}
+                            >
+                                {movie.title}
+                            </h2>
                             <p className="mt-2">{movie.overview}</p>
                             {movie.watched ? (
                                 <>
                                     <p className="text-green-500 mt-2">Vista ✓</p>
+                                    {movie.commented ? (
+                                        <p className="text-blue-500 mt-2">Comentada ✓</p>
+                                    ) : (
+                                        <Button
+                                            onClick={() => navigate(`/movies/${movie.id}/comment`)}
+                                            className="mt-2 mr-2 bg-blue-500"
+                                        >
+                                            Comentar y Valorar
+                                        </Button>
+                                    )}
                                     <Button
                                         onClick={() => handleUnmarkAsWatched(movie.id)}
                                         className="mt-2 bg-red-500"

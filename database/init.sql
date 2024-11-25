@@ -37,3 +37,22 @@ CREATE TABLE user_movies (
 ALTER TABLE user_movies ADD COLUMN IF NOT EXISTS created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP;
 
 ALTER TABLE users ADD COLUMN favorite_genres INTEGER[];
+
+
+CREATE TABLE IF NOT EXISTS matches (
+    user1 INTEGER REFERENCES users(id),
+    user2 INTEGER REFERENCES users(id),
+    compatibility DECIMAL(5, 2),
+    PRIMARY KEY (user1, user2)
+);
+
+
+CREATE TABLE IF NOT EXISTS recommendations (
+    user_id INTEGER REFERENCES users(id),
+    movie_id INTEGER REFERENCES movies(id),
+    recommended_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (user_id, movie_id)
+);
+
+DROP TABLE IF EXISTS matches;
+DROP TABLE IF EXISTS recommendations;

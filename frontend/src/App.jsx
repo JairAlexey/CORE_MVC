@@ -21,6 +21,7 @@ import CommentAndRatePage from "./pages/CommentAndRatePage";
 import MovieDetailsPage from './pages/MovieDetailsPage';
 import FavoriteGenresPage from './pages/FavoriteGenresPage';
 
+
 function App() {
   const { isAuth, user, loading } = useAuth();
 
