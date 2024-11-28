@@ -18,6 +18,10 @@ export const createMovie = async (req, res) => {
             });
         }
 
+        // Generar un ID único para la película
+        const maxIdResult = await pool.query("SELECT MAX(id) FROM movies");
+        const newId = (maxIdResult.rows[0].max || 0) + 1;
+
         // Validar y formatear la fecha
         let formattedDate = null;
         if (release_date) {
@@ -32,10 +36,10 @@ export const createMovie = async (req, res) => {
 
         // Insertar la nueva película con is_modified en true
         const result = await pool.query(
-            `INSERT INTO movies (title, overview, genre_ids, release_date, poster_path, is_modified) 
-                VALUES ($1, $2, $3, $4, $5, TRUE) 
+            `INSERT INTO movies (id, title, overview, genre_ids, release_date, poster_path, is_modified) 
+                VALUES ($1, $2, $3, $4, $5, $6, TRUE) 
              RETURNING *`,
-            [title, overview, genre_ids || [], formattedDate, poster_path]
+            [newId, title, overview, genre_ids || [], formattedDate, poster_path]
         );
 
         // Devolver la película creada
@@ -88,8 +92,20 @@ export const getAllMovies = async (req, res) => {
     const searchTerm = req.query.search || '';
 
     try {
+        // Primero, obtener películas de la base de datos local
+        let localMovies = [];
+        if (searchTerm) {
+            const localResult = await pool.query(
+                `SELECT * FROM movies 
+                WHERE title ILIKE $1 
+                AND id NOT IN (SELECT id FROM deleted_movies)`,
+                [`%${searchTerm}%`]
+            );
+            localMovies = localResult.rows;
+        }
+
+        // Luego obtener películas de la API externa
         let moviesFromAPI;
-        
         if (searchTerm && searchTerm.length > 0) {
             moviesFromAPI = await searchMovies(searchTerm, page);
         } else if (category === 'all') {
@@ -97,72 +113,21 @@ export const getAllMovies = async (req, res) => {
         } else {
             moviesFromAPI = await fetchMovies(page, category);
         }
-        
-        // Verificar si no hay resultados de la búsqueda
-        if (!moviesFromAPI || !moviesFromAPI.results || moviesFromAPI.results.length === 0) {
-            return res.json({
-                movies: [],
-                pagination: {
-                    currentPage: page,
-                    totalPages: 0
-                }
-            });
+
+        // Combinar resultados
+        let allMovies = [...localMovies];
+        if (moviesFromAPI && moviesFromAPI.results) {
+            allMovies = [...allMovies, ...moviesFromAPI.results];
         }
 
         // Obtener IDs de películas eliminadas
-        const deletedMoviesResult = await pool.query(
-            "SELECT id FROM deleted_movies"
-        );
+        const deletedMoviesResult = await pool.query("SELECT id FROM deleted_movies");
         const deletedMovieIds = new Set(deletedMoviesResult.rows.map(row => row.id));
 
         // Filtrar películas eliminadas
-        const filteredMovies = moviesFromAPI.results.filter(movie => !deletedMovieIds.has(movie.id));
+        const filteredMovies = allMovies.filter(movie => !deletedMovieIds.has(movie.id));
 
-        // Si no hay resultados después del filtrado, devolver array vacío
-        if (filteredMovies.length === 0) {
-            return res.json({
-                movies: [],
-                pagination: {
-                    currentPage: page,
-                    totalPages: 0
-                }
-            });
-        }
-
-        // Insertar películas filtradas en la base de datos
-        for (const movie of filteredMovies) {
-            await pool.query(
-                `INSERT INTO movies (id, title, overview, genre_ids, release_date, poster_path) 
-                VALUES ($1, $2, $3, $4, $5, $6) 
-                ON CONFLICT (id) DO UPDATE SET 
-                title = CASE 
-                    WHEN movies.is_modified THEN movies.title 
-                    ELSE EXCLUDED.title 
-                END,
-                overview = CASE 
-                    WHEN movies.is_modified THEN movies.overview 
-                    ELSE EXCLUDED.overview 
-                END,
-                genre_ids = CASE 
-                    WHEN movies.is_modified THEN movies.genre_ids 
-                    ELSE EXCLUDED.genre_ids 
-                END,
-                release_date = CASE 
-                    WHEN movies.is_modified THEN movies.release_date 
-                    ELSE EXCLUDED.release_date 
-                END
-                WHERE NOT movies.is_modified`,
-                [
-                    movie.id, 
-                    movie.title, 
-                    movie.overview, 
-                    movie.genre_ids || [], 
-                    movie.release_date || null, 
-                    movie.poster_path
-                ]
-            );
-        }
-
+        // Obtener información de usuario para las películas
         const result = await pool.query(`
             SELECT 
                 m.*,
@@ -178,8 +143,8 @@ export const getAllMovies = async (req, res) => {
         return res.json({
             movies: result.rows,
             pagination: {
-                currentPage: moviesFromAPI.currentPage,
-                totalPages: moviesFromAPI.totalPages
+                currentPage: page,
+                totalPages: moviesFromAPI ? moviesFromAPI.totalPages : 1
             }
         });
 
