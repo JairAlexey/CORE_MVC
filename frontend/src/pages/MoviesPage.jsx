@@ -3,13 +3,41 @@ import { useLocation } from "react-router-dom";
 import { useMovies } from "../context/MoviesContext";
 import { Card, Button } from "../components/ui";
 import { getGenreNames, getAllGenres } from "../utils/genres";
+import { FaSearch } from "react-icons/fa";
 
 function MoviesPage() {
     const location = useLocation();
-    const { movies, errors: movieErrors, updateMovie, deleteMovie } = useMovies();
+    const { movies, errors: movieErrors, updateMovie, deleteMovie, loadMovies, createMovie } = useMovies();
     const [editingMovie, setEditingMovie] = useState(null);
     const [errors, setErrors] = useState([]);
     const [successMessage, setSuccessMessage] = useState(location.state?.message || "");
+    const [searchTerm, setSearchTerm] = useState("");
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const [category, setCategory] = useState('popular');
+    const [isSearching, setIsSearching] = useState(false);
+
+    const categories = [
+        { id: 'all', name: 'Todas las Películas' },
+        { id: 'top_rated', name: 'Mejor Valoradas' },
+        { id: 'upcoming', name: 'Próximos Estrenos' },
+        { id: 'now_playing', name: 'En Cines' }
+    ];
+
+    useEffect(() => {
+        const fetchMovies = async () => {
+            try {
+                const data = await loadMovies(currentPage, category, searchTerm);
+                if (data && data.pagination) {
+                    setTotalPages(data.pagination.totalPages);
+                }
+            } catch (error) {
+                console.error("Error cargando películas:", error);
+            }
+        };
+
+        fetchMovies();
+    }, [currentPage, category, searchTerm]);
 
     useEffect(() => {
         if (successMessage) {
@@ -79,6 +107,22 @@ function MoviesPage() {
         setErrors([]);
     };
 
+    const handleSearch = (e) => {
+        setSearchTerm(e.target.value);
+        setCurrentPage(1);
+        setIsSearching(e.target.value !== "");
+    };
+
+    const handleCreate = async (movieData) => {
+        try {
+            const newMovie = await createMovie(movieData);
+            setSuccessMessage("¡Película creada exitosamente!");
+            await loadMovies(currentPage, category, searchTerm);
+        } catch (error) {
+            setErrors([error.response?.data?.message || "Error al crear la película"]);
+        }
+    };
+
     return (
         <div className="container mx-auto p-4">
             {successMessage && (
@@ -86,6 +130,41 @@ function MoviesPage() {
                     {successMessage}
                 </div>
             )}
+
+            {!isSearching && (
+                <div className="flex flex-wrap justify-center gap-4 mb-6">
+                    {categories.map(cat => (
+                        <Button
+                            key={cat.id}
+                            onClick={() => {
+                                setCategory(cat.id);
+                                setCurrentPage(1);
+                                setSearchTerm("");
+                            }}
+                            className={`px-4 py-2 ${
+                                category === cat.id 
+                                    ? 'bg-red-600 hover:bg-red-700' 
+                                    : 'bg-gray-600 hover:bg-gray-700'
+                            }`}
+                        >
+                            {cat.name}
+                        </Button>
+                    ))}
+                </div>
+            )}
+
+            <div className="flex justify-center mb-4">
+                <div className="relative w-1/2">
+                    <input
+                        type="text"
+                        placeholder="Buscar película..."
+                        value={searchTerm}
+                        onChange={handleSearch}
+                        className="w-full p-2 pl-10 border-2 rounded-xl bg-[#2B2A2A] text-white placeholder-white focus:border-2 focus:border-white"
+                    />
+                    <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white" />
+                </div>
+            </div>
 
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {movieErrors.length > 0 && (
@@ -194,6 +273,26 @@ function MoviesPage() {
                         )}
                     </Card>
                 ))}
+            </div>
+
+            <div className="flex justify-center gap-2 mt-6">
+                <Button
+                    onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                    disabled={currentPage === 1}
+                    className="px-4 py-2"
+                >
+                    Anterior
+                </Button>
+                <span className="px-4 py-2 bg-gray-700 rounded">
+                    Página {currentPage} de {totalPages}
+                </span>
+                <Button
+                    onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                    disabled={currentPage === totalPages}
+                    className="px-4 py-2"
+                >
+                    Siguiente
+                </Button>
             </div>
         </div>
     );

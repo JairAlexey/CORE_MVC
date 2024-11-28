@@ -1,28 +1,47 @@
 import { pool } from "../db.js";
-import { fetchMovies } from "../services/movieApiService.js";
+import { fetchMovies, fetchAllMovies, searchMovies } from "../services/movieApiService.js";
 
 
 export const createMovie = async (req, res) => {
     const { title, overview, genre_ids, release_date, poster_path } = req.body;
 
     try {
-        console.log("Datos recibidos:", { title, overview, genre_ids, release_date, poster_path });
-        
-        const result = await pool.query(
-            "INSERT INTO movies (title, overview, genre_ids, release_date, poster_path) VALUES ($1, $2, $3, $4, $5) RETURNING *",
-            [title, overview, genre_ids, release_date, poster_path]
+        // Verificar si la película ya existe
+        const existingMovie = await pool.query(
+            "SELECT * FROM movies WHERE title = $1",
+            [title]
         );
 
-        return res.status(201).json(result.rows[0]);
-    } catch (error) {
-        console.error("Error detallado:", error);
-        
-        if (error.code === '23505') {
+        if (existingMovie.rowCount > 0) {
             return res.status(409).json({ 
                 message: "Ya existe una película con ese título"
             });
         }
-        
+
+        // Validar y formatear la fecha
+        let formattedDate = null;
+        if (release_date) {
+            formattedDate = new Date(release_date).toISOString().split('T')[0];
+            // Verificar si la fecha es válida
+            if (formattedDate === 'Invalid Date') {
+                return res.status(400).json({ 
+                    message: "Formato de fecha inválido. Use YYYY-MM-DD"
+                });
+            }
+        }
+
+        // Insertar la nueva película con is_modified en true
+        const result = await pool.query(
+            `INSERT INTO movies (title, overview, genre_ids, release_date, poster_path, is_modified) 
+                VALUES ($1, $2, $3, $4, $5, TRUE) 
+             RETURNING *`,
+            [title, overview, genre_ids || [], formattedDate, poster_path]
+        );
+
+        // Devolver la película creada
+        return res.status(201).json(result.rows[0]);
+    } catch (error) {
+        console.error("Error detallado:", error);
         return res.status(500).json({ 
             message: "Error al crear la película",
             error: error.message 
@@ -36,7 +55,7 @@ export const updateMovie = async (req, res) => {
 
     try {
         const result = await pool.query(
-            "UPDATE movies SET title = $1, overview = $2, genre_ids = $3, release_date = $4 WHERE id = $5 RETURNING *",
+            "UPDATE movies SET title = $1, overview = $2, genre_ids = $3, release_date = $4, is_modified = TRUE WHERE id = $5 RETURNING *",
             [title, overview, genre_ids, release_date, id]
         );
 
@@ -64,7 +83,86 @@ export const updateMovie = async (req, res) => {
 
 export const getAllMovies = async (req, res) => {
     const userId = req.userId;
+    const page = parseInt(req.query.page) || 1;
+    const category = req.query.category || 'popular';
+    const searchTerm = req.query.search || '';
+
     try {
+        let moviesFromAPI;
+        
+        if (searchTerm && searchTerm.length > 0) {
+            moviesFromAPI = await searchMovies(searchTerm, page);
+        } else if (category === 'all') {
+            moviesFromAPI = await fetchAllMovies(page);
+        } else {
+            moviesFromAPI = await fetchMovies(page, category);
+        }
+        
+        // Verificar si no hay resultados de la búsqueda
+        if (!moviesFromAPI || !moviesFromAPI.results || moviesFromAPI.results.length === 0) {
+            return res.json({
+                movies: [],
+                pagination: {
+                    currentPage: page,
+                    totalPages: 0
+                }
+            });
+        }
+
+        // Obtener IDs de películas eliminadas
+        const deletedMoviesResult = await pool.query(
+            "SELECT id FROM deleted_movies"
+        );
+        const deletedMovieIds = new Set(deletedMoviesResult.rows.map(row => row.id));
+
+        // Filtrar películas eliminadas
+        const filteredMovies = moviesFromAPI.results.filter(movie => !deletedMovieIds.has(movie.id));
+
+        // Si no hay resultados después del filtrado, devolver array vacío
+        if (filteredMovies.length === 0) {
+            return res.json({
+                movies: [],
+                pagination: {
+                    currentPage: page,
+                    totalPages: 0
+                }
+            });
+        }
+
+        // Insertar películas filtradas en la base de datos
+        for (const movie of filteredMovies) {
+            await pool.query(
+                `INSERT INTO movies (id, title, overview, genre_ids, release_date, poster_path) 
+                VALUES ($1, $2, $3, $4, $5, $6) 
+                ON CONFLICT (id) DO UPDATE SET 
+                title = CASE 
+                    WHEN movies.is_modified THEN movies.title 
+                    ELSE EXCLUDED.title 
+                END,
+                overview = CASE 
+                    WHEN movies.is_modified THEN movies.overview 
+                    ELSE EXCLUDED.overview 
+                END,
+                genre_ids = CASE 
+                    WHEN movies.is_modified THEN movies.genre_ids 
+                    ELSE EXCLUDED.genre_ids 
+                END,
+                release_date = CASE 
+                    WHEN movies.is_modified THEN movies.release_date 
+                    ELSE EXCLUDED.release_date 
+                END
+                WHERE NOT movies.is_modified`,
+                [
+                    movie.id, 
+                    movie.title, 
+                    movie.overview, 
+                    movie.genre_ids || [], 
+                    movie.release_date || null, 
+                    movie.poster_path
+                ]
+            );
+        }
+
         const result = await pool.query(`
             SELECT 
                 m.*,
@@ -73,36 +171,24 @@ export const getAllMovies = async (req, res) => {
                 um.rating
             FROM movies m
             LEFT JOIN user_movies um ON m.id = um.movie_id AND um.user_id = $1
-            ORDER BY m.id DESC
-        `, [userId]);
-        
-        if (result.rowCount === 0) {
-            const moviesFromAPI = await fetchMovies();
-            
-            for (const movie of moviesFromAPI) {
-                await pool.query(
-                    "INSERT INTO movies (id, title, overview, genre_ids, release_date, poster_path) VALUES ($1, $2, $3, $4, $5, $6)",
-                    [movie.id, movie.title, movie.overview, movie.genre_ids, movie.release_date, movie.poster_path]
-                );
+            WHERE m.id = ANY($2::int[])
+            ORDER BY array_position($2::int[], m.id)
+        `, [userId, filteredMovies.map(m => m.id)]);
+
+        return res.json({
+            movies: result.rows,
+            pagination: {
+                currentPage: moviesFromAPI.currentPage,
+                totalPages: moviesFromAPI.totalPages
             }
-            
-            const newResult = await pool.query(`
-                SELECT 
-                    m.*,
-                    um.watched,
-                    um.comment IS NOT NULL as commented,
-                    um.rating
-                FROM movies m
-                LEFT JOIN user_movies um ON m.id = um.movie_id AND um.user_id = $1
-                ORDER BY m.id DESC
-            `, [userId]);
-            return res.json(newResult.rows);
-        }
-        
-        return res.json(result.rows);
+        });
+
     } catch (error) {
-        console.error(error);
-        return res.status(500).json({ message: "Error al obtener películas" });
+        console.error('Error en getAllMovies:', error);
+        return res.status(500).json({ 
+            message: "Error al obtener películas",
+            error: error.message 
+        });
     }
 };
 
@@ -110,16 +196,34 @@ export const deleteMovie = async (req, res) => {
     const { id } = req.params;
 
     try {
+        // Iniciar transacción
+        await pool.query('BEGIN');
+
+        // Eliminar registros relacionados en user_movies
+        await pool.query("DELETE FROM user_movies WHERE movie_id = $1", [id]);
+        
+        // Eliminar la película
         const result = await pool.query("DELETE FROM movies WHERE id = $1", [id]);
 
+        // Registrar la película como eliminada
+        await pool.query(
+            "INSERT INTO deleted_movies (id) VALUES ($1) ON CONFLICT (id) DO NOTHING",
+            [id]
+        );
+
         if (result.rowCount === 0) {
+            await pool.query('ROLLBACK');
             return res.status(404).json({
                 message: "No existe una película con ese id",
             });
         }
 
-        return res.sendStatus(204); // No content
+        // Confirmar transacción
+        await pool.query('COMMIT');
+
+        return res.sendStatus(204);
     } catch (error) {
+        await pool.query('ROLLBACK');
         console.error(error);
         return res.status(500).json({ message: "Error al eliminar la película" });
     }

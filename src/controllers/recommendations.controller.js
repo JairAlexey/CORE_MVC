@@ -33,7 +33,7 @@ export const generateRecommendations = async (req, res) => {
                     um.rating,
                     um.user_id as recommender_id
                 FROM movies m
-                INNER JOIN user_movies um ON m.id = um.movie_id
+                INNER JOIN user_movies um ON m.id = um.movie_id                    
                 WHERE um.user_id = $1 
                 AND um.rating >= 4
                 AND NOT EXISTS (
@@ -73,7 +73,7 @@ export const generateRecommendations = async (req, res) => {
 
 export const getUserRecommendations = async (req, res) => {
     try {
-        const userId = req.userId;
+        const userId = req.userId; //Utilizamos el userId del token
 
         const recommendations = await pool.query(`
             SELECT 

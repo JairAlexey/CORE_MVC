@@ -50,11 +50,9 @@ function App() {
             <Route
               element={<ProtectedRoute isAllowed={isAuth} redirectTo="/login" />}
             >
-
               <Route path="/profile" element={<ProfilePage />} />
-            </Route>
 
-            <Route
+              <Route
               path="/movies/:movieId/details"
               element={
                 <ProtectedRoute isAllowed={isAuth}>
@@ -139,6 +137,7 @@ function App() {
                 </ProtectedRoute>
               }
             />
+            </Route>
 
             <Route path="*" element={<NotFound />} />
           </Routes>

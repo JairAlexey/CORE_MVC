@@ -54,14 +54,14 @@ function ConnectionsPage() {
                     <p className="text-gray-300 mb-2">
                         Aún no tienes conexiones con otros usuarios.
                     </p>
-                    <p className="text-sm text-gray-400">
+                    <div className="text-sm text-gray-400">
                         Para generar conexiones necesitas:
                         <ul className="list-disc list-inside mt-2">
                             <li>Calificar algunas películas</li>
                             <li>Tener géneros favoritos en común con otros usuarios</li>
                             <li>Que existan otros usuarios activos en el sistema</li>
                         </ul>
-                    </p>
+                    </div>
                 </Card>
             ) : (
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -92,14 +92,14 @@ function ConnectionsPage() {
                         <p className="text-gray-300">
                             No hay recomendaciones disponibles en este momento.
                         </p>
-                        <p className="text-sm text-gray-400 mt-2">
+                        <div className="text-sm text-gray-400 mt-2">
                             Las recomendaciones se generan cuando:
                             <ul className="list-disc list-inside mt-2">
                                 <li>Tienes conexiones con otros usuarios</li>
                                 <li>Tus conexiones han visto películas que tú no</li>
                                 <li>Esas películas tienen buenas calificaciones</li>
                             </ul>
-                        </p>
+                        </div>
                     </Card>
                 ) : (
                     <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">

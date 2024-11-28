@@ -34,12 +34,17 @@ export const MoviesProvider = ({ children }) => {
         }
     }, [errors]);
 
-    const loadMovies = async () => {
+    const loadMovies = async (page = 1, category = 'popular', searchTerm = '') => {
         try {
-            const res = await getAllMoviesRequest();
-            setMovies(res.data);
+            const res = await getAllMoviesRequest(page, category, searchTerm);
+            if (res.data && res.data.movies) {
+                setMovies(res.data.movies);
+                return res.data;
+            }
+            return null;
         } catch (error) {
             setErrors([error.response?.data?.message || "Error al cargar películas"]);
+            throw error;
         }
     };
 

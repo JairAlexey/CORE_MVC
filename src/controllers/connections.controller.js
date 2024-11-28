@@ -8,7 +8,7 @@ export const calculateUserCompatibility = async (user1Id, user2Id) => {
                 SELECT movie_id, rating FROM user_movies WHERE user_id = $1
             ),
             user2_movies AS (
-                SELECT movie_id, rating FROM user_movies WHERE user_id = $2
+                SELECT movie_id, rating FROM user_movies WHERE user_id = $2 
             ),
             common_movies AS (
                 SELECT 

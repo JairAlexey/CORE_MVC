@@ -1,9 +1,15 @@
 import axios from "./axios";
 
-export const getAllMoviesRequest = () => {
+export const getAllMoviesRequest = (page = 1, category = 'popular', searchTerm = '') => {
     const user = JSON.parse(localStorage.getItem('user'));
     const endpoint = user?.is_admin ? '/movies' : '/user-movies';
-    return axios.get(endpoint);
+    return axios.get(endpoint, {
+        params: {
+            page,
+            category,
+            search: searchTerm
+        }
+    });
 };
 
 export const updateMovieRequest = (id, movieData) => axios.put(`/movies/${id}`, movieData);

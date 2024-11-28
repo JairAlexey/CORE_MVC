@@ -56,3 +56,10 @@ CREATE TABLE movie_recommendations (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     UNIQUE(recommender_id, receiver_id, movie_id)
 );
+
+CREATE TABLE deleted_movies (
+    id INTEGER PRIMARY KEY,
+    deleted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+ALTER TABLE movies ADD COLUMN is_modified BOOLEAN DEFAULT FALSE;

@@ -12,7 +12,7 @@ function CreateMoviePage() {
         title: '', 
         overview: '', 
         genre_ids: [], 
-        release_date: '', 
+        release_date: new Date().toISOString().split('T')[0], 
         poster_path: '' 
     });
 

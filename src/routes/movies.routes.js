@@ -32,4 +32,6 @@ router.post("/movies/:movieId/comment", isAuth, commentAndRateMovie);
 // Ruta para obtener los detalles de una película
 router.get("/movies/:movieId/details", isAuth, getMovieDetails);
 
+
+
 export default router;
