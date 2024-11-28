@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useMovies } from "../context/MoviesContext";
 import { Card, Button } from "../components/ui";
 import { useNavigate } from "react-router-dom";
-import { FaSearch } from 'react-icons/fa'; 
+import { FaSearch } from 'react-icons/fa';
 
 
 function UserMoviesPage() {
@@ -83,11 +83,10 @@ function UserMoviesPage() {
                                 setCurrentPage(1);
                                 setSearchTerm(""); // Limpiar búsqueda al cambiar categoría
                             }}
-                            className={`px-4 py-2 ${
-                                category === cat.id 
-                                    ? 'bg-red-600 hover:bg-red-700' 
+                            className={`px-4 py-2 ${category === cat.id
+                                    ? 'bg-red-600 hover:bg-red-700'
                                     : 'bg-gray-600 hover:bg-gray-700'
-                            }`}
+                                }`}
                         >
                             {cat.name}
                         </Button>
@@ -110,12 +109,16 @@ function UserMoviesPage() {
                 {movies.map((movie) => (
                     <Card key={movie.id} className="p-4">
                         <img
-                            src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
+                            src={
+                                movie.poster_path && movie.poster_path.startsWith('http')
+                                    ? movie.poster_path // Si es un URL completo, úsalo directamente
+                                    : `https://image.tmdb.org/t/p/w500${movie.poster_path}` // Si no, usa el prefijo TMDB
+                            }
                             alt={movie.title}
                             className="w-full h-auto mb-4"
                         />
                         <div>
-                            <h2 
+                            <h2
                                 className="text-xl font-bold cursor-pointer hover:text-blue-500 transition-colors"
                                 onClick={() => handleTitleClick(movie.id)}
                             >
@@ -153,6 +156,7 @@ function UserMoviesPage() {
                         </div>
                     </Card>
                 ))}
+
             </div>
             <div className="flex justify-center gap-2 mt-6">
                 <Button

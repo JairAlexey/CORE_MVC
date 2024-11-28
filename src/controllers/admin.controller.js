@@ -26,13 +26,37 @@ export const updateUser = async (req, res) => {
 export const deleteUser = async (req, res) => {
     const { id } = req.params;
 
-    const result = await pool.query("DELETE FROM users WHERE id = $1", [id]);
-
-    if (result.rowCount === 0) {
-        return res.status(404).json({
-            message: "Usuario no encontrado",
+    if (!req.isAdmin) {
+        return res.status(403).json({
+            message: "No tienes permisos para eliminar usuarios",
         });
     }
 
-    return res.sendStatus(204);
+    try {
+        // Eliminar las recomendaciones donde el usuario es el receptor
+        await pool.query("DELETE FROM movie_recommendations WHERE receiver_id = $1", [id]);
+
+        // Eliminar las recomendaciones donde el usuario es el recomendador
+        await pool.query("DELETE FROM movie_recommendations WHERE recommender_id = $1", [id]);
+
+        // Eliminar las conexiones del usuario
+        await pool.query("DELETE FROM user_connections WHERE user1_id = $1 OR user2_id = $1", [id]);
+
+        // Eliminar las películas del usuario
+        await pool.query("DELETE FROM user_movies WHERE user_id = $1", [id]);
+
+        // Ahora eliminar el usuario
+        const result = await pool.query("DELETE FROM users WHERE id = $1", [id]);
+
+        if (result.rowCount === 0) {
+            return res.status(404).json({
+                message: "Usuario no encontrado",
+            });
+        }
+
+        return res.sendStatus(204);
+    } catch (error) {
+        console.error("Error al eliminar el usuario:", error);
+        return res.status(500).json({ message: "Error al eliminar el usuario" });
+    }
 };

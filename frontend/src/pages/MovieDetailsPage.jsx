@@ -40,7 +40,11 @@ function MovieDetailsPage() {
                     <div className="flex flex-col md:flex-row">
                         <div className="md:w-1/3">
                             <img
-                                src={`https://image.tmdb.org/t/p/w500${movieDetails.poster_path}`}
+                            src={
+                                movieDetails.poster_path && movieDetails.poster_path.startsWith('http')
+                                    ? movieDetails.poster_path 
+                                    : `https://image.tmdb.org/t/p/w500${movieDetails.poster_path}` // Si no, usa el prefijo TMDB
+                            }
                                 alt={movieDetails.title}
                                 className="w-full h-auto"
                             />

@@ -16,6 +16,13 @@ function MoviesPage() {
     const [totalPages, setTotalPages] = useState(1);
     const [category, setCategory] = useState('popular');
     const [isSearching, setIsSearching] = useState(false);
+    const [newMovie, setNewMovie] = useState({
+        title: '',
+        overview: '',
+        genre_ids: [],
+        release_date: new Date().toISOString().split('T')[0],
+        poster_path: ''
+    });
 
     const categories = [
         { id: 'all', name: 'Todas las Películas' },
@@ -93,6 +100,7 @@ function MoviesPage() {
             setEditingMovie(null);
             setErrors([]);
             setSuccessMessage("¡Película actualizada exitosamente!");
+            await loadMovies(currentPage, category, searchTerm);
         } catch (error) {
             if (Array.isArray(error.response?.data)) {
                 setErrors(error.response.data);
@@ -141,11 +149,10 @@ function MoviesPage() {
                                 setCurrentPage(1);
                                 setSearchTerm("");
                             }}
-                            className={`px-4 py-2 ${
-                                category === cat.id 
-                                    ? 'bg-red-600 hover:bg-red-700' 
+                            className={`px-4 py-2 ${category === cat.id
+                                    ? 'bg-red-600 hover:bg-red-700'
                                     : 'bg-gray-600 hover:bg-gray-700'
-                            }`}
+                                }`}
                         >
                             {cat.name}
                         </Button>
@@ -180,7 +187,11 @@ function MoviesPage() {
                 {movies.map((movie) => (
                     <Card key={movie.id} className="p-4">
                         <img
-                            src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
+                            src={
+                                movie.poster_path && movie.poster_path.startsWith('http')
+                                    ? movie.poster_path // Si es un URL completo, úsalo directamente
+                                    : `https://image.tmdb.org/t/p/w500${movie.poster_path}` // Si no, usa el prefijo TMDB
+                            }
                             alt={movie.title}
                             className="w-full h-auto mb-4"
                         />
@@ -241,6 +252,16 @@ function MoviesPage() {
                                         release_date: e.target.value
                                     })}
                                     className="w-full p-2 border rounded text-black"
+                                />
+                                <input
+                                    type="text"
+                                    value={editingMovie.poster_path}
+                                    onChange={(e) => setEditingMovie({
+                                        ...editingMovie,
+                                        poster_path: e.target.value
+                                    })}
+                                    className="w-full p-2 border rounded text-black"
+                                    placeholder="URL del póster"
                                 />
                                 <div className="flex gap-2">
                                     <Button onClick={() => handleSave(editingMovie)}>

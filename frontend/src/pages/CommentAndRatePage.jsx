@@ -32,7 +32,11 @@ function CommentAndRatePage() {
                     {/* Columna de la imagen */}
                     <div className="md:w-1/2">
                         <img
-                            src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
+                            src={
+                                movie.poster_path && movie.poster_path.startsWith('http')
+                                    ? movie.poster_path // Si es un URL completo, úsalo directamente
+                                    : `https://image.tmdb.org/t/p/w500${movie.poster_path}` // Si no, usa el prefijo TMDB
+                            }
                             alt={movie.title}
                             className="w-full h-full object-cover"
                         />
@@ -43,6 +47,9 @@ function CommentAndRatePage() {
                         <h2 className="text-2xl font-bold mb-4">{movie.title}</h2>
                         <p className="text-gray-300 mb-4">{movie.overview}</p>
                         <p className="text-gray-300 mb-4">Géneros: {getGenreNames(movie.genre_ids)}</p>
+                        <p className="text-sm text-gray-300">
+                            Recomendado por: {Array.isArray(movie.recommenders) ? movie.recommenders.join(', ') : 'Desconocido'}
+                        </p>
                         
                         <div className="space-y-4">
                             <div>

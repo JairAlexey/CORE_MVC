@@ -3,15 +3,14 @@ import { pool } from "../db.js";
 export const generateRecommendations = async (req, res) => {
     try {
         const userId = req.userId;
-        
+
         // Obtener conexiones del usuario
         const connections = await pool.query(`
             SELECT 
                 CASE 
                     WHEN user1_id = $1 THEN user2_id 
                     ELSE user1_id 
-                END as connected_user_id,
-                compatibility_score
+                END as connected_user_id
             FROM user_connections 
             WHERE $1 IN (user1_id, user2_id)
         `, [userId]);
@@ -21,11 +20,12 @@ export const generateRecommendations = async (req, res) => {
         }
 
         // Para cada conexión, buscar películas para recomendar
+        const recommendationsMap = new Map(); // Usar un mapa para evitar duplicados
+
         for (const connection of connections.rows) {
             const connectedUserId = connection.connected_user_id;
 
             // Obtener películas bien calificadas (4 o 5 estrellas) por el usuario conectado
-            // que el usuario actual no ha visto
             const recommendableMovies = await pool.query(`
                 SELECT DISTINCT 
                     m.id,
@@ -42,24 +42,30 @@ export const generateRecommendations = async (req, res) => {
                     WHERE um2.movie_id = m.id 
                     AND um2.user_id = $2
                 )
-                AND NOT EXISTS (
-                    SELECT 1 
-                    FROM movie_recommendations mr 
-                    WHERE mr.movie_id = m.id 
-                    AND mr.recommender_id = $1 
-                    AND mr.receiver_id = $2
-                )
             `, [connectedUserId, userId]);
 
-            // Insertar recomendaciones
+            // Insertar recomendaciones en el mapa
             for (const movie of recommendableMovies.rows) {
-                await pool.query(`
-                    INSERT INTO movie_recommendations 
-                    (recommender_id, receiver_id, movie_id, rating)
-                    VALUES ($1, $2, $3, $4)
-                    ON CONFLICT (recommender_id, receiver_id, movie_id) DO NOTHING
-                `, [movie.recommender_id, userId, movie.id, movie.rating]);
+                const key = movie.id; // Usar el ID de la película como clave
+                if (!recommendationsMap.has(key)) {
+                    recommendationsMap.set(key, {
+                        ...movie,
+                        recommenders: [movie.recommender_id] // Inicializar con el recomendador
+                    });
+                } else {
+                    recommendationsMap.get(key).recommenders.push(movie.recommender_id); // Agregar recomendador
+                }
             }
+        }
+
+        // Insertar recomendaciones en la base de datos
+        for (const [key, movie] of recommendationsMap) {
+            await pool.query(`
+                INSERT INTO movie_recommendations 
+                (recommender_id, receiver_id, movie_id, rating)
+                VALUES ($1, $2, $3, $4)
+                ON CONFLICT (recommender_id, receiver_id, movie_id) DO NOTHING
+            `, [movie.recommender_id, userId, movie.id, movie.rating]);
         }
 
         return res.json({ message: "Recomendaciones generadas exitosamente" });
@@ -73,11 +79,11 @@ export const generateRecommendations = async (req, res) => {
 
 export const getUserRecommendations = async (req, res) => {
     try {
-        const userId = req.userId; //Utilizamos el userId del token
+        const userId = req.userId; // Utilizamos el userId del token
 
         const recommendations = await pool.query(`
             SELECT 
-                mr.id as recommendation_id,
+                mr.id as id,
                 m.*,
                 u.name as recommender_name,
                 u.gravatar as recommender_gravatar,

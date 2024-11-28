@@ -26,12 +26,21 @@ export const createMovie = async (req, res) => {
         let formattedDate = null;
         if (release_date) {
             formattedDate = new Date(release_date).toISOString().split('T')[0];
-            // Verificar si la fecha es válida
             if (formattedDate === 'Invalid Date') {
                 return res.status(400).json({ 
                     message: "Formato de fecha inválido. Use YYYY-MM-DD"
                 });
             }
+        }
+
+        // Validar poster_path (URL de la imagen)
+        const urlRegex = /^(https?:\/\/[^\s$.?#].[^\s]*)$/; // Verifica que sea un URL válido
+        const imageRegex = /\.(jpeg|jpg|png|gif|bmp|webp)$/i; // Extensiones de imágenes comunes
+
+        if (poster_path && (!urlRegex.test(poster_path) || !imageRegex.test(poster_path))) {
+            return res.status(400).json({
+                message: "El link del poster_path debe ser un URL válido y apuntar a una imagen (.jpg, .png, etc.)"
+            });
         }
 
         // Insertar la nueva película con is_modified en true
@@ -55,12 +64,44 @@ export const createMovie = async (req, res) => {
 
 export const updateMovie = async (req, res) => {
     const { id } = req.params;
-    const { title, overview, genre_ids, release_date } = req.body;
+    const { title, overview, genre_ids, release_date, poster_path } = req.body;
 
     try {
+        // Validar y formatear la fecha
+        let formattedDate = null;
+        if (release_date) {
+            formattedDate = new Date(release_date).toISOString().split('T')[0];
+            if (formattedDate === 'Invalid Date') {
+                return res.status(400).json({ 
+                    message: "Formato de fecha inválido. Use YYYY-MM-DD"
+                });
+            }
+        }
+
+        // Validar poster_path (URL de la imagen)
+        if (poster_path) {
+            const urlRegex = /^(https?:\/\/[^\s$.?#].[^\s]*)$/; // Verifica que sea un URL válido
+            const imageRegex = /\.(jpeg|jpg|png|gif|bmp|webp)$/i; // Extensiones de imágenes comunes
+
+            if (!urlRegex.test(poster_path) || !imageRegex.test(poster_path)) {
+                return res.status(400).json({
+                    message: "El link del poster_path debe ser un URL válido y apuntar a una imagen (.jpg, .png, etc.)"
+                });
+            }
+        }
+
+        // Actualizar la película
         const result = await pool.query(
-            "UPDATE movies SET title = $1, overview = $2, genre_ids = $3, release_date = $4, is_modified = TRUE WHERE id = $5 RETURNING *",
-            [title, overview, genre_ids, release_date, id]
+            `UPDATE movies 
+                SET title = $1, 
+                    overview = $2, 
+                    genre_ids = $3, 
+                    release_date = $4, 
+                    poster_path = $5, 
+                    is_modified = TRUE 
+             WHERE id = $6 
+             RETURNING *`,
+            [title, overview, genre_ids, formattedDate, poster_path, id]
         );
 
         if (result.rowCount === 0) {
@@ -83,6 +124,7 @@ export const updateMovie = async (req, res) => {
         });
     }
 };
+
 
 
 export const getAllMovies = async (req, res) => {
@@ -164,6 +206,19 @@ export const deleteMovie = async (req, res) => {
         // Iniciar transacción
         await pool.query('BEGIN');
 
+        // Verificar si la película está relacionada en movie_recommendations
+        const relatedRecommendations = await pool.query(
+            "SELECT * FROM movie_recommendations WHERE movie_id = $1",
+            [id]
+        );
+
+        if (relatedRecommendations.rowCount > 0) {
+            await pool.query('ROLLBACK');
+            return res.status(400).json({
+                message: "No se puede eliminar la película porque tiene recomendaciones asociadas."
+            });
+        }
+
         // Eliminar registros relacionados en user_movies
         await pool.query("DELETE FROM user_movies WHERE movie_id = $1", [id]);
         
@@ -218,14 +273,36 @@ export const unmarkMovieAsWatched = async (req, res) => {
     const userId = req.userId;
 
     try {
+        // Iniciar transacción
+        await pool.query('BEGIN');
+
+        // Eliminar la marca como vista
         const result = await pool.query(
             "DELETE FROM user_movies WHERE user_id = $1 AND movie_id = $2 RETURNING *",
             [userId, movieId]
         );
+
+        if (result.rowCount === 0) {
+            await pool.query('ROLLBACK');
+            return res.status(404).json({
+                message: "No existe una película con ese id para desmarcar como vista",
+            });
+        }
+
+        // Eliminar recomendaciones asociadas a esta película y usuario
+        await pool.query(
+            "DELETE FROM movie_recommendations WHERE recommender_id = $1 AND movie_id = $2",
+            [userId, movieId]
+        );
+
+        // Confirmar transacción
+        await pool.query('COMMIT');
+
         return res.json(result.rows[0]);
     } catch (error) {
+        await pool.query('ROLLBACK');
         console.error(error);
-        return res.status(500).json({ message: "Error al desmarcar la película como vista" });
+        return res.status(500).json({ message: "Error al desmarcar la película como vista y eliminar recomendaciones asociadas" });
     }
 };
 
@@ -303,5 +380,46 @@ export const getMovieDetails = async (req, res) => {
     } catch (error) {
         console.error('Error al obtener detalles de la película:', error);
         return res.status(500).json({ message: "Error al obtener detalles de la película" });
+    }
+};
+
+export const getUserRecommendations = async (req, res) => {
+    try {
+        const userId = req.userId; // Utilizamos el userId del token
+
+        const recommendations = await pool.query(`
+            SELECT 
+                mr.id as id, // Renombrar recommendation_id a id
+                m.*,
+                u.name as recommender_name,
+                u.gravatar as recommender_gravatar,
+                mr.rating as recommender_rating,
+                mr.created_at
+            FROM movie_recommendations mr
+            INNER JOIN movies m ON mr.movie_id = m.id
+            INNER JOIN users u ON mr.recommender_id = u.id
+            WHERE mr.receiver_id = $1
+            ORDER BY mr.created_at DESC
+        `, [userId]);
+
+        if (recommendations.rowCount === 0) {
+            return res.status(404).json({ 
+                errors: [
+                    "No hay recomendaciones disponibles. Para recibir recomendaciones:",
+                    "- Necesitas tener conexiones con otros usuarios",
+                    "- Tus conexiones deben haber visto películas que tú no",
+                    "- Esas películas deben tener buenas calificaciones (4 o 5 estrellas)"
+                ]
+            });
+        }
+
+        return res.json({
+            recommendations: recommendations.rows
+        });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ 
+            errors: ["Error al obtener recomendaciones"] 
+        });
     }
 };

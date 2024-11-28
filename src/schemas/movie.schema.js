@@ -27,7 +27,8 @@ export const updateMovieSchema = z.object({
         required_error: "La fecha de estreno es requerida"
     }).regex(/^\d{4}-\d{2}-\d{2}$/, {
         message: "La fecha debe estar en formato YYYY-MM-DD"
-    })
+    }),
+    poster_path: z.string().optional()
 });
 
 export const createMovieSchema = z.object({

@@ -65,8 +65,8 @@ function ConnectionsPage() {
                 </Card>
             ) : (
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {connections.map((connection) => (
-                        <Card key={connection.connected_user_id} className="p-4">
+                    {connections.map((connection, index) => (
+                        <Card key={`${connection.connected_user_id}-${index}`} className="p-4">
                             <div className="flex items-center gap-4">
                                 <img 
                                     src={connection.connected_user_gravatar} 
@@ -89,9 +89,7 @@ function ConnectionsPage() {
                 <h2 className="text-2xl font-bold mb-4">Películas Recomendadas</h2>
                 {recommendations.length === 0 ? (
                     <Card className="p-4 text-center">
-                        <p className="text-gray-300">
-                            No hay recomendaciones disponibles en este momento.
-                        </p>
+                        <p className="text-gray-300">No hay recomendaciones disponibles en este momento.</p>
                         <div className="text-sm text-gray-400 mt-2">
                             Las recomendaciones se generan cuando:
                             <ul className="list-disc list-inside mt-2">
@@ -104,19 +102,15 @@ function ConnectionsPage() {
                 ) : (
                     <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
                         {recommendations.map((recommendation) => (
-                            <Card key={recommendation.id} className="p-4">
+                            <Card key={`${recommendation.id}-${recommendation.recommender_name}`} className="p-4">
                                 <img 
                                     src={`https://image.tmdb.org/t/p/w500${recommendation.poster_path}`} 
                                     alt={recommendation.title}
                                     className="w-full h-64 object-cover mb-4"
                                 />
                                 <h3 className="font-bold">{recommendation.title}</h3>
-                                <p className="text-sm text-gray-300">
-                                    Recomendado por: {recommendation.recommender_name}
-                                </p>
-                                <p className="text-yellow-400">
-                                    {"⭐".repeat(recommendation.recommender_rating)}
-                                </p>
+                                <p className="text-sm text-gray-300">Recomendado por: {recommendation.recommender_name}</p>
+                                <p className="text-yellow-400">{"⭐".repeat(recommendation.recommender_rating)}</p>
                             </Card>
                         ))}
                     </div>
