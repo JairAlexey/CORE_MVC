@@ -5,6 +5,7 @@ import {
   signout,
   signup,
   updateFavoriteGenres,
+  getFavoriteGenres
 } from "../controllers/auth.controller.js";
 import { isAuth } from "../middlewares/auth.middleware.js";
 import { validateSchema } from "../middlewares/validate.middleware.js";
@@ -20,6 +21,8 @@ router.post("/signout", signout);
 
 router.get("/profile", isAuth, profile);
 
-router.put("/users/favorite-genres", isAuth, updateFavoriteGenres);
+router.put('/favorite-genres', isAuth, updateFavoriteGenres);
+
+router.get('/favorite-genres', isAuth, getFavoriteGenres);
 
 export default router;

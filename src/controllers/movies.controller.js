@@ -35,11 +35,11 @@ export const createMovie = async (req, res) => {
 
         // Validar poster_path (URL de la imagen)
         const urlRegex = /^(https?:\/\/[^\s$.?#].[^\s]*)$/; // Verifica que sea un URL válido
-        const imageRegex = /\.(jpeg|jpg|png|gif|bmp|webp)$/i; // Extensiones de imágenes comunes
+        const relativePathRegex = /^\/[a-zA-Z0-9_-]+\.(jpeg|jpg|png|gif|bmp|webp)$/; // Verifica que sea una ruta relativa válida
 
-        if (poster_path && (!urlRegex.test(poster_path) || !imageRegex.test(poster_path))) {
+        if (poster_path && (!urlRegex.test(poster_path) && !relativePathRegex.test(poster_path))) {
             return res.status(400).json({
-                message: "El link del poster_path debe ser un URL válido y apuntar a una imagen (.jpg, .png, etc.)"
+                message: "El link del poster_path debe ser un URL válido o una ruta relativa válida que apunte a una imagen (.jpg, .png, etc.)"
             });
         }
 
@@ -81,11 +81,11 @@ export const updateMovie = async (req, res) => {
         // Validar poster_path (URL de la imagen)
         if (poster_path) {
             const urlRegex = /^(https?:\/\/[^\s$.?#].[^\s]*)$/; // Verifica que sea un URL válido
-            const imageRegex = /\.(jpeg|jpg|png|gif|bmp|webp)$/i; // Extensiones de imágenes comunes
+            const relativePathRegex = /^\/[a-zA-Z0-9_-]+\.(jpeg|jpg|png|gif|bmp|webp)$/; // Verifica que sea una ruta relativa válida
 
-            if (!urlRegex.test(poster_path) || !imageRegex.test(poster_path)) {
+            if (!urlRegex.test(poster_path) && !relativePathRegex.test(poster_path)) {
                 return res.status(400).json({
-                    message: "El link del poster_path debe ser un URL válido y apuntar a una imagen (.jpg, .png, etc.)"
+                    message: "El link del poster_path debe ser un URL válido o una ruta relativa válida que apunte a una imagen (.jpg, .png, etc.)"
                 });
             }
         }
@@ -383,43 +383,3 @@ export const getMovieDetails = async (req, res) => {
     }
 };
 
-export const getUserRecommendations = async (req, res) => {
-    try {
-        const userId = req.userId; // Utilizamos el userId del token
-
-        const recommendations = await pool.query(`
-            SELECT 
-                mr.id as id, // Renombrar recommendation_id a id
-                m.*,
-                u.name as recommender_name,
-                u.gravatar as recommender_gravatar,
-                mr.rating as recommender_rating,
-                mr.created_at
-            FROM movie_recommendations mr
-            INNER JOIN movies m ON mr.movie_id = m.id
-            INNER JOIN users u ON mr.recommender_id = u.id
-            WHERE mr.receiver_id = $1
-            ORDER BY mr.created_at DESC
-        `, [userId]);
-
-        if (recommendations.rowCount === 0) {
-            return res.status(404).json({ 
-                errors: [
-                    "No hay recomendaciones disponibles. Para recibir recomendaciones:",
-                    "- Necesitas tener conexiones con otros usuarios",
-                    "- Tus conexiones deben haber visto películas que tú no",
-                    "- Esas películas deben tener buenas calificaciones (4 o 5 estrellas)"
-                ]
-            });
-        }
-
-        return res.json({
-            recommendations: recommendations.rows
-        });
-    } catch (error) {
-        console.error(error);
-        return res.status(500).json({ 
-            errors: ["Error al obtener recomendaciones"] 
-        });
-    }
-};

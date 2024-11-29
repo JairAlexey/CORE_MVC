@@ -101,3 +101,20 @@ export const updateFavoriteGenres = async (req, res) => {
       return res.status(500).json({ message: "Error al actualizar géneros favoritos" });
   }
 };
+
+export const getFavoriteGenres = async (req, res) => {
+    const userId = req.userId; 
+
+    try {
+        const result = await pool.query('SELECT favorite_genres FROM users WHERE id = $1', [userId]);
+        
+        if (result.rowCount === 0) {
+            return res.status(404).json({ message: "Usuario no encontrado" });
+        }
+
+        return res.json({ favoriteGenres: result.rows[0].favorite_genres });
+    } catch (error) {
+        console.error("Error al obtener géneros favoritos:", error);
+        return res.status(500).json({ message: "Error al obtener géneros favoritos" });
+    }
+};

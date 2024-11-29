@@ -1,11 +1,9 @@
-import { useState } from "react";
+import { useEffect } from "react";
 import { Button, Card } from "../components/ui";
-import { getAllGenres } from "../utils/genres";
-import axios from "../api/axios";
+import { useFavoriteGenres } from "../context/FavoriteGenresContext";
 
 function FavoriteGenresPage() {
-    const [selectedGenres, setSelectedGenres] = useState([]);
-    const genres = getAllGenres();
+    const { selectedGenres, setSelectedGenres, genres, updateFavoriteGenres } = useFavoriteGenres();
 
     const handleGenreChange = (genreId) => {
         setSelectedGenres((prev) =>
@@ -17,8 +15,7 @@ function FavoriteGenresPage() {
 
     const handleSave = async () => {
         try {
-            await axios.put("/users/favorite-genres", { favoriteGenres: selectedGenres });
-            alert("Géneros favoritos actualizados");
+            await updateFavoriteGenres(selectedGenres);
         } catch (error) {
             console.error("Error al actualizar géneros favoritos:", error);
         }
@@ -34,7 +31,7 @@ function FavoriteGenresPage() {
                             type="checkbox"
                             checked={selectedGenres.includes(genre.id)}
                             onChange={() => handleGenreChange(genre.id)}
-                            className="form-checkbox h-5 w-5 text-indigo-600 "
+                            className="form-checkbox h-5 w-5 text-indigo-600"
                         />
                         <label className="ml-2 text-white">{genre.name}</label>
                     </Card>

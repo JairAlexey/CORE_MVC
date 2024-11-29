@@ -7,3 +7,8 @@ export const updateUserRequest = (id, userData) =>
 
 export const deleteUserRequest = (id) =>
     axios.delete(`/users/${id}`);
+
+export const generateFavoriteGenresRequest = (favoriteGenres) => 
+    axios.put('/favorite-genres', { favoriteGenres });
+
+export const getFavoriteGenresRequest = () => axios.get('/favorite-genres');

@@ -1,9 +1,12 @@
 import { Routes, Route, Outlet } from "react-router-dom";
+import { useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 import { useAuth } from "./context/AuthContext";
 import { UsersProvider } from "./context/UsersContext";
 import { MoviesProvider } from "./context/MoviesContext";
 import { ConnectionProvider } from "./context/ConnectionsContext";
+import { FavoriteGenresProvider } from "./context/FavoriteGenresContext";
 
 import Navbar from "./components/navbar/Navbar";
 import { Container } from "./components/ui";
@@ -26,124 +29,137 @@ import ConnectionsPage from "./pages/ConnectionsPage";
 
 function App() {
   const { isAuth, user, loading } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    if (loading) return;
+
+    // Redirigir al administrador a "/movies" si está autenticado y es admin
+    if (isAuth && user?.is_admin && location.pathname === "/user-movies") {
+      navigate("/movies");
+    }
+  }, [isAuth, user, loading, location.pathname, navigate]);
 
   if (loading) return <h1>Cargando...</h1>;
 
   return (
-    <div className="relative min-h-screen bg-slate-950">
-      <div className="absolute bottom-0 left-[-20%] right-0 top-[-10%] size-[500px] rounded-full bg-[radial-gradient(circle_farthest-side,rgba(255,0,0,.15),rgba(255,255,255,0))] z-0"></div>
-      <div className="absolute bottom-0 right-[-20%] top-[-10%] size-[500px] rounded-full bg-[radial-gradient(circle_farthest-side,rgba(255,0,0,.15),rgba(255,255,255,0))] z-0"></div>
-      
-      <div className="relative z-10">
-        <Navbar />
+    <FavoriteGenresProvider>
+      <div className="relative min-h-screen bg-slate-950">
+        <div className="absolute bottom-0 left-[-20%] right-0 top-[-10%] size-[500px] rounded-full bg-[radial-gradient(circle_farthest-side,rgba(255,0,0,.15),rgba(255,255,255,0))] z-0"></div>
+        <div className="absolute bottom-0 right-[-20%] top-[-10%] size-[500px] rounded-full bg-[radial-gradient(circle_farthest-side,rgba(255,0,0,.15),rgba(255,255,255,0))] z-0"></div>
+        
+        <div className="relative z-10">
+          <Navbar />
 
-        <Container className="py-5">
-          <Routes>
-            <Route
-              element={<ProtectedRoute isAllowed={!isAuth} redirectTo="/user-movies" />}
-            >
-              <Route path="/" element={<HomePage />} />
-              <Route path="/login" element={<LoginPage />} />
-              <Route path="/register" element={<RegisterPage />} />
-            </Route>
-
-            <Route
-              element={<ProtectedRoute isAllowed={isAuth} redirectTo="/login" />}
-            >
-              <Route path="/profile" element={<ProfilePage />} />
+          <Container className="py-5">
+            <Routes>
+              <Route
+                element={<ProtectedRoute isAllowed={!isAuth} redirectTo="/user-movies" />}
+              >
+                <Route path="/" element={<HomePage />} />
+                <Route path="/login" element={<LoginPage />} />
+                <Route path="/register" element={<RegisterPage />} />
+              </Route>
 
               <Route
-              path="/movies/:movieId/details"
-              element={
-                <ProtectedRoute isAllowed={isAuth}>
-                  <MoviesProvider>
-                    <MovieDetailsPage />
-                  </MoviesProvider>
-                </ProtectedRoute>
-              }
-            />
+                element={<ProtectedRoute isAllowed={isAuth} redirectTo="/login" />}
+              >
+                <Route path="/profile" element={<ProfilePage />} />
 
-            <Route
-              path="/user-movies"
-              element={
-                <ProtectedRoute isAllowed={isAuth} redirectTo="/login">
-                  <MoviesProvider>
-                    <UserMoviePage />
-                  </MoviesProvider>
-                </ProtectedRoute>
-              }
-            />
-
-            <Route 
-              path="/favorite-genres" 
-              element=
-              {
-              <FavoriteGenresPage />
-              } 
-            />
-
-            <Route 
-                path="/connections" 
+                <Route
+                path="/movies/:movieId/details"
                 element={
-                    <ConnectionProvider>
-                        <ConnectionsPage />
-                    </ConnectionProvider>
+                  <ProtectedRoute isAllowed={isAuth}>
+                    <MoviesProvider>
+                      <MovieDetailsPage />
+                    </MoviesProvider>
+                  </ProtectedRoute>
+                }
+              />
+
+              <Route
+                path="/user-movies"
+                element={
+                  <ProtectedRoute isAllowed={isAuth} redirectTo="/login">
+                    <MoviesProvider>
+                      <UserMoviePage />
+                    </MoviesProvider>
+                  </ProtectedRoute>
+                }
+              />
+
+              <Route 
+                path="/favorite-genres" 
+                element=
+                {
+                <FavoriteGenresPage />
                 } 
-            />
+              />
 
-            <Route
-              path="/movies/:movieId/comment"
-              element={
-                <ProtectedRoute isAllowed={isAuth} redirectTo="/login">
-                  <MoviesProvider>
-                    <CommentAndRatePage />
-                  </MoviesProvider>
-                </ProtectedRoute>
-              }
-            />
+              <Route 
+                  path="/connections" 
+                  element={
+                      <ConnectionProvider>
+                          <ConnectionsPage />
+                      </ConnectionProvider>
+                  } 
+              />
 
-            <Route
-              path="/admin"
-              element={
-                <ProtectedRoute
-                  isAllowed={isAuth && user?.is_admin}
-                  redirectTo="/"
-                >
-                  <UsersProvider>
-                    <AdminPage />
-                  </UsersProvider>
-                </ProtectedRoute>
-              }
-            />
+              <Route
+                path="/movies/:movieId/comment"
+                element={
+                  <ProtectedRoute isAllowed={isAuth} redirectTo="/login">
+                    <MoviesProvider>
+                      <CommentAndRatePage />
+                    </MoviesProvider>
+                  </ProtectedRoute>
+                }
+              />
 
-            <Route
-              path="/movies"
-              element={
-                <ProtectedRoute isAllowed={isAuth && user?.is_admin} redirectTo="/">
-                  <MoviesProvider>
-                    <MoviesPage />
-                  </MoviesProvider>
-                </ProtectedRoute>
-              }
-            />
+              <Route
+                path="/admin"
+                element={
+                  <ProtectedRoute
+                    isAllowed={isAuth && user?.is_admin}
+                    redirectTo="/"
+                  >
+                    <UsersProvider>
+                      <AdminPage />
+                    </UsersProvider>
+                  </ProtectedRoute>
+                }
+              />
 
-            <Route
-              path="/create-movie"
-              element={
-                <ProtectedRoute isAllowed={isAuth && user?.is_admin} redirectTo="/">
-                  <MoviesProvider>
-                    <CreateMoviePage />
-                  </MoviesProvider>
-                </ProtectedRoute>
-              }
-            />
-            </Route>
+              <Route
+                path="/movies"
+                element={
+                  <ProtectedRoute isAllowed={isAuth && user?.is_admin} redirectTo="/">
+                    <MoviesProvider>
+                      <MoviesPage />
+                    </MoviesProvider>
+                  </ProtectedRoute>
+                }
+              />
 
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </Container>
+              <Route
+                path="/create-movie"
+                element={
+                  <ProtectedRoute isAllowed={isAuth && user?.is_admin} redirectTo="/">
+                    <MoviesProvider>
+                      <CreateMoviePage />
+                    </MoviesProvider>
+                  </ProtectedRoute>
+                }
+              />
+              </Route>
+
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </Container>
+        </div>
       </div>
-    </div>
+    </FavoriteGenresProvider>
   );
 }
 
