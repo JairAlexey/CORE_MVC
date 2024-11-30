@@ -124,7 +124,7 @@ export const MoviesProvider = ({ children }) => {
             setMovies(prevMovies => 
                 prevMovies.map(movie => 
                     movie.id === parseInt(movieId) 
-                        ? { ...movie, commented: true, rating } 
+                        ? { ...movie, commented: true, rating: res.data.rating } 
                         : movie
                 )
             );

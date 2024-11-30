@@ -13,10 +13,11 @@ export const createMovie = async (req, res) => {
         );
 
         if (existingMovie.rowCount > 0) {
-            return res.status(409).json({ 
+            return res.status(409).json({
                 message: "Ya existe una película con ese título"
             });
         }
+
 
         // Generar un ID único para la película
         const maxIdResult = await pool.query("SELECT MAX(id) FROM movies");
@@ -27,7 +28,7 @@ export const createMovie = async (req, res) => {
         if (release_date) {
             formattedDate = new Date(release_date).toISOString().split('T')[0];
             if (formattedDate === 'Invalid Date') {
-                return res.status(400).json({ 
+                return res.status(400).json({
                     message: "Formato de fecha inválido. Use YYYY-MM-DD"
                 });
             }
@@ -55,9 +56,9 @@ export const createMovie = async (req, res) => {
         return res.status(201).json(result.rows[0]);
     } catch (error) {
         console.error("Error detallado:", error);
-        return res.status(500).json({ 
+        return res.status(500).json({
             message: "Error al crear la película",
-            error: error.message 
+            error: error.message
         });
     }
 };
@@ -72,7 +73,7 @@ export const updateMovie = async (req, res) => {
         if (release_date) {
             formattedDate = new Date(release_date).toISOString().split('T')[0];
             if (formattedDate === 'Invalid Date') {
-                return res.status(400).json({ 
+                return res.status(400).json({
                     message: "Formato de fecha inválido. Use YYYY-MM-DD"
                 });
             }
@@ -99,7 +100,7 @@ export const updateMovie = async (req, res) => {
                     release_date = $4, 
                     poster_path = $5, 
                     is_modified = TRUE 
-             WHERE id = $6 
+                WHERE id = $6 
              RETURNING *`,
             [title, overview, genre_ids, formattedDate, poster_path, id]
         );
@@ -113,14 +114,14 @@ export const updateMovie = async (req, res) => {
         return res.json(result.rows[0]);
     } catch (error) {
         if (error.code === '23505') {
-            return res.status(409).json({ 
+            return res.status(409).json({
                 message: "Ya existe una película con ese título"
             });
         }
-        
-        return res.status(500).json({ 
+
+        return res.status(500).json({
             message: "Error al actualizar la película",
-            error: error.message 
+            error: error.message
         });
     }
 };
@@ -192,9 +193,9 @@ export const getAllMovies = async (req, res) => {
 
     } catch (error) {
         console.error('Error en getAllMovies:', error);
-        return res.status(500).json({ 
+        return res.status(500).json({
             message: "Error al obtener películas",
-            error: error.message 
+            error: error.message
         });
     }
 };
@@ -221,7 +222,7 @@ export const deleteMovie = async (req, res) => {
 
         // Eliminar registros relacionados en user_movies
         await pool.query("DELETE FROM user_movies WHERE movie_id = $1", [id]);
-        
+
         // Eliminar la película
         const result = await pool.query("DELETE FROM movies WHERE id = $1", [id]);
 
@@ -311,6 +312,8 @@ export const commentAndRateMovie = async (req, res) => {
     const { comment, rating } = req.body;
     const userId = req.userId;
 
+    console.log("Datos recibidos:", { comment, rating });
+
     try {
         const result = await pool.query(
             "UPDATE user_movies SET comment = $1, rating = $2 WHERE user_id = $3 AND movie_id = $4 AND watched = TRUE RETURNING *",
@@ -335,7 +338,7 @@ export const getMovieDetails = async (req, res) => {
     try {
         // Verificar si la película existe
         const movieExists = await pool.query('SELECT * FROM movies WHERE id = $1', [movieId]);
-        
+
         if (movieExists.rowCount === 0) {
             return res.status(404).json({ message: "Película no encontrada" });
         }

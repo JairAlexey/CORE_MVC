@@ -11,7 +11,7 @@ import {
 } from "../controllers/movies.controller.js";
 import { isAuth, isAdmin } from "../middlewares/auth.middleware.js";
 import { validateSchema } from "../middlewares/validate.middleware.js";
-import { updateMovieSchema, createMovieSchema } from "../schemas/movie.schema.js";
+import { updateMovieSchema, createMovieSchema, commentAndRateSchema} from "../schemas/movie.schema.js";
 
 const router = Router();
 
@@ -27,7 +27,7 @@ router.delete("/movies/:id", isAuth, isAdmin, deleteMovie);
 // Rutas para marcar y desmarcar películas como vistas
 router.post("/movies/:movieId/watched", isAuth, markMovieAsWatched);
 router.delete("/movies/:movieId/watched", isAuth, unmarkMovieAsWatched);
-router.post("/movies/:movieId/comment", isAuth, commentAndRateMovie);
+router.post("/movies/:movieId/comment", isAuth, validateSchema(commentAndRateSchema), commentAndRateMovie);
 
 // Ruta para obtener los detalles de una película
 router.get("/movies/:movieId/details", isAuth, getMovieDetails);

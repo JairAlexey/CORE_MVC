@@ -1,99 +1,93 @@
-import { useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useForm } from "react-hook-form";
 import { useMovies } from "../context/MoviesContext";
-import { Card, Button } from "../components/ui";
-import { getGenreNames } from "../utils/genres";
+import { Button, Card } from "../components/ui";
+import { useNavigate, useParams } from "react-router-dom";
+import { useState } from "react";
 
 function CommentAndRatePage() {
-    const { movieId } = useParams();
-    const { movies, commentAndRateMovie, setMovies } = useMovies();
-    const movie = movies.find(m => m.id === parseInt(movieId));
-    const [comment, setComment] = useState("");
-    const [rating, setRating] = useState(1);
+    const { register, handleSubmit, formState: { errors }, reset } = useForm();
     const navigate = useNavigate();
+    const { movieId } = useParams();
+    const { commentAndRateMovie } = useMovies();
+    const [formErrors, setFormErrors] = useState([]);
 
-    const handleCommentAndRate = async () => {
+    const onSubmit = async (data) => {
+        const numericRating = Number(data.rating);
+
+        if (isNaN(numericRating)) {
+            setFormErrors(["La valoración debe ser un número válido entre 1 y 5."]);
+            return;
+        }
+
         try {
-            await commentAndRateMovie(movieId, comment, rating);
-            const updatedMovies = movies.map(m => 
-                m.id === parseInt(movieId) ? { ...m, commented: true } : m
-            );
-            setMovies(updatedMovies);
+            await commentAndRateMovie(movieId, data.comment, numericRating);
             navigate('/movies', { state: { message: '¡Comentario y valoración guardados!' } });
         } catch (error) {
             console.error("Error al comentar y valorar:", error);
+            if (error.response) {
+                setFormErrors([error.response.data.message || "Error al comentar y valorar la película"]);
+            } else {
+                setFormErrors(["Error al comentar y valorar la película"]);
+            }
         }
     };
 
     return (
         <div className="flex justify-center items-center min-h-[calc(100vh-4rem)] p-4">
-            <div className="max-w-4xl w-full bg-zinc-800 rounded-lg shadow-lg overflow-hidden">
-                <div className="flex flex-col md:flex-row">
-                    {/* Columna de la imagen */}
-                    <div className="md:w-1/2">
-                        <img
-                            src={
-                                movie.poster_path && movie.poster_path.startsWith('http')
-                                    ? movie.poster_path // Si es un URL completo, úsalo directamente
-                                    : `https://image.tmdb.org/t/p/w500${movie.poster_path}` // Si no, usa el prefijo TMDB
-                            }
-                            alt={movie.title}
-                            className="w-full h-full object-cover"
+            <Card className="max-w-md w-full p-6">
+                <h2 className="text-2xl font-bold mb-4 text-center">Comentar y Valorar Película</h2>
+
+                {formErrors.length > 0 && (
+                    <div className="bg-red-500 text-white p-2 rounded mb-4">
+                        {formErrors.map((error, index) => (
+                            <p key={index} className="text-center">{error}</p>
+                        ))}
+                    </div>
+                )}
+
+                <form onSubmit={handleSubmit(onSubmit)}>
+                    <div className="mb-4">
+                        <label className="block text-sm font-medium text-gray-300 mb-2">
+                            Tu Comentario
+                        </label>
+                        <textarea
+                            {...register("comment", { required: "El comentario es requerido" })}
+                            className="w-full p-3 border rounded bg-zinc-700 border-zinc-600 text-white focus:outline-none focus:border-indigo-500"
+                            rows="4"
+                            placeholder="Escribe tu opinión sobre la película..."
                         />
+                        {errors.comment && <p className="text-red-500 mt-1">{errors.comment.message}</p>}
                     </div>
 
-                    {/* Columna del formulario */}
-                    <div className="md:w-1/2 p-6">
-                        <h2 className="text-2xl font-bold mb-4">{movie.title}</h2>
-                        <p className="text-gray-300 mb-4">{movie.overview}</p>
-                        <p className="text-gray-300 mb-4">Géneros: {getGenreNames(movie.genre_ids)}</p>
-                        <p className="text-sm text-gray-300">
-                            Recomendado por: {Array.isArray(movie.recommenders) ? movie.recommenders.join(', ') : 'Desconocido'}
-                        </p>
-                        
-                        <div className="space-y-4">
-                            <div>
-                                <label className="block text-sm font-medium text-gray-300 mb-2">
-                                    Tu comentario
-                                </label>
-                                <textarea
-                                    value={comment}
-                                    onChange={(e) => setComment(e.target.value)}
-                                    className="w-full p-3 border rounded bg-zinc-700 border-zinc-600 text-white focus:outline-none focus:border-indigo-500"
-                                    rows="4"
-                                    placeholder="Escribe tu opinión sobre la película..."
-                                    required
-                                />
-                            </div>
-
-                            <div>
-                                <label className="block text-sm font-medium text-gray-300 mb-2">
-                                    Valoración (1-5 estrellas)
-                                </label>
-                                <select
-                                    value={rating}
-                                    onChange={(e) => setRating(Number(e.target.value))}
-                                    className="w-full p-3 border rounded bg-zinc-700 border-zinc-600 text-white focus:outline-none focus:border-indigo-500"
-                                    required
-                                >
-                                    {[1, 2, 3, 4, 5].map(num => (
-                                        <option key={num} value={num}>
-                                            {"⭐".repeat(num)} ({num})
-                                        </option>
-                                    ))}
-                                </select>
-                            </div>
-
-                            <Button 
-                                onClick={handleCommentAndRate} 
-                                className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded transition duration-300"
-                            >
-                                Guardar Comentario y Valoración
-                            </Button>
-                        </div>
+                    <div className="mb-4">
+                        <label className="block text-sm font-medium text-gray-300 mb-2">
+                            Valoración (1-5 estrellas)
+                        </label>
+                        <select
+                            {...register("rating", { 
+                                required: "La valoración es requerida",
+                                validate: value => (value >=1 && value <=5) || "La valoración debe estar entre 1 y 5",
+                                valueAsNumber: true
+                            })}
+                            className="w-full p-3 border rounded bg-zinc-700 border-zinc-600 text-white focus:outline-none focus:border-indigo-500"
+                        >
+                            <option value="">Selecciona una valoración</option>
+                            {[1, 2, 3, 4, 5].map(num => (
+                                <option key={num} value={num}>
+                                    {"⭐".repeat(num)} ({num})
+                                </option>
+                            ))}
+                        </select>
+                        {errors.rating && <p className="text-red-500 mt-1">{errors.rating.message}</p>}
                     </div>
-                </div>
-            </div>
+
+                    <div className="flex justify-center">
+                        <Button type="submit" className="px-8 mt-4">
+                            Guardar Comentario y Valoración
+                        </Button>
+                    </div>
+                </form>
+            </Card>
         </div>
     );
 }
