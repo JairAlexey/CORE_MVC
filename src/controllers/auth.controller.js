@@ -85,6 +85,10 @@ export const updateFavoriteGenres = async (req, res) => {
   const userId = req.userId;
   const { favoriteGenres } = req.body;
 
+  if (favoriteGenres.length < 2) {
+      return res.status(400).json({ message: "Debes seleccionar al menos 2 géneros favoritos." });
+  }
+
   try {
       const result = await pool.query(
           "UPDATE users SET favorite_genres = $1 WHERE id = $2 RETURNING *",

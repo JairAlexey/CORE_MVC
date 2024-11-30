@@ -29,7 +29,7 @@ function LoginPage() {
       <Card>
         {loginErrors &&
           loginErrors.map((err) => (
-            <p className="bg-red-500 text-white p-2 text-center">{err}</p>
+            <p key={err} className="bg-red-500 text-white p-2 text-center">{err}</p>
           ))}
 
         <h1 className="text-4xl font-bold my-2 text-center">Iniciar Sesion</h1>

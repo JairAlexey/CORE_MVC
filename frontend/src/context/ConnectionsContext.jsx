@@ -28,7 +28,6 @@ export function ConnectionProvider({ children }) {
             const result = await getUserConnectionsRequest();
             setConnections(result.data || []);
         } catch (error) {
-            console.error("Error en updateConnections:", error);
             setError(error.response?.data?.errors || ["Error al actualizar conexiones"]);
             setConnections([]);
         } finally {

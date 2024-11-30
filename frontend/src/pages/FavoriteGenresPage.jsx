@@ -1,35 +1,43 @@
-import { useEffect } from "react";
 import { Button, Card } from "../components/ui";
 import { useFavoriteGenres } from "../context/FavoriteGenresContext";
 
 function FavoriteGenresPage() {
-    const { selectedGenres, setSelectedGenres, genres, updateFavoriteGenres } = useFavoriteGenres();
+    const { selectedGenres = [], setSelectedGenres, genres = [], updateFavoriteGenres, errors, clearErrors } = useFavoriteGenres(); 
 
     const handleGenreChange = (genreId) => {
         setSelectedGenres((prev) =>
-            prev.includes(genreId)
+            Array.isArray(prev) && prev.includes(genreId)
                 ? prev.filter((id) => id !== genreId)
-                : [...prev, genreId]
+                : [...(Array.isArray(prev) ? prev : []), genreId]
         );
     };
 
     const handleSave = async () => {
-        try {
-            await updateFavoriteGenres(selectedGenres);
-        } catch (error) {
-            console.error("Error al actualizar géneros favoritos:", error);
-        }
+        clearErrors(); // Limpiar errores antes de guardar
+        console.log("Géneros seleccionados:", selectedGenres);
+        await updateFavoriteGenres(selectedGenres);
     };
+
+    if (!genres || genres.length === 0) {
+        return <p className="text-center text-white">Cargando géneros...</p>; 
+    }
 
     return (
         <div className="container mx-auto p-4">
+            {errors.length > 0 && (
+                <div className="bg-red-500 text-white p-2 rounded mb-4">
+                    {errors.map((error, i) => (
+                        <p key={i} className="text-center">{error}</p>
+                    ))}
+                </div>
+            )}
             <h1 className="text-2xl font-bold mb-4 text-center">Selecciona tus géneros favoritos</h1>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                 {genres.map((genre) => (
                     <Card key={genre.id} className="flex items-center p-4 bg-zinc-800 rounded-lg shadow-lg">
                         <input
                             type="checkbox"
-                            checked={selectedGenres.includes(genre.id)}
+                            checked={Array.isArray(selectedGenres) && selectedGenres.includes(genre.id)}
                             onChange={() => handleGenreChange(genre.id)}
                             className="form-checkbox h-5 w-5 text-indigo-600"
                         />
