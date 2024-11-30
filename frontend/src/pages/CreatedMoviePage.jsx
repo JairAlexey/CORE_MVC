@@ -3,19 +3,27 @@ import { useMovies } from "../context/MoviesContext";
 import { Button, Card } from "../components/ui";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { getAllGenres } from "../utils/genres";
 
 function CreateMoviePage() {
     const { register, handleSubmit, formState: { errors } } = useForm();
     const navigate = useNavigate();
     const { createMovie } = useMovies();
     const [formErrors, setFormErrors] = useState([]);
+    const genres = getAllGenres();
 
     const onSubmit = async (data) => {
+        const genreIds = data.genre_ids.map(id => parseInt(id, 10));
+
+        const movieData = {
+            ...data,
+            genre_ids: genreIds
+        };
+
         try {
-            await createMovie(data);
+            await createMovie(movieData);
             navigate('/movies', { state: { message: '¡Película creada exitosamente!' } });
         } catch (error) {
-            console.error("Error al crear la película:", error);
             if (error.response) {
                 setFormErrors([error.response.data.message || "Error al crear la película"]);
             } else {
@@ -68,6 +76,28 @@ function CreateMoviePage() {
                         placeholder="URL del póster"
                     />
                     {errors.poster_path && <p className="text-red-500">{errors.poster_path.message}</p>}
+
+                    <div className="mb-4">
+                        <label className="block text-sm font-medium text-gray-300 mb-2">
+                            Géneros
+                        </label>
+                        <div className="flex flex-wrap gap-2">
+                            {genres.map((genre) => (
+                                <label key={genre.id} className="flex items-center text-white">
+                                    <input
+                                        type="checkbox"
+                                        value={genre.id}
+                                        {...register("genre_ids", { 
+                                            validate: value => value.length > 0 || "Debes seleccionar al menos un género"
+                                        })}
+                                        className="form-checkbox h-5 w-5 text-indigo-600"
+                                    />
+                                    <span className="ml-2">{genre.name}</span>
+                                </label>
+                            ))}
+                        </div>
+                        {errors.genre_ids && <p className="text-red-500">{errors.genre_ids.message}</p>}
+                    </div>
 
                     <div className="flex justify-center">
                         <Button type="submit" className="px-8 mt-4">

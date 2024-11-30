@@ -11,7 +11,7 @@ import {
 } from "../controllers/movies.controller.js";
 import { isAuth, isAdmin } from "../middlewares/auth.middleware.js";
 import { validateSchema } from "../middlewares/validate.middleware.js";
-import { updateMovieSchema, createMovieSchema, commentAndRateSchema} from "../schemas/movie.schema.js";
+import { updateMovieSchema, createMovieSchema, commentAndRateSchema } from "../schemas/movie.schema.js";
 
 const router = Router();
 
@@ -31,7 +31,5 @@ router.post("/movies/:movieId/comment", isAuth, validateSchema(commentAndRateSch
 
 // Ruta para obtener los detalles de una película
 router.get("/movies/:movieId/details", isAuth, getMovieDetails);
-
-
 
 export default router;

@@ -3,7 +3,7 @@ import { useUsers } from "../context/UsersContext";
 import { Card, Button } from "../components/ui";
 
 function AdminPage() {
-    const { users, loadUsers, deleteUser, updateUser } = useUsers();
+    const { users, loadUsers, deleteUser, updateUser, errors } = useUsers();
 
     useEffect(() => {
         loadUsers();
@@ -26,6 +26,13 @@ function AdminPage() {
         <div className="flex h-[80vh] justify-center items-center">
             <Card>
                 <h2 className="text-3xl font-bold my-4">Administración de Usuarios</h2>
+                {errors.length > 0 && (
+                    <div className="bg-red-500 text-white p-2 rounded mb-4">
+                        {errors.map((error, index) => (
+                            <p key={index} className="text-center">{error}</p>
+                        ))}
+                    </div>
+                )}
                 <div className="overflow-x-auto">
                     <table className="min-w-full">
                         <thead>

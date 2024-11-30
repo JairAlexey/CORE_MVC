@@ -65,3 +65,5 @@ CREATE TABLE deleted_movies (
 ALTER TABLE movies ADD COLUMN is_modified BOOLEAN DEFAULT FALSE;
 
 ALTER TABLE movies ALTER COLUMN release_date DROP NOT NULL;
+
+ALTER TABLE movies ALTER COLUMN release_date SET NOT NULL;

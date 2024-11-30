@@ -3,32 +3,37 @@ import { z } from "zod";
 export const updateMovieSchema = z.object({
     title: z.string({
         required_error: "El título es requerido",
-        invalid_type_error: "El título debe ser un texto"
     }).min(1, {
         message: "El título no puede estar vacío"
     }).max(255, {
         message: "El título no puede tener más de 255 caracteres"
     }),
-    
     overview: z.string({
         required_error: "La sinopsis es requerida",
-        invalid_type_error: "La sinopsis debe ser un texto"
     }).min(1, {
         message: "La sinopsis no puede estar vacía"
     }),
-    
     genre_ids: z.array(z.number(), {
         required_error: "Los géneros son requeridos"
     }).min(1, {
         message: "Debe seleccionar al menos un género"
     }),
-    
     release_date: z.string({
         required_error: "La fecha de estreno es requerida"
     }).regex(/^\d{4}-\d{2}-\d{2}$/, {
         message: "La fecha debe estar en formato YYYY-MM-DD"
     }),
-    poster_path: z.string().optional()
+    poster_path: z.string({
+        required_error: "El URL es requerido",
+    }).min(1, {
+        message: "El URL no puede estar vacío"
+    }).refine((url) => {
+        const urlRegex = /^(https?:\/\/[^\s$.?#].[^\s]*)$/;
+        const relativePathRegex = /^\/[a-zA-Z0-9_-]+\.(jpeg|jpg|png|gif|bmp|webp)$/;
+        return urlRegex.test(url) || relativePathRegex.test(url);
+    }, {
+        message: "El link del poster_path debe ser un URL válido o una ruta relativa válida que apunte a una imagen (.jpg, .png, etc.)"
+    })
 });
 
 export const createMovieSchema = z.object({
@@ -44,6 +49,11 @@ export const createMovieSchema = z.object({
     }).min(1, {
         message: "La sinopsis no puede estar vacía"
     }),
+    genre_ids: z.array(z.number(), {
+        required_error: "Los géneros son requeridos"
+    }).min(1, {
+        message: "Debe seleccionar al menos un género"
+    }),
     release_date: z.string({
         required_error: "La fecha de estreno es requerida"
     }).regex(/^\d{4}-\d{2}-\d{2}$/, {
@@ -53,6 +63,12 @@ export const createMovieSchema = z.object({
         required_error: "El URL es requerido",
     }).min(1, {
         message: "El URL no puede estar vacío"
+    }).refine((url) => {
+        const urlRegex = /^(https?:\/\/[^\s$.?#].[^\s]*)$/;
+        const relativePathRegex = /^\/[a-zA-Z0-9_-]+\.(jpeg|jpg|png|gif|bmp|webp)$/;
+        return urlRegex.test(url) || relativePathRegex.test(url);
+    }, {
+        message: "El link del poster_path debe ser un URL válido o una ruta relativa válida que apunte a una imagen (.jpg, .png, etc.)"
     })
 });
 

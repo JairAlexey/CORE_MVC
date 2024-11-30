@@ -80,7 +80,7 @@ export const MoviesProvider = ({ children }) => {
         } catch (error) {
             const errorMessage = error.response?.data?.message || "Error al crear la película";
             setErrors([errorMessage]);
-            throw error; // Importante: re-lanzar el error para manejarlo en el componente
+            throw error; 
         }
     };
 

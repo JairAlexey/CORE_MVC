@@ -40,22 +40,22 @@ export const createMovie = async (req, res) => {
 
         if (poster_path && (!urlRegex.test(poster_path) && !relativePathRegex.test(poster_path))) {
             return res.status(400).json({
-                message: "El link del poster_path debe ser un URL válido o una ruta relativa válida que apunte a una imagen (.jpg, .png, etc.)"
+                message: "El link del poster_path debe ser un URL válido o una ruta relativa válida que apunte a una imagen."
             });
         }
 
-        // Insertar la nueva película con is_modified en true
+        // Insertar la nueva película
         const result = await pool.query(
             `INSERT INTO movies (id, title, overview, genre_ids, release_date, poster_path, is_modified) 
                 VALUES ($1, $2, $3, $4, $5, $6, TRUE) 
              RETURNING *`,
-            [newId, title, overview, genre_ids || [], formattedDate, poster_path]
+            [newId, title, overview, genre_ids, formattedDate, poster_path]
         );
 
         // Devolver la película creada
         return res.status(201).json(result.rows[0]);
     } catch (error) {
-        console.error("Error detallado:", error);
+        console.error("Error al crear la película:", error);
         return res.status(500).json({
             message: "Error al crear la película",
             error: error.message
