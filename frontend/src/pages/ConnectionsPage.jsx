@@ -104,9 +104,11 @@ function ConnectionsPage() {
                         {recommendations.map((recommendation) => (
                             <Card key={`${recommendation.id}-${recommendation.recommender_name}`} className="p-4">
                                 <img 
-                                    src={`https://image.tmdb.org/t/p/w500${recommendation.poster_path}`} 
-                                    alt={recommendation.title}
-                                    className="w-full h-64 object-cover mb-4"
+                                    src={
+                                        recommendation.poster_path && recommendation.poster_path.startsWith('http')
+                                            ? recommendation.poster_path // Si es un URL completo, úsalo directamente
+                                            : `https://image.tmdb.org/t/p/w500${recommendation.poster_path}` // Si no, usa el prefijo TMDB
+                                    }
                                 />
                                 <h3 className="font-bold">{recommendation.title}</h3>
                                 <p className="text-sm text-gray-300">Recomendado por: {recommendation.recommender_name}</p>

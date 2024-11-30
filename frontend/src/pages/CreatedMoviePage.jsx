@@ -21,13 +21,14 @@ function CreateMoviePage() {
         };
 
         try {
+            setFormErrors([]);
             await createMovie(movieData);
             navigate('/movies', { state: { message: '¡Película creada exitosamente!' } });
         } catch (error) {
-            if (error.response) {
-                setFormErrors([error.response.data.message || "Error al crear la película"]);
+            if (Array.isArray(error.response?.data)) {
+                setFormErrors(error.response.data);
             } else {
-                setFormErrors(["Error al crear la película"]);
+                setFormErrors([error.response?.data?.message || "Error al actualizar la película"]);
             }
         }
     };

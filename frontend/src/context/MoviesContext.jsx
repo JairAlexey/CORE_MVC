@@ -78,6 +78,7 @@ export const MoviesProvider = ({ children }) => {
             setSuccessMessage("¡Película creada exitosamente!");
             return res.data;
         } catch (error) {
+
             const errorMessage = error.response?.data?.message || "Error al crear la película";
             setErrors([errorMessage]);
             throw error; 

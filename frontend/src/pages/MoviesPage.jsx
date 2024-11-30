@@ -123,11 +123,14 @@ function MoviesPage() {
 
     const handleCreate = async (movieData) => {
         try {
-            const newMovie = await createMovie(movieData);
+            const res = await createMovie(movieData);
             setSuccessMessage("¡Película creada exitosamente!");
-            await loadMovies(currentPage, category, searchTerm);
+            await loadMovies();
+            return res.data;
         } catch (error) {
-            setErrors([error.response?.data?.message || "Error al crear la película"]);
+            const errorMessage = error.response?.data?.message || "Error al crear la película";
+            setErrors([errorMessage]);
+            throw error;
         }
     };
 
