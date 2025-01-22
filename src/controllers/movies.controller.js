@@ -1,6 +1,47 @@
 import { pool } from "../db.js";
 import { fetchMovies, fetchAllMovies, searchMovies } from "../services/movieApiService.js";
+import fetch from 'node-fetch';
 
+const fetchMovieDetails = async (movieId) => {
+    const options = {
+        method: 'GET',
+        headers: {
+            accept: 'application/json',
+            // Usar la API key directamente en la URL en lugar del token de autorización
+        }
+    };
+
+    try {
+        const response = await fetch(
+            `https://api.themoviedb.org/3/movie/${movieId}?api_key=${process.env.TMDB_API_KEY}&language=es-ES`,
+            options
+        );
+        
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error('Error TMDB:', errorText);
+            throw new Error(`Error en la API de TMDB: ${response.status}`);
+        }
+
+        const data = await response.json();
+        
+        if (!data || !data.id) {
+            throw new Error('Datos de película inválidos de TMDB');
+        }
+
+        return {
+            id: parseInt(movieId),
+            title: data.title,
+            overview: data.overview || '',
+            genre_ids: data.genres ? data.genres.map(genre => genre.id) : [],
+            release_date: data.release_date || null,
+            poster_path: data.poster_path || null
+        };
+    } catch (error) {
+        console.error('Error completo al obtener detalles de TMDB:', error);
+        throw new Error(`Error al obtener detalles de la película: ${error.message}`);
+    }
+};
 
 export const createMovie = async (req, res) => {
     const { title, overview, genre_ids, release_date, poster_path } = req.body;
@@ -67,65 +108,51 @@ export const updateMovie = async (req, res) => {
     const { title, overview, genre_ids, release_date, poster_path } = req.body;
 
     try {
-        // Validar y formatear la fecha
-        let formattedDate = null;
-        if (release_date) {
-            formattedDate = new Date(release_date).toISOString().split('T')[0];
-            if (formattedDate === 'Invalid Date') {
-                return res.status(400).json({ 
-                    message: "Formato de fecha inválido. Use YYYY-MM-DD"
-                });
-            }
-        }
+        await pool.query("BEGIN");
 
-        // Validar poster_path (URL de la imagen)
-        if (poster_path) {
-            const urlRegex = /^(https?:\/\/[^\s$.?#].[^\s]*)$/; // Verifica que sea un URL válido
-            const relativePathRegex = /^\/[a-zA-Z0-9_-]+\.(jpeg|jpg|png|gif|bmp|webp)$/; // Verifica que sea una ruta relativa válida
-
-            if (!urlRegex.test(poster_path) && !relativePathRegex.test(poster_path)) {
-                return res.status(400).json({
-                    message: "El link del poster_path debe ser un URL válido o una ruta relativa válida que apunte a una imagen (.jpg, .png, etc.)"
-                });
-            }
-        }
-
-        // Actualizar la película
-        const result = await pool.query(
-            `UPDATE movies 
-                SET title = $1, 
-                    overview = $2, 
-                    genre_ids = $3, 
-                    release_date = $4, 
-                    poster_path = $5, 
-                    is_modified = TRUE 
-             WHERE id = $6 
-             RETURNING *`,
-            [title, overview, genre_ids, formattedDate, poster_path, id]
+        // Verificar si la película ya está en la base de datos
+        const movieExists = await pool.query(
+            "SELECT * FROM movies WHERE id = $1",
+            [id]
         );
 
-        if (result.rowCount === 0) {
-            return res.status(404).json({
-                message: "No existe una película con ese id"
-            });
+        if (movieExists.rowCount === 0) {
+            // Si no existe, la insertamos como una película modificada
+            const result = await pool.query(
+                `INSERT INTO movies (id, title, overview, genre_ids, release_date, poster_path, is_modified) 
+                VALUES ($1, $2, $3, $4, $5, $6, TRUE) 
+                RETURNING *`,
+                [id, title, overview, genre_ids, release_date, poster_path]
+            );
+            await pool.query("COMMIT");
+            return res.json(result.rows[0]);
         }
 
+        // Si existe, la actualizamos y marcamos como modificada
+        const result = await pool.query(
+            `UPDATE movies 
+            SET title = $1, 
+                overview = $2, 
+                genre_ids = $3, 
+                release_date = $4, 
+                poster_path = $5,
+                is_modified = TRUE
+            WHERE id = $6 
+            RETURNING *`,
+            [title, overview, genre_ids, release_date, poster_path, id]
+        );
+
+        await pool.query("COMMIT");
         return res.json(result.rows[0]);
     } catch (error) {
-        if (error.code === '23505') {
-            return res.status(409).json({ 
-                message: "Ya existe una película con ese título"
-            });
-        }
-        
+        await pool.query("ROLLBACK");
+        console.error("Error al actualizar la película:", error);
         return res.status(500).json({ 
             message: "Error al actualizar la película",
             error: error.message 
         });
     }
 };
-
-
 
 export const getAllMovies = async (req, res) => {
     const userId = req.userId;
@@ -134,19 +161,12 @@ export const getAllMovies = async (req, res) => {
     const searchTerm = req.query.search || '';
 
     try {
-        // Primero, obtener películas de la base de datos local
-        let localMovies = [];
-        if (searchTerm) {
-            const localResult = await pool.query(
-                `SELECT * FROM movies 
-                WHERE title ILIKE $1 
-                AND id NOT IN (SELECT id FROM deleted_movies)`,
-                [`%${searchTerm}%`]
-            );
-            localMovies = localResult.rows;
-        }
+        // Primero, obtener películas locales
+        let localMovies = await pool.query(
+            "SELECT * FROM movies WHERE is_modified = TRUE"
+        );
 
-        // Luego obtener películas de la API externa
+        // Obtener películas de la API externa
         let moviesFromAPI;
         if (searchTerm && searchTerm.length > 0) {
             moviesFromAPI = await searchMovies(searchTerm, page);
@@ -156,37 +176,35 @@ export const getAllMovies = async (req, res) => {
             moviesFromAPI = await fetchMovies(page, category);
         }
 
-        // Combinar resultados
-        let allMovies = [...localMovies];
+        // Obtener IDs de películas eliminadas
+        const deletedMovies = await pool.query("SELECT id FROM deleted_movies");
+        const deletedIds = new Set(deletedMovies.rows.map(m => m.id));
+
+        // Crear un Map con las películas locales para fácil acceso
+        const localMoviesMap = new Map(localMovies.rows.map(m => [m.id, m]));
+
+        // Combinar y filtrar resultados
+        let allMovies = [];
+
+        // Agregar películas de la API que no están eliminadas ni modificadas
         if (moviesFromAPI && moviesFromAPI.results) {
-            allMovies = [...allMovies, ...moviesFromAPI.results];
+            allMovies = moviesFromAPI.results
+                .filter(movie => !deletedIds.has(movie.id))
+                .map(movie => localMoviesMap.has(movie.id) ? localMoviesMap.get(movie.id) : movie);
         }
 
-        // Obtener IDs de películas eliminadas
-        const deletedMoviesResult = await pool.query("SELECT id FROM deleted_movies");
-        const deletedMovieIds = new Set(deletedMoviesResult.rows.map(row => row.id));
-
-        // Filtrar películas eliminadas
-        const filteredMovies = allMovies.filter(movie => !deletedMovieIds.has(movie.id));
-
-        // Obtener información de usuario para las películas
-        const result = await pool.query(`
-            SELECT 
-                m.*,
-                um.watched,
-                um.comment IS NOT NULL as commented,
-                um.rating
-            FROM movies m
-            LEFT JOIN user_movies um ON m.id = um.movie_id AND um.user_id = $1
-            WHERE m.id = ANY($2::int[])
-            ORDER BY array_position($2::int[], m.id)
-        `, [userId, filteredMovies.map(m => m.id)]);
+        // Agregar películas locales que no están en la API
+        localMovies.rows.forEach(localMovie => {
+            if (!allMovies.some(m => m.id === localMovie.id)) {
+                allMovies.push(localMovie);
+            }
+        });
 
         return res.json({
-            movies: result.rows,
+            movies: allMovies,
             pagination: {
-                currentPage: page,
-                totalPages: moviesFromAPI ? moviesFromAPI.totalPages : 1
+                currentPage: moviesFromAPI.currentPage,
+                totalPages: moviesFromAPI.totalPages
             }
         });
 
@@ -203,52 +221,36 @@ export const deleteMovie = async (req, res) => {
     const { id } = req.params;
 
     try {
-        // Iniciar transacción
-        await pool.query('BEGIN');
-
-        // Verificar si la película está relacionada en movie_recommendations
-        const relatedRecommendations = await pool.query(
-            "SELECT * FROM movie_recommendations WHERE movie_id = $1",
-            [id]
-        );
-
-        if (relatedRecommendations.rowCount > 0) {
-            await pool.query('ROLLBACK');
-            return res.status(400).json({
-                message: "No se puede eliminar la película porque tiene recomendaciones asociadas."
-            });
-        }
-
-        // Eliminar registros relacionados en user_movies
+        // Primero eliminamos las referencias en otras tablas
+        await pool.query("BEGIN");
+        
+        // Eliminar referencias en user_movies
         await pool.query("DELETE FROM user_movies WHERE movie_id = $1", [id]);
         
-        // Eliminar la película
-        const result = await pool.query("DELETE FROM movies WHERE id = $1", [id]);
-
-        // Registrar la película como eliminada
+        // Eliminar referencias en movie_recommendations
+        await pool.query("DELETE FROM movie_recommendations WHERE movie_id = $1", [id]);
+        
+        // Agregar a deleted_movies si no existe
         await pool.query(
             "INSERT INTO deleted_movies (id) VALUES ($1) ON CONFLICT (id) DO NOTHING",
             [id]
         );
 
-        if (result.rowCount === 0) {
-            await pool.query('ROLLBACK');
-            return res.status(404).json({
-                message: "No existe una película con ese id",
-            });
-        }
+        // Si existe en movies, eliminarla
+        await pool.query("DELETE FROM movies WHERE id = $1", [id]);
 
-        // Confirmar transacción
-        await pool.query('COMMIT');
-
-        return res.sendStatus(204);
+        await pool.query("COMMIT");
+        
+        return res.json({ message: "Película eliminada exitosamente" });
     } catch (error) {
-        await pool.query('ROLLBACK');
-        console.error(error);
-        return res.status(500).json({ message: "Error al eliminar la película" });
+        await pool.query("ROLLBACK");
+        console.error("Error al eliminar la película:", error);
+        return res.status(500).json({ 
+            message: "Error al eliminar la película",
+            error: error.message 
+        });
     }
 };
-
 
 //Usuario funciones para manejar las acciones de marcar una película como vista, comentar y valorar.
 
@@ -257,14 +259,69 @@ export const markMovieAsWatched = async (req, res) => {
     const userId = req.userId;
 
     try {
+        await pool.query('BEGIN');
+
+        // Verificar si la película existe en la base de datos local
+        let movieExists = await pool.query(
+            "SELECT * FROM movies WHERE id = $1",
+            [movieId]
+        );
+
+        // Si no existe en la base local, intentar obtener de TMDB
+        if (movieExists.rowCount === 0) {
+            try {
+                const response = await fetch(
+                    `https://api.themoviedb.org/3/movie/${movieId}?api_key=${process.env.TMDB_API_KEY}&language=es-ES`
+                );
+                
+                if (!response.ok) {
+                    throw new Error(`Error TMDB: ${response.status}`);
+                }
+
+                const movieData = await response.json();
+                
+                // Insertar la película en la base de datos local
+                const insertResult = await pool.query(
+                    `INSERT INTO movies (id, title, overview, genre_ids, release_date, poster_path) 
+                    VALUES ($1, $2, $3, $4, $5, $6)
+                    RETURNING *`,
+                    [
+                        movieId,
+                        movieData.title,
+                        movieData.overview || '',
+                        movieData.genres ? movieData.genres.map(g => g.id) : [],
+                        movieData.release_date || null,
+                        movieData.poster_path || null
+                    ]
+                );
+                movieExists = insertResult;
+            } catch (error) {
+                console.error('Error al obtener datos de TMDB:', error);
+                await pool.query('ROLLBACK');
+                return res.status(500).json({ 
+                    message: "Error al obtener detalles de la película de TMDB"
+                });
+            }
+        }
+
+        // Marcar como vista
         const result = await pool.query(
-            "INSERT INTO user_movies (user_id, movie_id, watched) VALUES ($1, $2, TRUE) ON CONFLICT (user_id, movie_id) DO UPDATE SET watched = TRUE RETURNING *",
+            `INSERT INTO user_movies (user_id, movie_id, watched) 
+            VALUES ($1, $2, TRUE) 
+            ON CONFLICT (user_id, movie_id) 
+            DO UPDATE SET watched = TRUE
+            RETURNING *`,
             [userId, movieId]
         );
+
+        await pool.query('COMMIT');
         return res.json(result.rows[0]);
     } catch (error) {
-        console.error(error);
-        return res.status(500).json({ message: "Error al marcar la película como vista" });
+        await pool.query('ROLLBACK');
+        console.error("Error al marcar película como vista:", error);
+        return res.status(500).json({ 
+            message: "Error al marcar la película como vista"
+        });
     }
 };
 
