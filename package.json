@@ -25,6 +25,7 @@
     "node-fetch": "^3.3.2",
     "pern-tasks": "file:",
     "pg": "^8.11.1",
+    "react-hot-toast": "^2.5.1",
     "zod": "^3.21.4"
   },
   "devDependencies": {

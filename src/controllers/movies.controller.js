@@ -1,47 +1,6 @@
 import { pool } from "../db.js";
-import { fetchMovies, fetchAllMovies, searchMovies } from "../services/movieApiService.js";
+import { fetchMovies, fetchAllMovies, searchMovies, fetchMovieDetails } from "../services/movieApiService.js";
 import fetch from 'node-fetch';
-
-const fetchMovieDetails = async (movieId) => {
-    const options = {
-        method: 'GET',
-        headers: {
-            accept: 'application/json',
-            // Usar la API key directamente en la URL en lugar del token de autorización
-        }
-    };
-
-    try {
-        const response = await fetch(
-            `https://api.themoviedb.org/3/movie/${movieId}?api_key=${process.env.TMDB_API_KEY}&language=es-ES`,
-            options
-        );
-        
-        if (!response.ok) {
-            const errorText = await response.text();
-            console.error('Error TMDB:', errorText);
-            throw new Error(`Error en la API de TMDB: ${response.status}`);
-        }
-
-        const data = await response.json();
-        
-        if (!data || !data.id) {
-            throw new Error('Datos de película inválidos de TMDB');
-        }
-
-        return {
-            id: parseInt(movieId),
-            title: data.title,
-            overview: data.overview || '',
-            genre_ids: data.genres ? data.genres.map(genre => genre.id) : [],
-            release_date: data.release_date || null,
-            poster_path: data.poster_path || null
-        };
-    } catch (error) {
-        console.error('Error completo al obtener detalles de TMDB:', error);
-        throw new Error(`Error al obtener detalles de la película: ${error.message}`);
-    }
-};
 
 export const createMovie = async (req, res) => {
     const { title, overview, genre_ids, release_date, poster_path } = req.body;
@@ -54,7 +13,7 @@ export const createMovie = async (req, res) => {
         );
 
         if (existingMovie.rowCount > 0) {
-            return res.status(409).json({ 
+            return res.status(409).json({
                 message: "Ya existe una película con ese título"
             });
         }
@@ -68,7 +27,7 @@ export const createMovie = async (req, res) => {
         if (release_date) {
             formattedDate = new Date(release_date).toISOString().split('T')[0];
             if (formattedDate === 'Invalid Date') {
-                return res.status(400).json({ 
+                return res.status(400).json({
                     message: "Formato de fecha inválido. Use YYYY-MM-DD"
                 });
             }
@@ -96,9 +55,9 @@ export const createMovie = async (req, res) => {
         return res.status(201).json(result.rows[0]);
     } catch (error) {
         console.error("Error detallado:", error);
-        return res.status(500).json({ 
+        return res.status(500).json({
             message: "Error al crear la película",
-            error: error.message 
+            error: error.message
         });
     }
 };
@@ -147,9 +106,9 @@ export const updateMovie = async (req, res) => {
     } catch (error) {
         await pool.query("ROLLBACK");
         console.error("Error al actualizar la película:", error);
-        return res.status(500).json({ 
+        return res.status(500).json({
             message: "Error al actualizar la película",
-            error: error.message 
+            error: error.message
         });
     }
 };
@@ -210,9 +169,9 @@ export const getAllMovies = async (req, res) => {
 
     } catch (error) {
         console.error('Error en getAllMovies:', error);
-        return res.status(500).json({ 
+        return res.status(500).json({
             message: "Error al obtener películas",
-            error: error.message 
+            error: error.message
         });
     }
 };
@@ -223,13 +182,13 @@ export const deleteMovie = async (req, res) => {
     try {
         // Primero eliminamos las referencias en otras tablas
         await pool.query("BEGIN");
-        
+
         // Eliminar referencias en user_movies
         await pool.query("DELETE FROM user_movies WHERE movie_id = $1", [id]);
-        
+
         // Eliminar referencias en movie_recommendations
         await pool.query("DELETE FROM movie_recommendations WHERE movie_id = $1", [id]);
-        
+
         // Agregar a deleted_movies si no existe
         await pool.query(
             "INSERT INTO deleted_movies (id) VALUES ($1) ON CONFLICT (id) DO NOTHING",
@@ -240,14 +199,14 @@ export const deleteMovie = async (req, res) => {
         await pool.query("DELETE FROM movies WHERE id = $1", [id]);
 
         await pool.query("COMMIT");
-        
+
         return res.json({ message: "Película eliminada exitosamente" });
     } catch (error) {
         await pool.query("ROLLBACK");
         console.error("Error al eliminar la película:", error);
-        return res.status(500).json({ 
+        return res.status(500).json({
             message: "Error al eliminar la película",
-            error: error.message 
+            error: error.message
         });
     }
 };
@@ -273,13 +232,13 @@ export const markMovieAsWatched = async (req, res) => {
                 const response = await fetch(
                     `https://api.themoviedb.org/3/movie/${movieId}?api_key=${process.env.TMDB_API_KEY}&language=es-ES`
                 );
-                
+
                 if (!response.ok) {
                     throw new Error(`Error TMDB: ${response.status}`);
                 }
 
                 const movieData = await response.json();
-                
+
                 // Insertar la película en la base de datos local
                 const insertResult = await pool.query(
                     `INSERT INTO movies (id, title, overview, genre_ids, release_date, poster_path) 
@@ -298,7 +257,7 @@ export const markMovieAsWatched = async (req, res) => {
             } catch (error) {
                 console.error('Error al obtener datos de TMDB:', error);
                 await pool.query('ROLLBACK');
-                return res.status(500).json({ 
+                return res.status(500).json({
                     message: "Error al obtener detalles de la película de TMDB"
                 });
             }
@@ -319,7 +278,7 @@ export const markMovieAsWatched = async (req, res) => {
     } catch (error) {
         await pool.query('ROLLBACK');
         console.error("Error al marcar película como vista:", error);
-        return res.status(500).json({ 
+        return res.status(500).json({
             message: "Error al marcar la película como vista"
         });
     }
@@ -390,14 +349,46 @@ export const getMovieDetails = async (req, res) => {
     const userId = req.userId;
 
     try {
-        // Verificar si la película existe
-        const movieExists = await pool.query('SELECT * FROM movies WHERE id = $1', [movieId]);
+        // Primero intentamos obtener la película de nuestra base de datos
+        let movieExists = await pool.query('SELECT * FROM movies WHERE id = $1', [movieId]);
         
+        // Si no existe en nuestra base de datos, la buscamos en TMDB
         if (movieExists.rowCount === 0) {
-            return res.status(404).json({ message: "Película no encontrada" });
+            try {
+                const tmdbMovie = await fetchMovieDetails(movieId);
+                
+                // Guardamos la película en nuestra base de datos
+                await pool.query(
+                    `INSERT INTO movies (id, title, overview, genre_ids, release_date, poster_path) 
+                     VALUES ($1, $2, $3, $4, $5, $6) 
+                     ON CONFLICT (id) DO UPDATE 
+                     SET title = EXCLUDED.title,
+                         overview = EXCLUDED.overview,
+                         genre_ids = EXCLUDED.genre_ids,
+                         release_date = EXCLUDED.release_date,
+                         poster_path = EXCLUDED.poster_path
+                     RETURNING *`,
+                    [
+                        tmdbMovie.id,
+                        tmdbMovie.title,
+                        tmdbMovie.overview,
+                        tmdbMovie.genre_ids,
+                        tmdbMovie.release_date,
+                        tmdbMovie.poster_path
+                    ]
+                );
+                
+                movieExists = await pool.query('SELECT * FROM movies WHERE id = $1', [movieId]);
+            } catch (error) {
+                console.error("Error al obtener película de TMDB:", error);
+                return res.status(404).json({
+                    message: "No se pudo encontrar la película",
+                    error: error.message
+                });
+            }
         }
 
-        // Obtener detalles de la película y todos los comentarios
+        // Obtener comentarios y detalles adicionales
         const result = await pool.query(`
             SELECT 
                 m.*,
@@ -416,26 +407,21 @@ export const getMovieDetails = async (req, res) => {
                     JOIN users u ON um.user_id = u.id
                     WHERE um.movie_id = m.id),
                     '[]'
-                ) as comments,
-                (
-                    SELECT json_build_object(
-                        'comment', my_um.comment,
-                        'rating', my_um.rating,
-                        'created_at', my_um.created_at,
-                        'user_name', u.name,
-                        'user_gravatar', u.gravatar
-                    )
-                    FROM user_movies my_um
-                    JOIN users u ON my_um.user_id = u.id
-                    WHERE my_um.movie_id = m.id AND my_um.user_id = $1
-                ) as user_comment
+                ) as comments
             FROM movies m
-            WHERE m.id = $2
-        `, [userId, movieId]);
+            WHERE m.id = $1
+        `, [movieId]);
+
+        if (result.rows.length === 0) {
+            return res.status(404).json({ message: "Película no encontrada" });
+        }
 
         return res.json(result.rows[0]);
     } catch (error) {
         console.error('Error al obtener detalles de la película:', error);
-        return res.status(500).json({ message: "Error al obtener detalles de la película" });
+        return res.status(500).json({ 
+            message: "Error al obtener detalles de la película",
+            error: error.message 
+        });
     }
 };

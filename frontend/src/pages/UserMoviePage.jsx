@@ -111,8 +111,8 @@ function UserMoviesPage() {
                         <img
                             src={
                                 movie.poster_path && movie.poster_path.startsWith('http')
-                                    ? movie.poster_path // Si es un URL completo, úsalo directamente
-                                    : `https://image.tmdb.org/t/p/w500${movie.poster_path}` // Si no, usa el prefijo TMDB
+                                    ? movie.poster_path
+                                    : `https://image.tmdb.org/t/p/w500${movie.poster_path}`
                             }
                             alt={movie.title}
                             className="w-full h-auto mb-4"
@@ -125,33 +125,38 @@ function UserMoviesPage() {
                                 {movie.title}
                             </h2>
                             <p className="mt-2">{movie.overview}</p>
+                            
                             {movie.watched ? (
-                                <>
-                                    <p className="text-green-500 mt-2">Vista ✓</p>
+                                <div className="mt-2 space-y-2">
+                                    <p className="text-green-500">Vista ✓</p>
                                     {movie.commented ? (
-                                        <p className="text-blue-500 mt-2">Comentada y valorada ✓</p>
+                                        <p className="text-blue-500">
+                                            Ya has comentado y valorado esta película ✓
+                                        </p>
                                     ) : (
                                         <Button
                                             onClick={() => navigate(`/movies/${movie.id}/comment`)}
-                                            className="mt-2 mr-2 bg-blue-500"
+                                            className="bg-blue-500 hover:bg-blue-600"
                                         >
                                             Comentar y Valorar
                                         </Button>
                                     )}
                                     <Button
                                         onClick={() => handleUnmarkAsWatched(movie.id)}
-                                        className="mt-2 bg-red-500"
+                                        className="bg-red-500 hover:bg-red-600 ml-2"
                                     >
                                         Desmarcar como vista
                                     </Button>
-                                </>
+                                </div>
                             ) : (
-                                <Button
-                                    onClick={() => handleMarkAsWatched(movie.id)}
-                                    className="mt-2"
-                                >
-                                    Marcar como vista
-                                </Button>
+                                <div className="mt-2">
+                                    <Button
+                                        onClick={() => handleMarkAsWatched(movie.id)}
+                                        className="bg-green-500 hover:bg-green-600"
+                                    >
+                                        Marcar como vista
+                                    </Button>
+                                </div>
                             )}
                         </div>
                     </Card>

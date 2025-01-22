@@ -1,7 +1,9 @@
 import axios from 'axios';
+import dotenv from 'dotenv';
+dotenv.config();
 
-const API_KEY = 'd73468cfd03d633688b7bee80c78f659';
-const BASE_URL = 'https://api.themoviedb.org/3';
+const TMDB_BASE_URL = 'https://api.themoviedb.org/3';
+const TMDB_API_KEY = process.env.TMDB_API_KEY;
 
 export const fetchMovies = async (page = 1, category = 'popular') => {
     try {
@@ -23,9 +25,9 @@ export const fetchMovies = async (page = 1, category = 'popular') => {
                 endpoint = '/movie/popular';
         }
 
-        const response = await axios.get(`${BASE_URL}${endpoint}`, {
+        const response = await axios.get(`${TMDB_BASE_URL}${endpoint}`, {
             params: {
-                api_key: API_KEY,
+                api_key: TMDB_API_KEY,
                 language: 'es-MX',
                 page: page,
                 region: 'MX'
@@ -58,9 +60,9 @@ export const fetchMovies = async (page = 1, category = 'popular') => {
 
 export const searchMovies = async (searchTerm, page = 1) => {
     try {
-        const response = await axios.get(`${BASE_URL}/search/movie`, {
+        const response = await axios.get(`${TMDB_BASE_URL}/search/movie`, {
             params: {
-                api_key: API_KEY,
+                api_key: TMDB_API_KEY,
                 language: 'es-MX',
                 query: searchTerm,
                 page: page,
@@ -86,9 +88,9 @@ export const searchMovies = async (searchTerm, page = 1) => {
 
 export const fetchAllMovies = async (page = 1) => {
     try {
-        const response = await axios.get(`${BASE_URL}/discover/movie`, {
+        const response = await axios.get(`${TMDB_BASE_URL}/discover/movie`, {
             params: {
-                api_key: API_KEY,
+                api_key: TMDB_API_KEY,
                 language: 'es-MX',
                 page: page,
                 sort_by: 'popularity.desc',
@@ -117,5 +119,29 @@ const options = {
     headers: {
         accept: 'application/json',
         Authorization: `Bearer ${process.env.TMDB_ACCESS_TOKEN}`
+    }
+};
+
+export const fetchMovieDetails = async (movieId) => {
+    try {
+        const response = await axios.get(`${TMDB_BASE_URL}/movie/${movieId}`, {
+            params: {
+                api_key: TMDB_API_KEY,
+                language: 'es-ES'
+            }
+        });
+
+        const data = response.data;
+        return {
+            id: parseInt(movieId),
+            title: data.title,
+            overview: data.overview || '',
+            genre_ids: data.genres ? data.genres.map(genre => genre.id) : [],
+            release_date: data.release_date || null,
+            poster_path: data.poster_path || null
+        };
+    } catch (error) {
+        console.error('Error al obtener detalles de TMDB:', error.response || error);
+        throw new Error(`Error al obtener detalles de la película: ${error.message}`);
     }
 };
