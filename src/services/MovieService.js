@@ -1,19 +1,25 @@
 import { pool } from "../db.js";
 import { fetchMovieDetails, fetchMovies, fetchAllMovies, searchMovies } from "./movieApiService.js";
 import { IMovieRepository, IUserMovieRepository } from '../interfaces/IMovieRepository.js';
+import { MovieObserver, RecommendationObserver } from '../observers/MovieObserver.js';
+import { LocalMovieCreator, ApiMovieCreator } from '../factories/MovieFactory.js';
 
 class MovieService extends IMovieRepository {
     constructor(pool) {
         super();
         this.pool = pool;
+        this.localMovieCreator = new LocalMovieCreator();
+        this.apiMovieCreator = new ApiMovieCreator();
+        this.movieObserver = new MovieObserver();
+        this.movieObserver.subscribe(new RecommendationObserver(pool));
     }
 
     async createMovie(movieData) {
-        const { title, overview, genre_ids, release_date, poster_path } = movieData;
+        const movie = this.localMovieCreator.createMovie(movieData);
         
         const existingMovie = await this.pool.query(
             "SELECT * FROM movies WHERE title = $1",
-            [title]
+            [movie.getTitle()]
         );
 
         if (existingMovie.rowCount > 0) {
@@ -27,7 +33,14 @@ class MovieService extends IMovieRepository {
             `INSERT INTO movies (id, title, overview, genre_ids, release_date, poster_path, is_modified) 
             VALUES ($1, $2, $3, $4, $5, $6, TRUE) 
             RETURNING *`,
-            [newId, title, overview, genre_ids || [], release_date, poster_path]
+            [
+                newId,
+                movie.getTitle(),
+                movie.getOverview(),
+                movie.getGenres(),
+                movie.getReleaseDate(),
+                movie.getPosterPath()
+            ]
         );
 
         return result.rows[0];
@@ -95,10 +108,12 @@ class MovieService extends IMovieRepository {
 
     async getAllMovies({ userId, page, category, searchTerm }) {
         try {
+            // Obtener películas locales
             let localMovies = await this.pool.query(
                 "SELECT * FROM movies WHERE is_modified = TRUE"
             );
 
+            // Obtener películas de la API externa
             let moviesFromAPI;
             if (searchTerm && searchTerm.length > 0) {
                 moviesFromAPI = await searchMovies(searchTerm, page);
@@ -202,6 +217,8 @@ class UserMovieService extends IUserMovieRepository {
     constructor(pool) {
         super();
         this.pool = pool;
+        this.movieObserver = new MovieObserver();
+        this.movieObserver.subscribe(new RecommendationObserver(pool));
     }
 
     async markAsWatched(userId, movieId) {
@@ -281,6 +298,9 @@ class UserMovieService extends IUserMovieRepository {
         if (result.rowCount === 0) {
             throw new Error("Debes marcar la película como vista antes de comentar o valorar");
         }
+
+        // Notificar a los observadores
+        this.movieObserver.notify(userId, movieId, rating);
 
         return result.rows[0];
     }
