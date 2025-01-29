@@ -1,10 +1,8 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
 import MovieList from '../components/MovieList';
 
 export default function MoviesPage() {
-    const router = useRouter();
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {

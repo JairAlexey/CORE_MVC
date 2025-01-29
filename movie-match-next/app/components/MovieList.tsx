@@ -1,9 +1,17 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { movieApi } from '../api/movies';
+import Image from 'next/image';
+
+interface Movie {
+    id: number;
+    title: string;
+    overview: string;
+    poster_path: string;
+}
 
 export default function MovieList() {
-    const [movies, setMovies] = useState<any[]>([]);
+    const [movies, setMovies] = useState<Movie[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
 
@@ -35,9 +43,11 @@ export default function MovieList() {
                     <h2 className="text-xl font-bold text-white">{movie.title}</h2>
                     <p className="text-gray-400">{movie.overview}</p>
                     {movie.poster_path && (
-                        <img 
+                        <Image 
                             src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
                             alt={movie.title}
+                            width={500}
+                            height={750}
                             className="w-full h-auto mt-4 rounded"
                         />
                     )}
