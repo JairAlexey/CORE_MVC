@@ -1,6 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import MovieList from '../components/MovieList';
+import SmartSearchBox from '../components/SmartSearchBox';
 
 export default function MoviesPage() {
     const [isLoading, setIsLoading] = useState(true);
@@ -25,6 +26,9 @@ export default function MoviesPage() {
     return (
         <main className="min-h-screen p-4">
             <h1 className="text-3xl font-bold mb-4">Películas</h1>
+            <div className="mb-6">
+                <SmartSearchBox />
+            </div>
             <MovieList />
         </main>
     );
