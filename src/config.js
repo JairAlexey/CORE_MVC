@@ -8,4 +8,9 @@ export const PG_DATABASE = process.env.PG_DATABASE || "MovieMatch";
 
 export const ORIGIN = process.env.ORIGIN ?
     process.env.ORIGIN.split(',') :
-    ['http://localhost:5173', 'http://localhost:3001', 'http://localhost:3000'];
+    [
+        'https://vitereact-production-a44a.up.railway.app',
+        'https://next-production-d0d7.up.railway.app',
+        'http://localhost:5173',
+        'http://localhost:3000'
+    ];
