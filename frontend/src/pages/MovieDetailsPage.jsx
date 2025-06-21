@@ -3,11 +3,13 @@ import { useParams } from 'react-router-dom';
 import { useMovies } from '../context/MoviesContext';
 import Card from '../components/ui/Card';
 import { getGenreNames } from '../utils/genres';
+import { LoadingSpinner } from '../components/ui';
 
 function MovieDetailsPage() {
     const { movieId } = useParams();
     const [movieDetails, setMovieDetails] = useState(null);
     const { getMovieDetails } = useMovies();
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const loadMovieDetails = async () => {
@@ -16,12 +18,15 @@ function MovieDetailsPage() {
                 setMovieDetails(details);
             } catch (error) {
                 console.error("Error al cargar detalles:", error);
+            } finally {
+                setLoading(false);
             }
         };
         loadMovieDetails();
     }, [movieId]);
 
     const formatDate = (dateString) => {
+        if (!dateString) return "Fecha no disponible";
         return new Date(dateString).toLocaleDateString('es-ES', {
             year: 'numeric',
             month: 'long',
@@ -31,7 +36,8 @@ function MovieDetailsPage() {
         });
     };
 
-    if (!movieDetails) return <div>Cargando...</div>;
+    if (loading) return <LoadingSpinner size="large" text="Cargando detalles de la película..." />;
+    if (!movieDetails) return <div className="text-center text-white">Película no encontrada</div>;
 
     return (
         <div className="container mx-auto p-4">

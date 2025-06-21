@@ -163,6 +163,7 @@ function UserMoviesPage() {
                 ))}
 
             </div>
+
             <div className="flex justify-center gap-2 mt-6">
                 <Button
                     onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}

@@ -9,7 +9,7 @@ import { ConnectionProvider } from "./context/ConnectionsContext";
 import { FavoriteGenresProvider } from "./context/FavoriteGenresContext";
 
 import Navbar from "./components/navbar/Navbar";
-import { Container } from "./components/ui";
+import { Container, LoadingSpinner } from "./components/ui";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 
 import HomePage from "./pages/HomePage";
@@ -41,7 +41,7 @@ function App() {
     }
   }, [isAuth, user, loading, location.pathname, navigate]);
 
-  if (loading) return <h1>Cargando...</h1>;
+  if (loading) return <LoadingSpinner size="large" text="Iniciando aplicación..." />;
 
   return (
     <FavoriteGenresProvider>

@@ -14,7 +14,7 @@ export const useFavoriteGenres = () => {
 };
 
 export const FavoriteGenresProvider = ({ children }) => {
-    const { user } = useAuth(); 
+    const { user, updateUser } = useAuth(); 
     const [selectedGenres, setSelectedGenres] = useState([]);
     const [genres, setGenres] = useState([]);
     const [errors, setErrors] = useState([]);
@@ -27,7 +27,7 @@ export const FavoriteGenresProvider = ({ children }) => {
         const fetchGenres = async () => {
             try {
                 if (user) { 
-                    const response = await getFavoriteGenresRequest(user.id); 
+                    const response = await getFavoriteGenresRequest(); 
                     setSelectedGenres(response.data.favoriteGenres);
                 } else {
                     setSelectedGenres([]);
@@ -44,7 +44,11 @@ export const FavoriteGenresProvider = ({ children }) => {
 
     const updateFavoriteGenres = async (favoriteGenres) => {
         try {
-            await generateFavoriteGenresRequest(favoriteGenres);
+            console.log("Enviando géneros favoritos al backend:", favoriteGenres);
+            const response = await generateFavoriteGenresRequest(favoriteGenres);
+            console.log("Respuesta del backend:", response.data);
+            // Actualizar el estado del usuario con los nuevos géneros favoritos
+            updateUser(response.data);
             alert("Géneros favoritos actualizados");
         } catch (error) {
             console.error("Error al actualizar géneros favoritos:", error);

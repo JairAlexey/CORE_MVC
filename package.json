@@ -6,17 +6,19 @@
   "type": "module",
   "scripts": {
     "dev": "nodemon src/index.js",
-    "start": "node src/index.js"
+    "start": "node src/index.js",
+    "cleanup-users": "node scripts/cleanup_users.js",
+    "generate-test-users": "node scripts/generate_test_users.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "axios": "^1.7.7",
-    "bcrypt": "^5.1.0",
+    "axios": "^1.10.0",
+    "bcrypt": "^5.1.1",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
-    "dotenv": "^16.4.5",
+    "dotenv": "^16.5.0",
     "express": "^4.18.2",
     "express-promise-router": "^4.1.1",
     "jsonwebtoken": "^9.0.0",
@@ -24,7 +26,7 @@
     "morgan": "^1.10.0",
     "node-fetch": "^3.3.2",
     "pern-tasks": "file:",
-    "pg": "^8.11.1",
+    "pg": "^8.16.0",
     "react-hot-toast": "^2.5.1",
     "zod": "^3.21.4"
   },

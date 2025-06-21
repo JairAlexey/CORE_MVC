@@ -1,8 +1,12 @@
-import { Button, Card } from "../components/ui";
+import { useState, useEffect } from "react";
+import { useAuth } from "../context/AuthContext";
+import { Card, Button, LoadingSpinner } from "../components/ui";
 import { useFavoriteGenres } from "../context/FavoriteGenresContext";
 
 function FavoriteGenresPage() {
-    const { selectedGenres = [], setSelectedGenres, genres = [], updateFavoriteGenres, errors, clearErrors } = useFavoriteGenres(); 
+    const { user } = useAuth();
+    const { selectedGenres = [], setSelectedGenres, genres = [], updateFavoriteGenres, errors, clearErrors } = useFavoriteGenres();
+    const [loading, setLoading] = useState(true);
 
     const handleGenreChange = (genreId) => {
         setSelectedGenres((prev) =>
@@ -17,6 +21,13 @@ function FavoriteGenresPage() {
         console.log("Géneros seleccionados:", selectedGenres);
         await updateFavoriteGenres(selectedGenres);
     };
+
+    useEffect(() => {
+        // El contexto ya maneja la carga de géneros favoritos
+        setLoading(false);
+    }, []);
+
+    if (loading) return <LoadingSpinner size="large" text="Cargando géneros..." />;
 
     if (!genres || genres.length === 0) {
         return <p className="text-center text-white">Cargando géneros...</p>; 

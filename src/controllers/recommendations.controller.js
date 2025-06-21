@@ -1,4 +1,5 @@
 import { pool } from "../db.js";
+import { predictMovieRating, calculateMovieFeatures, predictMultipleMovies, calculateMultipleMoviesFeatures } from "../services/mlModelService.js";
 
 export const generateRecommendations = async (req, res) => {
     try {
@@ -19,47 +20,38 @@ export const generateRecommendations = async (req, res) => {
             return res.json({ message: "No tienes conexiones aún" });
         }
 
-        // Para cada conexión, buscar películas para recomendar
-        const recommendationsMap = new Map(); // Usar un mapa para evitar duplicados
+        // Obtener todas las películas recomendables de una vez
+        const recommendableMovies = await pool.query(`
+            SELECT DISTINCT 
+                m.id,
+                m.title,
+                um.rating,
+                um.user_id as recommender_id
+            FROM movies m
+            INNER JOIN user_movies um ON m.id = um.movie_id
+            INNER JOIN user_connections uc ON (
+                (uc.user1_id = $1 AND uc.user2_id = um.user_id) OR
+                (uc.user2_id = $1 AND uc.user1_id = um.user_id)
+            )
+            INNER JOIN users u ON u.id = $1
+            WHERE um.rating >= 4
+            AND NOT EXISTS (
+                SELECT 1 
+                FROM user_movies um2 
+                WHERE um2.movie_id = m.id 
+                AND um2.user_id = $1
+            )
+            -- El filtro de géneros ha sido eliminado para permitir cualquier película
+        `, [userId]);
 
-        for (const connection of connections.rows) {
-            const connectedUserId = connection.connected_user_id;
-
-            // Obtener películas bien calificadas (4 o 5 estrellas) por el usuario conectado
-            const recommendableMovies = await pool.query(`
-                SELECT DISTINCT 
-                    m.id,
-                    m.title,
-                    um.rating,
-                    um.user_id as recommender_id
-                FROM movies m
-                INNER JOIN user_movies um ON m.id = um.movie_id                    
-                WHERE um.user_id = $1 
-                AND um.rating >= 4
-                AND NOT EXISTS (
-                    SELECT 1 
-                    FROM user_movies um2 
-                    WHERE um2.movie_id = m.id 
-                    AND um2.user_id = $2
-                )
-            `, [connectedUserId, userId]);
-
-            // Insertar recomendaciones en el mapa
-            for (const movie of recommendableMovies.rows) {
-                const key = movie.id; // Usar el ID de la película como clave
-                if (!recommendationsMap.has(key)) {
-                    recommendationsMap.set(key, {
-                        ...movie,
-                        recommenders: [movie.recommender_id] // Inicializar con el recomendador
-                    });
-                } else {
-                    recommendationsMap.get(key).recommenders.push(movie.recommender_id); // Agregar recomendador
-                }
-            }
+        if (recommendableMovies.rowCount === 0) {
+            return res.json({ 
+                message: "No hay películas recomendables que cumplan con tus preferencias de géneros. Asegúrate de tener géneros favoritos configurados." 
+            });
         }
 
-        // Insertar recomendaciones en la base de datos
-        for (const [key, movie] of recommendationsMap) {
+        // Insertar todas las recomendaciones
+        for (const movie of recommendableMovies.rows) {
             await pool.query(`
                 INSERT INTO movie_recommendations 
                 (recommender_id, receiver_id, movie_id, rating)
@@ -68,7 +60,9 @@ export const generateRecommendations = async (req, res) => {
             `, [movie.recommender_id, userId, movie.id, movie.rating]);
         }
 
-        return res.json({ message: "Recomendaciones generadas exitosamente" });
+        return res.json({ 
+            message: `Recomendaciones generadas exitosamente. ${recommendableMovies.rowCount} películas recomendadas.` 
+        });
     } catch (error) {
         console.error(error);
         return res.status(500).json({ 
@@ -80,21 +74,42 @@ export const generateRecommendations = async (req, res) => {
 export const getUserRecommendations = async (req, res) => {
     try {
         const userId = req.userId; // Utilizamos el userId del token
+        console.log("🔍 getUserRecommendations llamado para usuario:", userId);
 
         const recommendations = await pool.query(`
             SELECT 
-                mr.id as id,
-                m.*,
-                u.name as recommender_name,
-                u.gravatar as recommender_gravatar,
-                mr.rating as recommender_rating,
-                mr.created_at
+                m.id as movie_id,
+                m.title,
+                m.overview,
+                m.genre_ids,
+                m.release_date,
+                CASE 
+                    WHEN m.poster_path IS NOT NULL AND m.poster_path != '' 
+                    THEN CONCAT('https://image.tmdb.org/t/p/w500', m.poster_path)
+                    ELSE NULL
+                END as poster_path,
+                -- Agrupar todos los recomendadores en un array
+                ARRAY_AGG(
+                    JSON_BUILD_OBJECT(
+                        'id', u.id,
+                        'name', u.name,
+                        'gravatar', u.gravatar,
+                        'rating', mr.rating
+                    )
+                ) as recommenders,
+                -- Tomar la fecha más reciente de recomendación
+                MAX(mr.created_at) as created_at,
+                -- Contar cuántos usuarios recomendaron esta película
+                COUNT(DISTINCT mr.recommender_id) as recommender_count
             FROM movie_recommendations mr
             INNER JOIN movies m ON mr.movie_id = m.id
             INNER JOIN users u ON mr.recommender_id = u.id
             WHERE mr.receiver_id = $1
-            ORDER BY mr.created_at DESC
+            GROUP BY m.id, m.title, m.overview, m.genre_ids, m.release_date, m.poster_path
+            ORDER BY created_at DESC
         `, [userId]);
+
+        console.log("📊 Recomendaciones encontradas:", recommendations.rowCount);
 
         if (recommendations.rowCount === 0) {
             return res.status(404).json({ 
@@ -107,13 +122,92 @@ export const getUserRecommendations = async (req, res) => {
             });
         }
 
-        return res.json({
-            recommendations: recommendations.rows
-        });
+        // Extraer los IDs de las películas para predicción en lote
+        const movieIds = recommendations.rows.map(rec => rec.movie_id);
+        console.log("🎬 IDs de películas para predicción:", movieIds);
+
+        try {
+            console.log("🤖 Iniciando cálculo de features para predicción en lote...");
+            // Calcular features para todas las películas de una vez
+            const moviesFeatures = await calculateMultipleMoviesFeatures(pool, userId, movieIds);
+            console.log("✅ Features calculados para", moviesFeatures.length, "películas");
+            
+            console.log("🤖 Enviando features al modelo de IA...");
+            // Obtener predicciones en lote del modelo
+            const batchPredictions = await predictMultipleMovies(moviesFeatures);
+            console.log("✅ Predicciones recibidas del modelo:", batchPredictions);
+            
+            // Crear un mapa de predicciones por movie_id para acceso rápido
+            const predictionsMap = {};
+            if (batchPredictions.predictions) {
+                batchPredictions.predictions.forEach(pred => {
+                    predictionsMap[pred.movie_id] = pred;
+                });
+            }
+
+            // Combinar recomendaciones con predicciones
+            const recommendationsWithPredictions = recommendations.rows.map(recommendation => {
+                const prediction = predictionsMap[recommendation.movie_id];
+                return {
+                    ...recommendation,
+                    ml_prediction: prediction || null
+                };
+            });
+
+            console.log("🎉 Recomendaciones con predicciones listas:", recommendationsWithPredictions.length);
+
+            return res.json({
+                recommendations: recommendationsWithPredictions,
+                total_predictions: batchPredictions.total_movies || 0
+            });
+
+        } catch (mlError) {
+            console.error('❌ Error en predicción de ML:', mlError);
+            
+            // Si falla la predicción, devolver recomendaciones sin predicciones
+            const recommendationsWithoutPredictions = recommendations.rows.map(recommendation => ({
+                ...recommendation,
+                ml_prediction: null
+            }));
+
+            return res.json({
+                recommendations: recommendationsWithoutPredictions,
+                ml_error: "No se pudieron obtener predicciones del modelo de IA"
+            });
+        }
+
     } catch (error) {
-        console.error(error);
+        console.error('❌ Error general en getUserRecommendations:', error);
         return res.status(500).json({ 
             errors: ["Error al obtener recomendaciones"] 
+        });
+    }
+};
+
+export const getMoviePrediction = async (req, res) => {
+    try {
+        const userId = req.userId;
+        const { movie_id } = req.body;
+
+        if (!movie_id) {
+            return res.status(400).json({ 
+                errors: ["Se requiere el ID de la película"] 
+            });
+        }
+
+        // Calcular features para el modelo
+        const features = await calculateMovieFeatures(pool, userId, movie_id);
+        
+        // Obtener predicción del modelo
+        const prediction = await predictMovieRating(features);
+        
+        return res.json({
+            prediction: prediction
+        });
+    } catch (error) {
+        console.error('Error obteniendo predicción:', error);
+        return res.status(500).json({ 
+            errors: ["Error al obtener predicción del modelo"] 
         });
     }
 };

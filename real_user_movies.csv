@@ -1,0 +1,601 @@
+user_id,movie_id,watched,comment,rating,created_at
+4,872585,TRUE,Comentario de Usuario4 sobre Oppenheimer,5,2024-10-28T10:33:51.616982
+7,552524,TRUE,Comentario de Usuario7 sobre Lilo y Stitch,3,2024-07-04T10:33:51.616982
+8,1266860,TRUE,Comentario de Usuario8 sobre Lo que quisimos ser,3,2025-03-22T10:33:51.617483
+10,1193647,TRUE,Comentario de Usuario10 sobre Mensaje en una botella,3,2024-08-25T10:33:51.617483
+1,1233413,TRUE,Comentario de Usuario1 sobre Los pecadores,4,2025-05-02T10:33:51.617483
+3,980477,TRUE,Comentario de Usuario3 sobre Ne Zha 2,2,2024-09-26T10:33:51.617483
+5,20760,TRUE,Comentario de Usuario5 sobre Lilo & Stitch 2: El efecto del defecto,4,2024-09-29T10:33:51.617982
+1,298618,TRUE,Comentario de Usuario1 sobre Flash,4,2025-06-14T10:33:51.617982
+3,1377424,TRUE,Comentario de Usuario3 sobre വിക്ടോറിയ,5,2024-12-30T10:33:51.617982
+2,947891,TRUE,Comentario de Usuario2 sobre Mi yo adulta,4,2024-08-27T10:33:51.617982
+16,872585,TRUE,Comentario de Usuario16 sobre Oppenheimer,4,2024-11-14T10:33:51.617982
+8,857598,TRUE,Comentario de Usuario8 sobre పుష్పా 2 - The Rule,5,2025-06-17T10:33:51.618483
+10,947891,TRUE,Comentario de Usuario10 sobre Mi yo adulta,3,2025-01-26T10:33:51.618483
+15,803796,TRUE,Comentario de Usuario15 sobre Las guerreras k-pop,3,2024-07-03T10:33:51.618483
+13,634649,TRUE,Comentario de Usuario13 sobre Spider-Man: No Way Home,2,2025-06-20T10:33:51.618483
+5,693134,TRUE,Comentario de Usuario5 sobre Dune: Parte dos,5,2025-02-16T10:33:51.618483
+15,198663,TRUE,Comentario de Usuario15 sobre El corredor del laberinto,4,2024-09-09T10:33:51.618483
+19,1426306,TRUE,Comentario de Usuario19 sobre Titán: La tragedia de OceanGate,5,2025-06-10T10:33:51.618483
+17,912649,TRUE,Comentario de Usuario17 sobre Venom: El último baile,3,2025-06-17T10:33:51.618483
+19,808,TRUE,Comentario de Usuario19 sobre Shrek,5,2025-05-10T10:33:51.618483
+4,803796,TRUE,Comentario de Usuario4 sobre Las guerreras k-pop,5,2025-02-24T10:33:51.618483
+17,346698,TRUE,Comentario de Usuario17 sobre Barbie,3,2024-10-04T10:33:51.618483
+20,155,TRUE,Comentario de Usuario20 sobre El caballero oscuro,4,2025-02-16T10:33:51.618984
+14,573435,TRUE,Comentario de Usuario14 sobre Bad Boys: Ride or Die,3,2024-11-25T10:33:51.618984
+18,1001435,TRUE,Comentario de Usuario18 sobre La vida ante nosotros,1,2025-03-10T10:33:51.618984
+3,1449951,TRUE,Comentario de Usuario3 sobre Snow White,4,2025-03-12T10:33:51.618984
+10,14836,TRUE,Comentario de Usuario10 sobre Los mundos de Coraline,4,2024-06-30T10:33:51.618984
+3,823219,TRUE,"Comentario de Usuario3 sobre Flow, un mundo que salvar",2,2024-07-20T10:33:51.619484
+13,1152619,TRUE,Comentario de Usuario13 sobre Possessions,4,2025-06-08T10:33:51.619484
+18,1284120,TRUE,Comentario de Usuario18 sobre La hermanastra fea,5,2024-09-18T10:33:51.619484
+12,668489,TRUE,Comentario de Usuario12 sobre Estragos,3,2024-11-07T10:33:51.619484
+1,9532,TRUE,Comentario de Usuario1 sobre Destino final,5,2025-06-04T10:33:51.619484
+17,1241894,TRUE,Comentario de Usuario17 sobre Woodwalkers,2,2025-04-06T10:33:51.619484
+11,1356039,TRUE,Comentario de Usuario11 sobre Contraataque,4,2024-11-23T10:33:51.619484
+4,762509,TRUE,Comentario de Usuario4 sobre Mufasa: El rey león,4,2025-01-06T10:33:51.619484
+9,462183,TRUE,Comentario de Usuario9 sobre Salvaje Despertar,5,2025-04-03T10:33:51.619484
+2,829557,TRUE,Comentario de Usuario2 sobre 365 días: Aquel día,5,2024-11-25T10:33:51.619985
+8,1414272,TRUE,Comentario de Usuario8 sobre Belyas,2,2024-10-24T10:33:51.619985
+2,1097549,TRUE,Comentario de Usuario2 sobre Babygirl,5,2024-09-23T10:33:51.619985
+3,1153714,TRUE,Comentario de Usuario3 sobre Death of a Unicorn,5,2025-02-27T10:33:51.619985
+20,14836,TRUE,Comentario de Usuario20 sobre Los mundos de Coraline,3,2024-09-06T10:33:51.619985
+7,1152619,TRUE,Comentario de Usuario7 sobre Possessions,4,2024-07-22T10:33:51.619985
+14,638507,TRUE,Comentario de Usuario14 sobre Cómo entrenar a tu dragón: Vuelta a casa,4,2024-11-16T10:33:51.620481
+4,1449951,TRUE,Comentario de Usuario4 sobre Snow White,5,2024-10-08T10:33:51.620481
+17,1124620,TRUE,Comentario de Usuario17 sobre El Mono,5,2024-08-04T10:33:51.620481
+9,1234821,TRUE,Comentario de Usuario9 sobre Jurassic World: El renacer,4,2024-08-27T10:33:51.620481
+4,1244944,TRUE,Comentario de Usuario4 sobre La mujer de las sombras,5,2025-04-18T10:33:51.620481
+19,676685,TRUE,Comentario de Usuario19 sobre Misión Panda en África,4,2025-02-13T10:33:51.620481
+6,673,TRUE,Comentario de Usuario6 sobre Harry Potter y el prisionero de Azkaban,5,2024-07-03T10:33:51.620481
+17,1124620,TRUE,Comentario de Usuario17 sobre El Mono,3,2024-11-15T10:33:51.620481
+14,1356039,TRUE,Comentario de Usuario14 sobre Contraataque,4,2024-07-20T10:33:51.620988
+15,1297763,TRUE,Comentario de Usuario15 sobre Batman Ninja vs. Yakuza League,5,2024-07-01T10:33:51.620988
+18,1181039,TRUE,Comentario de Usuario18 sobre La tumba del rey maldito,4,2025-03-18T10:33:51.620988
+10,1098006,TRUE,Comentario de Usuario10 sobre La fuente de la eterna juventud,4,2025-02-13T10:33:51.620988
+13,822119,TRUE,Comentario de Usuario13 sobre Capitán América: Brave New World,5,2024-06-23T10:33:51.620988
+3,1022787,TRUE,Comentario de Usuario3 sobre Elio,5,2025-01-24T10:33:51.620988
+3,573435,TRUE,Comentario de Usuario3 sobre Bad Boys: Ride or Die,5,2024-08-11T10:33:51.620988
+14,438631,TRUE,Comentario de Usuario14 sobre Dune,3,2025-05-17T10:33:51.620988
+20,238,TRUE,Comentario de Usuario20 sobre El padrino,5,2024-11-01T10:33:51.620988
+2,1097311,TRUE,Comentario de Usuario2 sobre Echo Valley,2,2025-06-17T10:33:51.621482
+20,539972,TRUE,Comentario de Usuario20 sobre Kraven the Hunter,3,2025-01-31T10:33:51.621482
+18,822119,TRUE,Comentario de Usuario18 sobre Capitán América: Brave New World,5,2024-08-05T10:33:51.621482
+7,351286,TRUE,Comentario de Usuario7 sobre Jurassic World: El reino caído,5,2024-09-03T10:33:51.621482
+1,385687,TRUE,Comentario de Usuario1 sobre Fast & Furious X,4,2024-12-27T10:33:51.621482
+4,11544,TRUE,Comentario de Usuario4 sobre Lilo & Stitch,4,2024-11-28T10:33:51.621482
+19,385687,TRUE,Comentario de Usuario19 sobre Fast & Furious X,5,2024-12-13T10:33:51.621988
+10,1433735,TRUE,Comentario de Usuario10 sobre Loco Por Ella,4,2024-10-21T10:33:51.621988
+15,1379587,TRUE,Comentario de Usuario15 sobre Utopia,5,2024-07-08T10:33:51.621988
+8,462183,TRUE,Comentario de Usuario8 sobre Salvaje Despertar,2,2024-08-09T10:33:51.621988
+13,411,TRUE,"Comentario de Usuario13 sobre Las crónicas de Narnia: El león, la bruja y el armario",2,2025-02-12T10:33:51.621988
+11,808,TRUE,Comentario de Usuario11 sobre Shrek,4,2024-08-20T10:33:51.621988
+13,166428,TRUE,Comentario de Usuario13 sobre Cómo entrenar a tu dragón 3,4,2025-02-19T10:33:51.621988
+18,324544,TRUE,Comentario de Usuario18 sobre Tierras perdidas,4,2024-07-19T10:33:51.621988
+7,55779,TRUE,Comentario de Usuario7 sobre Destino final 5,5,2024-10-18T10:33:51.622487
+12,1098006,TRUE,Comentario de Usuario12 sobre La fuente de la eterna juventud,5,2024-12-27T10:33:51.622487
+17,676685,TRUE,Comentario de Usuario17 sobre Misión Panda en África,5,2024-10-30T10:33:51.622487
+2,539972,TRUE,Comentario de Usuario2 sobre Kraven the Hunter,2,2024-09-25T10:33:51.622487
+8,611251,TRUE,Comentario de Usuario8 sobre 女高生トリオ 性感試験,3,2024-11-03T10:33:51.622487
+11,1010581,TRUE,Comentario de Usuario11 sobre Culpa mía,4,2025-01-03T10:33:51.622487
+14,1199974,TRUE,Comentario de Usuario14 sobre Párvulos: Hijos Del Apocalipsis,2,2024-09-09T10:33:51.622487
+7,967160,TRUE,Comentario de Usuario7 sobre Claudia,2,2024-11-27T10:33:51.622487
+2,278,TRUE,Comentario de Usuario2 sobre Cadena perpetua,5,2025-04-04T10:33:51.622487
+20,552524,TRUE,Comentario de Usuario20 sobre Lilo y Stitch,5,2025-05-02T10:33:51.622487
+3,1449951,TRUE,Comentario de Usuario3 sobre Snow White,2,2025-04-09T10:33:51.622487
+1,1405338,TRUE,Comentario de Usuario1 sobre Oni-Goroshi: Ciudad de los demonios,4,2025-05-16T10:33:51.622487
+10,1241894,TRUE,Comentario de Usuario10 sobre Woodwalkers,4,2025-03-07T10:33:51.622487
+20,238,TRUE,Comentario de Usuario20 sobre El padrino,4,2025-02-09T10:33:51.622487
+18,986056,TRUE,Comentario de Usuario18 sobre Thunderbolts*,5,2024-07-01T10:33:51.622487
+20,11544,TRUE,Comentario de Usuario20 sobre Lilo & Stitch,4,2024-06-27T10:33:51.622487
+20,676685,TRUE,Comentario de Usuario20 sobre Misión Panda en África,5,2024-10-15T10:33:51.622487
+7,351286,TRUE,Comentario de Usuario7 sobre Jurassic World: El reino caído,5,2025-06-21T10:33:51.622487
+14,438631,TRUE,Comentario de Usuario14 sobre Dune,4,2024-10-16T10:33:51.623506
+8,1064213,TRUE,Comentario de Usuario8 sobre Anora,4,2025-03-14T10:33:51.623506
+20,1239193,TRUE,Comentario de Usuario20 sobre Deep Cover: Actores encubiertos,3,2025-04-16T10:33:51.623506
+4,710258,TRUE,Comentario de Usuario4 sobre Rust,5,2024-09-18T10:33:51.623506
+8,1225916,TRUE,Comentario de Usuario8 sobre 3ão: Uma História Sem Fim,5,2025-02-04T10:33:51.623506
+9,912649,TRUE,Comentario de Usuario9 sobre Venom: El último baile,4,2024-12-17T10:33:51.623506
+19,30484,TRUE,Comentario de Usuario19 sobre La reina guerrera,4,2025-05-17T10:33:51.624019
+8,696506,TRUE,Comentario de Usuario8 sobre Mickey 17,5,2025-05-28T10:33:51.624019
+12,933260,TRUE,Comentario de Usuario12 sobre La sustancia,3,2025-04-16T10:33:51.624019
+3,1241894,TRUE,Comentario de Usuario3 sobre Woodwalkers,2,2025-04-27T10:33:51.624019
+13,762509,TRUE,Comentario de Usuario13 sobre Mufasa: El rey león,4,2025-02-24T10:33:51.624019
+17,14836,TRUE,Comentario de Usuario17 sobre Los mundos de Coraline,2,2024-10-01T10:33:51.624019
+10,1395724,TRUE,Comentario de Usuario10 sobre 痴人の愛,2,2024-12-13T10:33:51.624019
+18,986056,TRUE,Comentario de Usuario18 sobre Thunderbolts*,2,2025-05-26T10:33:51.624019
+7,438631,TRUE,Comentario de Usuario7 sobre Dune,4,2025-02-21T10:33:51.624019
+5,1426306,TRUE,Comentario de Usuario5 sobre Titán: La tragedia de OceanGate,5,2024-07-08T10:33:51.624019
+6,1193647,TRUE,Comentario de Usuario6 sobre Mensaje en una botella,5,2025-01-12T10:33:51.624019
+14,573435,TRUE,Comentario de Usuario14 sobre Bad Boys: Ride or Die,5,2025-04-24T10:33:51.624520
+13,1232933,TRUE,Comentario de Usuario13 sobre Terror en el Río,5,2025-06-08T10:33:51.624520
+11,954,TRUE,Comentario de Usuario11 sobre Misión imposible,5,2024-08-01T10:33:51.624520
+13,1022787,TRUE,Comentario de Usuario13 sobre Elio,5,2024-10-16T10:33:51.624520
+17,11544,TRUE,Comentario de Usuario17 sobre Lilo & Stitch,4,2024-09-12T10:33:51.624520
+10,1153714,TRUE,Comentario de Usuario10 sobre Death of a Unicorn,4,2024-09-29T10:33:51.624520
+2,715287,TRUE,Comentario de Usuario2 sobre 새엄마의 욕망,3,2024-10-02T10:33:51.624520
+8,1403735,TRUE,Comentario de Usuario8 sobre లైలా,4,2024-07-25T10:33:51.624520
+5,1144430,TRUE,Comentario de Usuario5 sobre La bala perdida 3,5,2024-12-22T10:33:51.625019
+18,1011477,TRUE,Comentario de Usuario18 sobre Karate Kid: Legends,5,2025-03-14T10:33:51.625019
+7,1426680,TRUE,Comentario de Usuario7 sobre Nuestros tiempos,5,2024-12-14T10:33:51.625019
+3,1180648,TRUE,Comentario de Usuario3 sobre Mudbrick,5,2025-03-13T10:33:51.625019
+6,8966,TRUE,Comentario de Usuario6 sobre Crepúsculo,5,2025-06-03T10:33:51.625019
+19,673,TRUE,Comentario de Usuario19 sobre Harry Potter y el prisionero de Azkaban,4,2024-09-15T10:33:51.625019
+4,166428,TRUE,Comentario de Usuario4 sobre Cómo entrenar a tu dragón 3,4,2024-08-10T10:33:51.625019
+16,1001414,TRUE,Comentario de Usuario16 sobre La calle del terror: La reina del baile,2,2025-05-29T10:33:51.625019
+19,1414272,TRUE,Comentario de Usuario19 sobre Belyas,2,2025-05-01T10:33:51.625019
+20,552524,TRUE,Comentario de Usuario20 sobre Lilo y Stitch,5,2024-07-11T10:33:51.625019
+19,10191,TRUE,Comentario de Usuario19 sobre Cómo entrenar a tu dragón,4,2024-10-24T10:33:51.625518
+3,238,TRUE,Comentario de Usuario3 sobre El padrino,3,2025-03-24T10:33:51.625518
+10,1477114,TRUE,Comentario de Usuario10 sobre Sorority,5,2024-11-02T10:33:51.625518
+13,1022787,TRUE,Comentario de Usuario13 sobre Elio,5,2024-08-25T10:33:51.625518
+17,672,TRUE,Comentario de Usuario17 sobre Harry Potter y la cámara secreta,5,2024-08-20T10:33:51.625518
+14,696506,TRUE,Comentario de Usuario14 sobre Mickey 17,1,2024-09-22T10:33:51.625518
+7,30484,TRUE,Comentario de Usuario7 sobre La reina guerrera,3,2025-02-19T10:33:51.625518
+16,696506,TRUE,Comentario de Usuario16 sobre Mickey 17,4,2025-03-30T10:33:51.626018
+11,447273,TRUE,Comentario de Usuario11 sobre Blancanieves,5,2025-06-10T10:33:51.626018
+18,438631,TRUE,Comentario de Usuario18 sobre Dune,4,2024-08-06T10:33:51.626018
+5,1001435,TRUE,Comentario de Usuario5 sobre La vida ante nosotros,4,2025-04-21T10:33:51.626018
+11,578,TRUE,Comentario de Usuario11 sobre Tiburón,5,2025-06-03T10:33:51.626018
+8,1414272,TRUE,Comentario de Usuario8 sobre Belyas,4,2024-10-15T10:33:51.626018
+19,552524,TRUE,Comentario de Usuario19 sobre Lilo y Stitch,4,2025-02-28T10:33:51.626018
+12,7451,TRUE,Comentario de Usuario12 sobre xXx,5,2025-01-02T10:33:51.626018
+10,710258,TRUE,Comentario de Usuario10 sobre Rust,5,2024-10-11T10:33:51.626018
+3,710258,TRUE,Comentario de Usuario3 sobre Rust,5,2025-05-14T10:33:51.626518
+13,927342,TRUE,Comentario de Usuario13 sobre Amaran,4,2025-03-06T10:33:51.626518
+1,462183,TRUE,Comentario de Usuario1 sobre Salvaje Despertar,3,2025-06-17T10:33:51.626518
+15,1297763,TRUE,Comentario de Usuario15 sobre Batman Ninja vs. Yakuza League,4,2025-05-31T10:33:51.626518
+14,710258,TRUE,Comentario de Usuario14 sobre Rust,3,2024-12-27T10:33:51.626518
+16,1403735,TRUE,Comentario de Usuario16 sobre లైలా,4,2025-04-27T10:33:51.626518
+7,1241436,TRUE,Comentario de Usuario7 sobre Warfare: Tiempo de guerra,4,2024-08-30T10:33:51.626518
+4,166428,TRUE,Comentario de Usuario4 sobre Cómo entrenar a tu dragón 3,4,2024-09-28T10:33:51.626518
+18,1152619,TRUE,Comentario de Usuario18 sobre Possessions,4,2024-10-13T10:33:51.626518
+7,1184918,TRUE,Comentario de Usuario7 sobre Robot salvaje,5,2024-09-05T10:33:51.627019
+2,927342,TRUE,Comentario de Usuario2 sobre Amaran,5,2025-04-03T10:33:51.627019
+18,668489,TRUE,Comentario de Usuario18 sobre Estragos,5,2024-08-18T10:33:51.627019
+2,1092506,TRUE,Comentario de Usuario2 sobre Indomables,5,2024-07-15T10:33:51.627019
+1,1442532,TRUE,Comentario de Usuario1 sobre Malagkit,4,2024-08-06T10:33:51.627019
+2,462183,TRUE,Comentario de Usuario2 sobre Salvaje Despertar,3,2024-10-30T10:33:51.627019
+10,808,TRUE,Comentario de Usuario10 sobre Shrek,3,2025-01-11T10:33:51.627019
+4,1022787,TRUE,Comentario de Usuario4 sobre Elio,3,2025-05-21T10:33:51.627519
+12,1144430,TRUE,Comentario de Usuario12 sobre La bala perdida 3,4,2025-03-17T10:33:51.627519
+16,1064213,TRUE,Comentario de Usuario16 sobre Anora,4,2025-01-16T10:33:51.627519
+16,1294203,TRUE,Comentario de Usuario16 sobre Culpa mía: Londres,5,2024-07-19T10:33:51.627519
+14,1252309,TRUE,Comentario de Usuario14 sobre Pídeme lo que quieras,4,2025-03-17T10:33:51.627519
+6,411,TRUE,"Comentario de Usuario6 sobre Las crónicas de Narnia: El león, la bruja y el armario",3,2025-01-23T10:33:51.627519
+14,385687,TRUE,Comentario de Usuario14 sobre Fast & Furious X,4,2024-11-02T10:33:51.627519
+3,1087891,TRUE,Comentario de Usuario3 sobre Amateur,4,2025-05-23T10:33:51.627519
+20,10191,TRUE,Comentario de Usuario20 sobre Cómo entrenar a tu dragón,5,2024-08-15T10:33:51.627519
+20,977294,TRUE,Comentario de Usuario20 sobre Agente infiltrado,4,2025-05-01T10:33:51.627519
+1,19912,TRUE,Comentario de Usuario1 sobre Destino final 4,5,2024-08-06T10:33:51.627519
+1,120,TRUE,Comentario de Usuario1 sobre El señor de los anillos: La comunidad del anillo,3,2024-12-10T10:33:51.628018
+16,1219555,TRUE,Comentario de Usuario16 sobre Wunderschöner,5,2025-04-08T10:33:51.628018
+18,9286,TRUE,Comentario de Usuario18 sobre Destino final 3,4,2024-08-09T10:33:51.628018
+7,1181039,TRUE,Comentario de Usuario7 sobre La tumba del rey maldito,3,2025-02-20T10:33:51.628018
+4,14836,TRUE,Comentario de Usuario4 sobre Los mundos de Coraline,4,2024-09-18T10:33:51.628018
+17,1087192,TRUE,Comentario de Usuario17 sobre Cómo entrenar a tu dragón,4,2024-08-08T10:33:51.628018
+1,9286,TRUE,Comentario de Usuario1 sobre Destino final 3,5,2025-06-06T10:33:51.628018
+4,1395724,TRUE,Comentario de Usuario4 sobre 痴人の愛,3,2025-06-04T10:33:51.628018
+14,672,TRUE,Comentario de Usuario14 sobre Harry Potter y la cámara secreta,5,2025-04-25T10:33:51.628528
+6,1233413,TRUE,Comentario de Usuario6 sobre Los pecadores,5,2024-10-02T10:33:51.628528
+4,299536,TRUE,Comentario de Usuario4 sobre Vengadores: Infinity War,3,2025-03-30T10:33:51.628528
+20,7451,TRUE,Comentario de Usuario20 sobre xXx,5,2024-12-31T10:33:51.628528
+5,575264,TRUE,Comentario de Usuario5 sobre Misión: Imposible - Sentencia mortal parte uno,5,2024-09-23T10:33:51.628528
+4,14836,TRUE,Comentario de Usuario4 sobre Los mundos de Coraline,5,2024-08-11T10:33:51.628528
+16,1241982,TRUE,Comentario de Usuario16 sobre Vaiana 2,2,2024-08-25T10:33:51.628528
+18,166428,TRUE,Comentario de Usuario18 sobre Cómo entrenar a tu dragón 3,4,2024-07-15T10:33:51.628528
+8,1284120,TRUE,Comentario de Usuario8 sobre La hermanastra fea,1,2025-04-01T10:33:51.628528
+16,519182,TRUE,Comentario de Usuario16 sobre Gru 4. Mi villano favorito,4,2025-06-19T10:33:51.629019
+19,298618,TRUE,Comentario de Usuario19 sobre Flash,5,2025-01-09T10:33:51.629019
+7,1232546,TRUE,Comentario de Usuario7 sobre Until Dawn,4,2024-10-16T10:33:51.629019
+18,519182,TRUE,Comentario de Usuario18 sobre Gru 4. Mi villano favorito,4,2025-04-13T10:33:51.629019
+20,1241982,TRUE,Comentario de Usuario20 sobre Vaiana 2,5,2024-10-03T10:33:51.629019
+17,1238307,TRUE,Comentario de Usuario17 sobre مسامير جونيور,4,2024-06-26T10:33:51.629019
+13,1241982,TRUE,Comentario de Usuario13 sobre Vaiana 2,5,2024-12-12T10:33:51.629518
+17,1284120,TRUE,Comentario de Usuario17 sobre La hermanastra fea,1,2024-10-16T10:33:51.629518
+20,1001435,TRUE,Comentario de Usuario20 sobre La vida ante nosotros,5,2024-08-11T10:33:51.629518
+14,1061474,TRUE,Comentario de Usuario14 sobre Superman,2,2025-03-24T10:33:51.629518
+11,1100988,TRUE,Comentario de Usuario11 sobre 28 años después,4,2025-01-12T10:33:51.629518
+16,1153714,TRUE,Comentario de Usuario16 sobre Death of a Unicorn,5,2024-10-03T10:33:51.629518
+7,20760,TRUE,Comentario de Usuario7 sobre Lilo & Stitch 2: El efecto del defecto,5,2025-05-24T10:33:51.629518
+4,11544,TRUE,Comentario de Usuario4 sobre Lilo & Stitch,5,2024-07-26T10:33:51.630018
+17,1098006,TRUE,Comentario de Usuario17 sobre La fuente de la eterna juventud,5,2024-09-01T10:33:51.630018
+14,666154,TRUE,Comentario de Usuario14 sobre Kayara. La guerrera del imperio Inca,2,2024-08-16T10:33:51.630018
+7,977294,TRUE,Comentario de Usuario7 sobre Agente infiltrado,4,2025-05-10T10:33:51.630018
+20,1225915,TRUE,Comentario de Usuario20 sobre El ladrón de joyas,5,2025-06-06T10:33:51.630018
+19,676685,TRUE,Comentario de Usuario19 sobre Misión Panda en África,4,2024-08-30T10:33:51.630018
+11,1040159,TRUE,Comentario de Usuario11 sobre My Massive Cock,4,2024-07-20T10:33:51.630018
+6,597,TRUE,Comentario de Usuario6 sobre Titanic,4,2025-02-17T10:33:51.630018
+17,14836,TRUE,Comentario de Usuario17 sobre Los mundos de Coraline,2,2025-04-28T10:33:51.630018
+19,927342,TRUE,Comentario de Usuario19 sobre Amaran,1,2024-10-16T10:33:51.630018
+17,411,TRUE,"Comentario de Usuario17 sobre Las crónicas de Narnia: El león, la bruja y el armario",5,2024-07-22T10:33:51.630018
+6,1017163,TRUE,Comentario de Usuario6 sobre Fuerza bruta: Castigo,4,2025-04-15T10:33:51.630018
+14,927342,TRUE,Comentario de Usuario14 sobre Amaran,5,2025-02-08T10:33:51.630018
+17,552524,TRUE,Comentario de Usuario17 sobre Lilo y Stitch,2,2024-11-01T10:33:51.630517
+14,1147416,TRUE,"Comentario de Usuario14 sobre Miraculous World: Las Aventuras de Ladybug en Londres, la carrera contra el tiempo",5,2024-11-30T10:33:51.630517
+9,1124620,TRUE,Comentario de Usuario9 sobre El Mono,5,2025-05-03T10:33:51.630517
+19,1241982,TRUE,Comentario de Usuario19 sobre Vaiana 2,3,2024-07-04T10:33:51.630517
+9,1011985,TRUE,Comentario de Usuario9 sobre Kung Fu Panda 4,4,2025-02-15T10:33:51.630517
+10,1219555,TRUE,Comentario de Usuario10 sobre Wunderschöner,4,2024-10-12T10:33:51.630517
+1,541671,TRUE,Comentario de Usuario1 sobre Ballerina,1,2025-06-10T10:33:51.631018
+17,1225915,TRUE,Comentario de Usuario17 sobre El ladrón de joyas,4,2024-10-03T10:33:51.631018
+8,1180648,TRUE,Comentario de Usuario8 sobre Mudbrick,5,2024-12-20T10:33:51.631018
+11,1241436,TRUE,Comentario de Usuario11 sobre Warfare: Tiempo de guerra,5,2024-07-11T10:33:51.631018
+1,1199974,TRUE,Comentario de Usuario1 sobre Párvulos: Hijos Del Apocalipsis,5,2025-03-27T10:33:51.631018
+8,611251,TRUE,Comentario de Usuario8 sobre 女高生トリオ 性感試験,5,2025-02-11T10:33:51.631018
+11,1199974,TRUE,Comentario de Usuario11 sobre Párvulos: Hijos Del Apocalipsis,5,2025-05-08T10:33:51.631018
+2,1092506,TRUE,Comentario de Usuario2 sobre Indomables,4,2024-11-20T10:33:51.631018
+3,1064213,TRUE,Comentario de Usuario3 sobre Anora,3,2024-09-07T10:33:51.631018
+1,696506,TRUE,Comentario de Usuario1 sobre Mickey 17,4,2025-05-14T10:33:51.631018
+8,597,TRUE,Comentario de Usuario8 sobre Titanic,2,2024-09-17T10:33:51.631018
+14,954,TRUE,Comentario de Usuario14 sobre Misión imposible,5,2024-07-17T10:33:51.631518
+9,1241982,TRUE,Comentario de Usuario9 sobre Vaiana 2,5,2024-09-15T10:33:51.631518
+16,933260,TRUE,Comentario de Usuario16 sobre La sustancia,5,2025-05-03T10:33:51.631518
+9,302946,TRUE,Comentario de Usuario9 sobre El contable,5,2025-03-12T10:33:51.631518
+14,575265,TRUE,Comentario de Usuario14 sobre Misión: Imposible - Sentencia final,5,2025-06-15T10:33:51.631518
+20,1045938,TRUE,Comentario de Usuario20 sobre G20,3,2025-01-05T10:33:51.631518
+20,912649,TRUE,Comentario de Usuario20 sobre Venom: El último baile,5,2025-03-31T10:33:51.631518
+7,519182,TRUE,Comentario de Usuario7 sobre Gru 4. Mi villano favorito,4,2024-10-29T10:33:51.631518
+16,56379,TRUE,Comentario de Usuario16 sobre La caseta de la risa,4,2024-06-26T10:33:51.631518
+1,1376434,TRUE,Comentario de Usuario1 sobre Predator: Asesino de asesinos,2,2025-03-24T10:33:51.631518
+3,1297028,TRUE,Comentario de Usuario3 sobre Rosario,3,2024-12-02T10:33:51.631518
+12,385687,TRUE,Comentario de Usuario12 sobre Fast & Furious X,4,2024-11-24T10:33:51.632017
+17,1477114,TRUE,Comentario de Usuario17 sobre Sorority,5,2024-11-18T10:33:51.632017
+12,1379587,TRUE,Comentario de Usuario12 sobre Utopia,4,2025-01-28T10:33:51.632017
+7,438631,TRUE,Comentario de Usuario7 sobre Dune,4,2024-10-15T10:33:51.632017
+4,1017163,TRUE,Comentario de Usuario4 sobre Fuerza bruta: Castigo,4,2024-10-22T10:33:51.632017
+7,1152619,TRUE,Comentario de Usuario7 sobre Possessions,4,2025-01-11T10:33:51.632017
+13,1238307,TRUE,Comentario de Usuario13 sobre مسامير جونيور,5,2025-03-29T10:33:51.632017
+19,1450599,TRUE,Comentario de Usuario19 sobre K.O.,5,2025-05-01T10:33:51.632017
+1,27205,TRUE,Comentario de Usuario1 sobre Origen,5,2025-02-25T10:33:51.632017
+4,1241982,TRUE,Comentario de Usuario4 sobre Vaiana 2,1,2025-03-07T10:33:51.632017
+19,671,TRUE,Comentario de Usuario19 sobre Harry Potter y la piedra filosofal,2,2025-01-23T10:33:51.632518
+17,1147416,TRUE,"Comentario de Usuario17 sobre Miraculous World: Las Aventuras de Ladybug en Londres, la carrera contra el tiempo",4,2025-05-16T10:33:51.632518
+16,1193647,TRUE,Comentario de Usuario16 sobre Mensaje en una botella,4,2024-08-26T10:33:51.632518
+1,1125899,TRUE,Comentario de Usuario1 sobre Cleaner,5,2024-10-25T10:33:51.632518
+2,1040159,TRUE,Comentario de Usuario2 sobre My Massive Cock,5,2024-10-01T10:33:51.632518
+17,533535,TRUE,Comentario de Usuario17 sobre Deadpool y Lobezno,4,2025-04-08T10:33:51.632518
+6,1193647,TRUE,Comentario de Usuario6 sobre Mensaje en una botella,4,2024-07-29T10:33:51.632518
+16,1022787,TRUE,Comentario de Usuario16 sobre Elio,4,2024-09-14T10:33:51.632518
+15,402431,TRUE,Comentario de Usuario15 sobre Wicked,3,2024-12-03T10:33:51.632518
+7,1234821,TRUE,Comentario de Usuario7 sobre Jurassic World: El renacer,4,2025-02-15T10:33:51.632518
+3,30484,TRUE,Comentario de Usuario3 sobre La reina guerrera,4,2024-12-16T10:33:51.632518
+20,1426680,TRUE,Comentario de Usuario20 sobre Nuestros tiempos,4,2025-01-06T10:33:51.632518
+18,157336,TRUE,Comentario de Usuario18 sobre Interstellar,4,2025-02-18T10:33:51.632518
+9,967160,TRUE,Comentario de Usuario9 sobre Claudia,5,2024-08-31T10:33:51.632518
+3,1297028,TRUE,Comentario de Usuario3 sobre Rosario,3,2025-06-11T10:33:51.632518
+13,575264,TRUE,Comentario de Usuario13 sobre Misión: Imposible - Sentencia mortal parte uno,5,2024-08-15T10:33:51.632518
+5,1442776,TRUE,Comentario de Usuario5 sobre Guerra de mutantes,5,2024-08-23T10:33:51.632518
+8,939243,TRUE,Comentario de Usuario8 sobre Sonic 3: La película,4,2025-02-06T10:33:51.632518
+16,1238307,TRUE,Comentario de Usuario16 sobre مسامير جونيور,5,2024-07-10T10:33:51.632518
+4,589018,TRUE,Comentario de Usuario4 sobre Salvajes,4,2024-09-05T10:33:51.633526
+11,611251,TRUE,Comentario de Usuario11 sobre 女高生トリオ 性感試験,3,2025-01-08T10:33:51.633526
+12,541671,TRUE,Comentario de Usuario12 sobre Ballerina,1,2024-06-28T10:33:51.633526
+16,1195506,TRUE,Comentario de Usuario16 sobre Novocaine,4,2024-08-15T10:33:51.633526
+7,603,TRUE,Comentario de Usuario7 sobre Matrix,3,2024-08-16T10:33:51.633526
+4,939243,TRUE,Comentario de Usuario4 sobre Sonic 3: La película,3,2024-10-03T10:33:51.633526
+1,1297028,TRUE,Comentario de Usuario1 sobre Rosario,4,2024-12-06T10:33:51.633526
+6,696506,TRUE,Comentario de Usuario6 sobre Mickey 17,5,2025-05-15T10:33:51.633526
+16,1160956,TRUE,Comentario de Usuario16 sobre Operación Panda: Misión Rescate,4,2024-07-14T10:33:51.634037
+13,299536,TRUE,Comentario de Usuario13 sobre Vengadores: Infinity War,4,2024-07-25T10:33:51.634037
+19,155,TRUE,Comentario de Usuario19 sobre El caballero oscuro,4,2024-11-16T10:33:51.634037
+1,27205,TRUE,Comentario de Usuario1 sobre Origen,1,2025-01-03T10:33:51.634037
+20,1421982,TRUE,Comentario de Usuario20 sobre Kiff: La historia del anillo de luz,5,2025-04-02T10:33:51.634037
+15,1421982,TRUE,Comentario de Usuario15 sobre Kiff: La historia del anillo de luz,5,2025-03-19T10:33:51.634037
+1,1136867,TRUE,Comentario de Usuario1 sobre Materialistas,5,2024-09-12T10:33:51.634037
+14,24428,TRUE,Comentario de Usuario14 sobre Los Vengadores,3,2025-01-16T10:33:51.634037
+1,507086,TRUE,Comentario de Usuario1 sobre Jurassic World: Dominion,4,2024-07-22T10:33:51.634037
+7,945961,TRUE,Comentario de Usuario7 sobre Alien: Romulus,2,2025-03-12T10:33:51.634537
+3,674,TRUE,Comentario de Usuario3 sobre Harry Potter y el cáliz de fuego,5,2025-03-04T10:33:51.634537
+4,672,TRUE,Comentario de Usuario4 sobre Harry Potter y la cámara secreta,4,2024-12-17T10:33:51.634537
+11,1421982,TRUE,Comentario de Usuario11 sobre Kiff: La historia del anillo de luz,5,2024-06-30T10:33:51.634537
+20,829557,TRUE,Comentario de Usuario20 sobre 365 días: Aquel día,2,2024-07-15T10:33:51.634537
+6,638507,TRUE,Comentario de Usuario6 sobre Cómo entrenar a tu dragón: Vuelta a casa,3,2024-08-25T10:33:51.635038
+8,8966,TRUE,Comentario de Usuario8 sobre Crepúsculo,5,2024-09-23T10:33:51.635038
+2,462183,TRUE,Comentario de Usuario2 sobre Salvaje Despertar,1,2024-06-21T10:33:51.635038
+8,1219555,TRUE,Comentario de Usuario8 sobre Wunderschöner,2,2025-02-09T10:33:51.635538
+15,198663,TRUE,Comentario de Usuario15 sobre El corredor del laberinto,3,2024-08-13T10:33:51.635538
+10,1442532,TRUE,Comentario de Usuario10 sobre Malagkit,4,2024-12-20T10:33:51.635538
+1,1297763,TRUE,Comentario de Usuario1 sobre Batman Ninja vs. Yakuza League,4,2025-03-08T10:33:51.636037
+16,676685,TRUE,Comentario de Usuario16 sobre Misión Panda en África,3,2024-09-07T10:33:51.636037
+15,870028,TRUE,Comentario de Usuario15 sobre El contable 2,1,2025-06-18T10:33:51.636037
+19,986056,TRUE,Comentario de Usuario19 sobre Thunderbolts*,5,2024-08-15T10:33:51.636537
+10,1241894,TRUE,Comentario de Usuario10 sobre Woodwalkers,5,2024-07-26T10:33:51.636537
+12,216015,TRUE,Comentario de Usuario12 sobre Cincuenta sombras de Grey,5,2024-10-01T10:33:51.636537
+9,1144430,TRUE,Comentario de Usuario9 sobre La bala perdida 3,3,2025-03-17T10:33:51.636537
+13,696506,TRUE,Comentario de Usuario13 sobre Mickey 17,5,2025-06-02T10:33:51.636537
+20,11544,TRUE,Comentario de Usuario20 sobre Lilo & Stitch,4,2024-09-02T10:33:51.636537
+20,411,TRUE,"Comentario de Usuario20 sobre Las crónicas de Narnia: El león, la bruja y el armario",3,2024-09-12T10:33:51.636537
+15,1241982,TRUE,Comentario de Usuario15 sobre Vaiana 2,5,2025-01-09T10:33:51.636537
+11,1022787,TRUE,Comentario de Usuario11 sobre Elio,3,2024-08-10T10:33:51.636537
+1,634649,TRUE,Comentario de Usuario1 sobre Spider-Man: No Way Home,4,2024-09-11T10:33:51.636537
+14,666154,TRUE,Comentario de Usuario14 sobre Kayara. La guerrera del imperio Inca,3,2024-10-11T10:33:51.637036
+2,611251,TRUE,Comentario de Usuario2 sobre 女高生トリオ 性感試験,4,2025-01-06T10:33:51.637036
+7,986056,TRUE,Comentario de Usuario7 sobre Thunderbolts*,5,2024-10-03T10:33:51.637036
+16,1011985,TRUE,Comentario de Usuario16 sobre Kung Fu Panda 4,5,2024-09-14T10:33:51.637036
+19,1450599,TRUE,Comentario de Usuario19 sobre K.O.,1,2024-07-27T10:33:51.637036
+20,896536,TRUE,Comentario de Usuario20 sobre La Leyenda de Ochi,4,2024-12-08T10:33:51.637036
+2,569094,TRUE,Comentario de Usuario2 sobre Spider-Man: Cruzando el Multiverso,5,2025-02-15T10:33:51.637036
+8,552524,TRUE,Comentario de Usuario8 sobre Lilo y Stitch,4,2024-12-06T10:33:51.637537
+5,634649,TRUE,Comentario de Usuario5 sobre Spider-Man: No Way Home,5,2024-07-26T10:33:51.637537
+1,574475,TRUE,Comentario de Usuario1 sobre Destino final: Lazos de sangre,5,2024-12-12T10:33:51.637537
+4,1022789,TRUE,Comentario de Usuario4 sobre Del revés 2 (Inside Out 2),4,2025-03-13T10:33:51.637537
+12,7451,TRUE,Comentario de Usuario12 sobre xXx,4,2024-07-06T10:33:51.637537
+5,1379587,TRUE,Comentario de Usuario5 sobre Utopia,4,2025-03-14T10:33:51.637537
+15,411,TRUE,"Comentario de Usuario15 sobre Las crónicas de Narnia: El león, la bruja y el armario",3,2025-04-27T10:33:51.637537
+4,24428,TRUE,Comentario de Usuario4 sobre Los Vengadores,5,2024-08-29T10:33:51.637537
+3,823219,TRUE,"Comentario de Usuario3 sobre Flow, un mundo que salvar",5,2025-01-08T10:33:51.637537
+6,1233413,TRUE,Comentario de Usuario6 sobre Los pecadores,1,2025-04-13T10:33:51.638037
+11,411,TRUE,"Comentario de Usuario11 sobre Las crónicas de Narnia: El león, la bruja y el armario",4,2025-05-23T10:33:51.638037
+10,402431,TRUE,Comentario de Usuario10 sobre Wicked,1,2024-12-21T10:33:51.638037
+15,55779,TRUE,Comentario de Usuario15 sobre Destino final 5,3,2025-05-26T10:33:51.638037
+16,1219555,TRUE,Comentario de Usuario16 sobre Wunderschöner,4,2024-07-27T10:33:51.638037
+13,541671,TRUE,Comentario de Usuario13 sobre Ballerina,4,2025-05-12T10:33:51.638037
+3,1152619,TRUE,Comentario de Usuario3 sobre Possessions,4,2024-12-08T10:33:51.638037
+11,507086,TRUE,Comentario de Usuario11 sobre Jurassic World: Dominion,4,2024-06-29T10:33:51.638037
+5,1395724,TRUE,Comentario de Usuario5 sobre 痴人の愛,2,2025-04-03T10:33:51.638037
+6,950387,TRUE,Comentario de Usuario6 sobre Una película de Minecraft,4,2024-12-16T10:33:51.638037
+4,676685,TRUE,Comentario de Usuario4 sobre Misión Panda en África,4,2024-07-20T10:33:51.638531
+20,447273,TRUE,Comentario de Usuario20 sobre Blancanieves,5,2024-09-18T10:33:51.638531
+16,638507,TRUE,Comentario de Usuario16 sobre Cómo entrenar a tu dragón: Vuelta a casa,1,2024-07-10T10:33:51.638531
+15,603692,TRUE,Comentario de Usuario15 sobre John Wick 4,3,2024-11-26T10:33:51.638531
+14,603692,TRUE,Comentario de Usuario14 sobre John Wick 4,4,2025-03-10T10:33:51.638531
+15,986056,TRUE,Comentario de Usuario15 sobre Thunderbolts*,4,2024-12-06T10:33:51.638531
+2,1453280,TRUE,Comentario de Usuario2 sobre A Kind of Madness,5,2025-02-01T10:33:51.638531
+18,1289601,TRUE,Comentario de Usuario18 sobre Lucha por tu vida,2,2024-12-03T10:33:51.638531
+6,1297028,TRUE,Comentario de Usuario6 sobre Rosario,3,2025-02-11T10:33:51.638531
+1,346698,TRUE,Comentario de Usuario1 sobre Barbie,4,2024-10-04T10:33:51.638531
+11,1477114,TRUE,Comentario de Usuario11 sobre Sorority,5,2025-02-04T10:33:51.638531
+16,1303162,TRUE,Comentario de Usuario16 sobre Cells at Work!,5,2025-03-01T10:33:51.638531
+8,1426306,TRUE,Comentario de Usuario8 sobre Titán: La tragedia de OceanGate,2,2024-09-28T10:33:51.639031
+15,668489,TRUE,Comentario de Usuario15 sobre Estragos,4,2025-02-16T10:33:51.639031
+4,11544,TRUE,Comentario de Usuario4 sobre Lilo & Stitch,4,2025-04-20T10:33:51.639031
+5,933260,TRUE,Comentario de Usuario5 sobre La sustancia,1,2024-07-01T10:33:51.639031
+14,1238307,TRUE,Comentario de Usuario14 sobre مسامير جونيور,4,2024-10-22T10:33:51.639031
+9,638507,TRUE,Comentario de Usuario9 sobre Cómo entrenar a tu dragón: Vuelta a casa,3,2024-09-30T10:33:51.639031
+9,1193647,TRUE,Comentario de Usuario9 sobre Mensaje en una botella,5,2024-10-15T10:33:51.639031
+11,808,TRUE,Comentario de Usuario11 sobre Shrek,5,2024-12-20T10:33:51.639031
+13,27205,TRUE,Comentario de Usuario13 sobre Origen,5,2024-10-13T10:33:51.639031
+18,1010581,TRUE,Comentario de Usuario18 sobre Culpa mía,5,2025-06-15T10:33:51.639031
+7,1297028,TRUE,Comentario de Usuario7 sobre Rosario,1,2024-10-06T10:33:51.639031
+10,803796,TRUE,Comentario de Usuario10 sobre Las guerreras k-pop,4,2025-04-26T10:33:51.639530
+10,1403735,TRUE,Comentario de Usuario10 sobre లైలా,3,2025-05-09T10:33:51.639530
+15,676685,TRUE,Comentario de Usuario15 sobre Misión Panda en África,5,2025-05-18T10:33:51.639530
+1,324544,TRUE,Comentario de Usuario1 sobre Tierras perdidas,4,2025-05-08T10:33:51.639530
+9,1125899,TRUE,Comentario de Usuario9 sobre Cleaner,4,2024-09-22T10:33:51.639530
+20,1094473,TRUE,"Comentario de Usuario20 sobre Bambi, una vida en el bosque",2,2025-04-01T10:33:51.639530
+13,578,TRUE,Comentario de Usuario13 sobre Tiburón,4,2024-07-17T10:33:51.639530
+7,1184918,TRUE,Comentario de Usuario7 sobre Robot salvaje,5,2025-05-14T10:33:51.639530
+19,589018,TRUE,Comentario de Usuario19 sobre Salvajes,2,2025-05-19T10:33:51.640037
+19,1356039,TRUE,Comentario de Usuario19 sobre Contraataque,4,2025-04-09T10:33:51.640037
+11,1294203,TRUE,Comentario de Usuario11 sobre Culpa mía: Londres,5,2024-12-06T10:33:51.640037
+12,857598,TRUE,Comentario de Usuario12 sobre పుష్పా 2 - The Rule,3,2025-06-11T10:33:51.640037
+5,1195506,TRUE,Comentario de Usuario5 sobre Novocaine,4,2024-09-05T10:33:51.640037
+1,1124620,TRUE,Comentario de Usuario1 sobre El Mono,5,2024-09-09T10:33:51.640037
+11,950396,TRUE,Comentario de Usuario11 sobre El abismo secreto,4,2025-03-10T10:33:51.640037
+9,8966,TRUE,Comentario de Usuario9 sobre Crepúsculo,4,2025-03-19T10:33:51.640037
+12,1045938,TRUE,Comentario de Usuario12 sobre G20,4,2024-07-09T10:33:51.640037
+16,939243,TRUE,Comentario de Usuario16 sobre Sonic 3: La película,5,2025-05-30T10:33:51.640537
+8,947891,TRUE,Comentario de Usuario8 sobre Mi yo adulta,1,2024-11-30T10:33:51.640537
+13,1147416,TRUE,"Comentario de Usuario13 sobre Miraculous World: Las Aventuras de Ladybug en Londres, la carrera contra el tiempo",2,2025-03-15T10:33:51.640537
+3,120,TRUE,Comentario de Usuario3 sobre El señor de los anillos: La comunidad del anillo,5,2025-01-13T10:33:51.640537
+20,1094473,TRUE,"Comentario de Usuario20 sobre Bambi, una vida en el bosque",5,2025-01-10T10:33:51.640537
+11,822119,TRUE,Comentario de Usuario11 sobre Capitán América: Brave New World,4,2025-03-23T10:33:51.640537
+12,1156593,TRUE,Comentario de Usuario12 sobre Culpa tuya,5,2024-12-07T10:33:51.640537
+8,302946,TRUE,Comentario de Usuario8 sobre El contable,4,2024-10-13T10:33:51.641037
+8,927342,TRUE,Comentario de Usuario8 sobre Amaran,4,2024-11-05T10:33:51.641037
+10,1252309,TRUE,Comentario de Usuario10 sobre Pídeme lo que quieras,5,2025-06-08T10:33:51.641037
+9,1471014,TRUE,Comentario de Usuario9 sobre Van Gogh by Vincent,4,2025-04-14T10:33:51.641037
+10,1001435,TRUE,Comentario de Usuario10 sobre La vida ante nosotros,4,2024-09-26T10:33:51.641037
+19,673,TRUE,Comentario de Usuario19 sobre Harry Potter y el prisionero de Azkaban,5,2024-09-03T10:33:51.641037
+5,552524,TRUE,Comentario de Usuario5 sobre Lilo y Stitch,1,2025-05-01T10:33:51.641037
+10,568770,TRUE,Comentario de Usuario10 sobre Poseída,4,2025-01-03T10:33:51.641037
+3,947891,TRUE,Comentario de Usuario3 sobre Mi yo adulta,3,2024-09-29T10:33:51.641037
+14,927342,TRUE,Comentario de Usuario14 sobre Amaran,5,2025-04-18T10:33:51.641037
+13,346698,TRUE,Comentario de Usuario13 sobre Barbie,4,2024-12-22T10:33:51.641037
+12,603692,TRUE,Comentario de Usuario12 sobre John Wick 4,5,2024-12-03T10:33:51.641536
+9,1061474,TRUE,Comentario de Usuario9 sobre Superman,5,2024-08-12T10:33:51.641536
+18,24428,TRUE,Comentario de Usuario18 sobre Los Vengadores,4,2024-07-16T10:33:51.641536
+12,302946,TRUE,Comentario de Usuario12 sobre El contable,4,2025-03-20T10:33:51.641536
+1,757725,TRUE,Comentario de Usuario1 sobre Shadow Force,5,2025-06-01T10:33:51.641536
+9,808,TRUE,Comentario de Usuario9 sobre Shrek,5,2024-10-21T10:33:51.641536
+11,823219,TRUE,"Comentario de Usuario11 sobre Flow, un mundo que salvar",1,2024-09-18T10:33:51.641536
+19,1232933,TRUE,Comentario de Usuario19 sobre Terror en el Río,4,2024-12-07T10:33:51.641536
+14,1241894,TRUE,Comentario de Usuario14 sobre Woodwalkers,2,2025-06-04T10:33:51.641536
+4,519182,TRUE,Comentario de Usuario4 sobre Gru 4. Mi villano favorito,4,2025-02-13T10:33:51.641536
+5,155,TRUE,Comentario de Usuario5 sobre El caballero oscuro,4,2024-10-26T10:33:51.642031
+6,673,TRUE,Comentario de Usuario6 sobre Harry Potter y el prisionero de Azkaban,5,2025-03-16T10:33:51.642031
+19,634649,TRUE,Comentario de Usuario19 sobre Spider-Man: No Way Home,5,2025-01-03T10:33:51.642031
+16,1160956,TRUE,Comentario de Usuario16 sobre Operación Panda: Misión Rescate,2,2025-02-16T10:33:51.642031
+2,1193647,TRUE,Comentario de Usuario2 sobre Mensaje en una botella,4,2024-09-28T10:33:51.642031
+2,1011477,TRUE,Comentario de Usuario2 sobre Karate Kid: Legends,5,2024-12-07T10:33:51.642031
+17,1405338,TRUE,Comentario de Usuario17 sobre Oni-Goroshi: Ciudad de los demonios,4,2025-01-24T10:33:51.642031
+14,1294203,TRUE,Comentario de Usuario14 sobre Culpa mía: Londres,2,2025-01-02T10:33:51.642031
+19,539972,TRUE,Comentario de Usuario19 sobre Kraven the Hunter,4,2025-03-31T10:33:51.642031
+7,1376434,TRUE,Comentario de Usuario7 sobre Predator: Asesino de asesinos,5,2025-01-21T10:33:51.642031
+12,857598,TRUE,Comentario de Usuario12 sobre పుష్పా 2 - The Rule,5,2024-09-05T10:33:51.642531
+1,1411773,TRUE,Comentario de Usuario1 sobre The Last Stand of Ellen Cole,2,2024-12-04T10:33:51.642531
+8,967160,TRUE,Comentario de Usuario8 sobre Claudia,4,2025-01-17T10:33:51.642531
+7,299536,TRUE,Comentario de Usuario7 sobre Vengadores: Infinity War,2,2024-08-26T10:33:51.642531
+20,411,TRUE,"Comentario de Usuario20 sobre Las crónicas de Narnia: El león, la bruja y el armario",4,2025-03-04T10:33:51.642531
+6,447273,TRUE,Comentario de Usuario6 sobre Blancanieves,4,2025-06-20T10:33:51.642531
+15,1449951,TRUE,Comentario de Usuario15 sobre Snow White,4,2025-04-24T10:33:51.642531
+7,1448938,TRUE,Comentario de Usuario7 sobre Abduct,4,2024-06-23T10:33:51.642531
+8,216015,TRUE,Comentario de Usuario8 sobre Cincuenta sombras de Grey,4,2025-06-08T10:33:51.642531
+10,1087192,TRUE,Comentario de Usuario10 sobre Cómo entrenar a tu dragón,5,2025-05-08T10:33:51.642531
+12,269149,TRUE,Comentario de Usuario12 sobre Zootrópolis,5,2024-08-11T10:33:51.642531
+20,603692,TRUE,Comentario de Usuario20 sobre John Wick 4,5,2025-02-07T10:33:51.642531
+15,676685,TRUE,Comentario de Usuario15 sobre Misión Panda en África,5,2024-10-08T10:33:51.642531
+6,896536,TRUE,Comentario de Usuario6 sobre La Leyenda de Ochi,2,2024-11-01T10:33:51.642531
+13,1405338,TRUE,Comentario de Usuario13 sobre Oni-Goroshi: Ciudad de los demonios,2,2025-03-09T10:33:51.643535
+3,823219,TRUE,"Comentario de Usuario3 sobre Flow, un mundo que salvar",3,2025-02-24T10:33:51.643535
+9,857598,TRUE,Comentario de Usuario9 sobre పుష్పా 2 - The Rule,1,2025-03-26T10:33:51.643535
+18,1233413,TRUE,Comentario de Usuario18 sobre Los pecadores,5,2025-03-03T10:33:51.643535
+18,574475,TRUE,Comentario de Usuario18 sobre Destino final: Lazos de sangre,5,2024-09-28T10:33:51.643535
+9,9286,TRUE,Comentario de Usuario9 sobre Destino final 3,5,2024-12-30T10:33:51.643535
+2,1022787,TRUE,Comentario de Usuario2 sobre Elio,1,2025-01-18T10:33:51.643535
+9,11544,TRUE,Comentario de Usuario9 sobre Lilo & Stitch,5,2024-10-13T10:33:51.643535
+18,120,TRUE,Comentario de Usuario18 sobre El señor de los anillos: La comunidad del anillo,3,2025-05-06T10:33:51.643535
+4,269149,TRUE,Comentario de Usuario4 sobre Zootrópolis,3,2024-06-29T10:33:51.644038
+9,857598,TRUE,Comentario de Usuario9 sobre పుష్పా 2 - The Rule,5,2025-02-10T10:33:51.644038
+15,1001414,TRUE,Comentario de Usuario15 sobre La calle del terror: La reina del baile,3,2025-05-30T10:33:51.644038
+11,1297763,TRUE,Comentario de Usuario11 sobre Batman Ninja vs. Yakuza League,4,2024-08-17T10:33:51.644038
+9,950387,TRUE,Comentario de Usuario9 sobre Una película de Minecraft,3,2025-02-11T10:33:51.644038
+16,1022787,TRUE,Comentario de Usuario16 sobre Elio,2,2024-09-11T10:33:51.644038
+12,1477114,TRUE,Comentario de Usuario12 sobre Sorority,5,2024-09-07T10:33:51.644038
+8,1377424,TRUE,Comentario de Usuario8 sobre വിക്ടോറിയ,5,2025-03-03T10:33:51.644038
+15,1449951,TRUE,Comentario de Usuario15 sobre Snow White,5,2024-10-19T10:33:51.644038
+5,912649,TRUE,Comentario de Usuario5 sobre Venom: El último baile,4,2024-09-19T10:33:51.644545
+8,1156593,TRUE,Comentario de Usuario8 sobre Culpa tuya,2,2024-07-25T10:33:51.644545
+14,575264,TRUE,Comentario de Usuario14 sobre Misión: Imposible - Sentencia mortal parte uno,5,2025-05-31T10:33:51.644545
+16,872585,TRUE,Comentario de Usuario16 sobre Oppenheimer,3,2024-10-02T10:33:51.644545
+16,569094,TRUE,Comentario de Usuario16 sobre Spider-Man: Cruzando el Multiverso,3,2024-12-11T10:33:51.644545
+19,808,TRUE,Comentario de Usuario19 sobre Shrek,4,2024-08-04T10:33:51.644545
+18,975615,TRUE,Comentario de Usuario18 sobre Words of War,4,2025-04-12T10:33:51.644545
+10,402431,TRUE,Comentario de Usuario10 sobre Wicked,5,2025-06-03T10:33:51.644545
+9,1181039,TRUE,Comentario de Usuario9 sobre La tumba del rey maldito,4,2024-12-25T10:33:51.645044
+16,438631,TRUE,Comentario de Usuario16 sobre Dune,5,2025-03-05T10:33:51.645044
+10,1193647,TRUE,Comentario de Usuario10 sobre Mensaje en una botella,5,2025-04-01T10:33:51.645044
+9,1442776,TRUE,Comentario de Usuario9 sobre Guerra de mutantes,5,2024-10-12T10:33:51.645044
+13,30484,TRUE,Comentario de Usuario13 sobre La reina guerrera,5,2025-02-08T10:33:51.645044
+18,933260,TRUE,Comentario de Usuario18 sobre La sustancia,3,2024-07-03T10:33:51.645044
+16,1160956,TRUE,Comentario de Usuario16 sobre Operación Panda: Misión Rescate,2,2024-11-08T10:33:51.645044
+13,1156593,TRUE,Comentario de Usuario13 sobre Culpa tuya,4,2024-08-17T10:33:51.645044
+7,912649,TRUE,Comentario de Usuario7 sobre Venom: El último baile,5,2025-01-10T10:33:51.645044
+8,1001435,TRUE,Comentario de Usuario8 sobre La vida ante nosotros,4,2024-10-13T10:33:51.645044
+14,666154,TRUE,Comentario de Usuario14 sobre Kayara. La guerrera del imperio Inca,3,2024-11-18T10:33:51.645544
+3,950387,TRUE,Comentario de Usuario3 sobre Una película de Minecraft,4,2024-10-28T10:33:51.645544
+2,927342,TRUE,Comentario de Usuario2 sobre Amaran,5,2025-04-09T10:33:51.645544
+18,1284120,TRUE,Comentario de Usuario18 sobre La hermanastra fea,5,2024-06-25T10:33:51.645544
+19,11544,TRUE,Comentario de Usuario19 sobre Lilo & Stitch,4,2024-09-23T10:33:51.645544
+2,1442776,TRUE,Comentario de Usuario2 sobre Guerra de mutantes,4,2024-08-09T10:33:51.645544
+17,947891,TRUE,Comentario de Usuario17 sobre Mi yo adulta,4,2025-04-10T10:33:51.645544
+12,1379587,TRUE,Comentario de Usuario12 sobre Utopia,4,2024-10-27T10:33:51.645544
+7,1087192,TRUE,Comentario de Usuario7 sobre Cómo entrenar a tu dragón,2,2024-09-04T10:33:51.645544
+10,1097549,TRUE,Comentario de Usuario10 sobre Babygirl,5,2025-03-22T10:33:51.646045
+14,573435,TRUE,Comentario de Usuario14 sobre Bad Boys: Ride or Die,1,2024-08-05T10:33:51.646045
+1,1405338,TRUE,Comentario de Usuario1 sobre Oni-Goroshi: Ciudad de los demonios,3,2025-03-20T10:33:51.646045
+11,1193647,TRUE,Comentario de Usuario11 sobre Mensaje en una botella,5,2024-12-03T10:33:51.646045
+7,170,TRUE,Comentario de Usuario7 sobre 28 días después,5,2024-07-16T10:33:51.646045
+3,603692,TRUE,Comentario de Usuario3 sobre John Wick 4,5,2024-08-15T10:33:51.646045
+13,1153714,TRUE,Comentario de Usuario13 sobre Death of a Unicorn,4,2025-06-06T10:33:51.646045
+16,1124620,TRUE,Comentario de Usuario16 sobre El Mono,4,2025-04-14T10:33:51.646045
+3,808,TRUE,Comentario de Usuario3 sobre Shrek,4,2025-03-20T10:33:51.646045
+12,573435,TRUE,Comentario de Usuario12 sobre Bad Boys: Ride or Die,4,2024-08-15T10:33:51.646544
+20,302946,TRUE,Comentario de Usuario20 sobre El contable,3,2024-09-02T10:33:51.646544
+9,977294,TRUE,Comentario de Usuario9 sobre Agente infiltrado,4,2024-08-27T10:33:51.646544
+5,1426680,TRUE,Comentario de Usuario5 sobre Nuestros tiempos,4,2025-03-25T10:33:51.646544
+13,1396122,TRUE,Comentario de Usuario13 sobre তান্ডব,5,2024-08-27T10:33:51.646544
+4,20760,TRUE,Comentario de Usuario4 sobre Lilo & Stitch 2: El efecto del defecto,5,2024-10-17T10:33:51.646544
+14,1450599,TRUE,Comentario de Usuario14 sobre K.O.,3,2025-06-17T10:33:51.646544
+2,947891,TRUE,Comentario de Usuario2 sobre Mi yo adulta,4,2024-06-26T10:33:51.646544
+8,166428,TRUE,Comentario de Usuario8 sobre Cómo entrenar a tu dragón 3,4,2025-06-05T10:33:51.647044
+9,462183,TRUE,Comentario de Usuario9 sobre Salvaje Despertar,4,2025-02-17T10:33:51.647044
+5,346698,TRUE,Comentario de Usuario5 sobre Barbie,3,2025-02-16T10:33:51.647044
+2,857598,TRUE,Comentario de Usuario2 sobre పుష్పా 2 - The Rule,5,2024-06-30T10:33:51.647044
+15,870028,TRUE,Comentario de Usuario15 sobre El contable 2,5,2024-08-26T10:33:51.647044
+14,1449951,TRUE,Comentario de Usuario14 sobre Snow White,4,2024-08-13T10:33:51.647044
+13,1147416,TRUE,"Comentario de Usuario13 sobre Miraculous World: Las Aventuras de Ladybug en Londres, la carrera contra el tiempo",3,2025-02-11T10:33:51.647044
+18,507086,TRUE,Comentario de Usuario18 sobre Jurassic World: Dominion,3,2025-06-09T10:33:51.647044
+16,10191,TRUE,Comentario de Usuario16 sobre Cómo entrenar a tu dragón,4,2025-01-22T10:33:51.647044
+17,1011985,TRUE,Comentario de Usuario17 sobre Kung Fu Panda 4,5,2024-12-12T10:33:51.647044
+13,1257960,TRUE,Comentario de Usuario13 sobre Sikandar,1,2024-07-09T10:33:51.647044
+5,1160956,TRUE,Comentario de Usuario5 sobre Operación Panda: Misión Rescate,4,2024-10-26T10:33:51.647044
+19,574475,TRUE,Comentario de Usuario19 sobre Destino final: Lazos de sangre,5,2025-01-18T10:33:51.647044
+17,638507,TRUE,Comentario de Usuario17 sobre Cómo entrenar a tu dragón: Vuelta a casa,2,2025-02-09T10:33:51.647539
+8,1252309,TRUE,Comentario de Usuario8 sobre Pídeme lo que quieras,2,2024-12-11T10:33:51.647539
+9,822119,TRUE,Comentario de Usuario9 sobre Capitán América: Brave New World,4,2024-07-10T10:33:51.647539
+1,1124620,TRUE,Comentario de Usuario1 sobre El Mono,5,2024-09-22T10:33:51.647539
+19,27205,TRUE,Comentario de Usuario19 sobre Origen,4,2025-04-03T10:33:51.647539
+11,1092506,TRUE,Comentario de Usuario11 sobre Indomables,4,2025-05-11T10:33:51.647539
+8,155,TRUE,Comentario de Usuario8 sobre El caballero oscuro,5,2024-09-29T10:33:51.647539
+8,1097549,TRUE,Comentario de Usuario8 sobre Babygirl,4,2025-01-30T10:33:51.648038
+12,1197306,TRUE,Comentario de Usuario12 sobre A Working Man,5,2025-05-01T10:33:51.648038
+14,912649,TRUE,Comentario de Usuario14 sobre Venom: El último baile,4,2025-03-03T10:33:51.648038
+20,1241894,TRUE,Comentario de Usuario20 sobre Woodwalkers,5,2025-05-04T10:33:51.648038
+7,519182,TRUE,Comentario de Usuario7 sobre Gru 4. Mi villano favorito,5,2024-10-15T10:33:51.648038
+6,1193647,TRUE,Comentario de Usuario6 sobre Mensaje en una botella,1,2024-10-29T10:33:51.648038
+1,668489,TRUE,Comentario de Usuario1 sobre Estragos,4,2024-09-02T10:33:51.648038
+5,1315988,TRUE,Comentario de Usuario5 sobre Mikaela,5,2024-11-15T10:33:51.648544
+2,927342,TRUE,Comentario de Usuario2 sobre Amaran,4,2025-03-20T10:33:51.648544
+7,198663,TRUE,Comentario de Usuario7 sobre El corredor del laberinto,2,2025-05-12T10:33:51.648544
+16,552524,TRUE,Comentario de Usuario16 sobre Lilo y Stitch,5,2025-04-15T10:33:51.648544
+16,1022789,TRUE,Comentario de Usuario16 sobre Del revés 2 (Inside Out 2),1,2025-04-18T10:33:51.648544
+15,1232546,TRUE,Comentario de Usuario15 sobre Until Dawn,4,2025-04-01T10:33:51.648544
+8,1252309,TRUE,Comentario de Usuario8 sobre Pídeme lo que quieras,5,2024-08-10T10:33:51.649044
+19,674,TRUE,Comentario de Usuario19 sobre Harry Potter y el cáliz de fuego,4,2024-11-03T10:33:51.649044
+14,507086,TRUE,Comentario de Usuario14 sobre Jurassic World: Dominion,5,2025-03-03T10:33:51.649044
+9,1377424,TRUE,Comentario de Usuario9 sobre വിക്ടോറിയ,5,2024-11-10T10:33:51.649044
+11,10191,TRUE,Comentario de Usuario11 sobre Cómo entrenar a tu dragón,5,2024-08-04T10:33:51.649044
+17,324544,TRUE,Comentario de Usuario17 sobre Tierras perdidas,5,2025-01-20T10:33:51.649044
+20,170,TRUE,Comentario de Usuario20 sobre 28 días después,5,2024-06-26T10:33:51.649044
+9,1232546,TRUE,Comentario de Usuario9 sobre Until Dawn,5,2025-04-30T10:33:51.649044
+8,1184918,TRUE,Comentario de Usuario8 sobre Robot salvaje,4,2024-10-28T10:33:51.649044
+12,155,TRUE,Comentario de Usuario12 sobre El caballero oscuro,4,2024-10-15T10:33:51.649539
+6,1180648,TRUE,Comentario de Usuario6 sobre Mudbrick,4,2024-06-30T10:33:51.649539
+19,1356039,TRUE,Comentario de Usuario19 sobre Contraataque,4,2025-03-03T10:33:51.649539
+20,573435,TRUE,Comentario de Usuario20 sobre Bad Boys: Ride or Die,4,2024-07-01T10:33:51.649539
+8,411,TRUE,"Comentario de Usuario8 sobre Las crónicas de Narnia: El león, la bruja y el armario",5,2025-01-08T10:33:51.649539
+6,1315988,TRUE,Comentario de Usuario6 sobre Mikaela,4,2025-04-23T10:33:51.649539
+8,947891,TRUE,Comentario de Usuario8 sobre Mi yo adulta,3,2024-08-21T10:33:51.650545
+7,351286,TRUE,Comentario de Usuario7 sobre Jurassic World: El reino caído,5,2025-04-18T10:33:51.650545
+5,1186940,TRUE,Comentario de Usuario5 sobre ¡Viva la vida!,5,2024-08-23T10:33:51.650545
+4,911430,TRUE,Comentario de Usuario4 sobre F1 la película,2,2025-05-04T10:33:51.650545
+4,808,TRUE,Comentario de Usuario4 sobre Shrek,4,2024-12-31T10:33:51.650545
+10,1087192,TRUE,Comentario de Usuario10 sobre Cómo entrenar a tu dragón,4,2024-10-01T10:33:51.650545
+5,541671,TRUE,Comentario de Usuario5 sobre Ballerina,5,2025-02-03T10:33:51.650545
+12,302946,TRUE,Comentario de Usuario12 sobre El contable,4,2025-06-20T10:33:51.650545
+8,170,TRUE,Comentario de Usuario8 sobre 28 días después,1,2024-10-02T10:33:51.650545
+20,278,TRUE,Comentario de Usuario20 sobre Cadena perpetua,4,2024-11-17T10:33:51.651045
+9,927342,TRUE,Comentario de Usuario9 sobre Amaran,4,2025-01-17T10:33:51.651045
+19,1098006,TRUE,Comentario de Usuario19 sobre La fuente de la eterna juventud,4,2025-02-05T10:33:51.651045
+18,986056,TRUE,Comentario de Usuario18 sobre Thunderbolts*,4,2024-06-24T10:33:51.651045
+20,1356236,TRUE,Comentario de Usuario20 sobre Saint Catherine,3,2024-09-21T10:33:51.651045
+3,1477114,TRUE,Comentario de Usuario3 sobre Sorority,5,2025-02-21T10:33:51.651045
+15,558449,TRUE,Comentario de Usuario15 sobre Gladiator II,5,2025-05-05T10:33:51.651045
+2,385687,TRUE,Comentario de Usuario2 sobre Fast & Furious X,4,2024-09-14T10:33:51.651045
+8,611251,TRUE,Comentario de Usuario8 sobre 女高生トリオ 性感試験,5,2024-10-17T10:33:51.651045
+5,634649,TRUE,Comentario de Usuario5 sobre Spider-Man: No Way Home,4,2024-07-10T10:33:51.651045
+4,1449951,TRUE,Comentario de Usuario4 sobre Snow White,2,2025-04-26T10:33:51.651544
+1,822119,TRUE,Comentario de Usuario1 sobre Capitán América: Brave New World,5,2025-03-23T10:33:51.651544
+10,1294203,TRUE,Comentario de Usuario10 sobre Culpa mía: Londres,4,2025-06-08T10:33:51.651544
+10,1442532,TRUE,Comentario de Usuario10 sobre Malagkit,3,2024-06-24T10:33:51.651544
+4,1022787,TRUE,Comentario de Usuario4 sobre Elio,5,2024-11-11T10:33:51.651544
+14,1022787,TRUE,Comentario de Usuario14 sobre Elio,5,2024-07-04T10:33:51.651544
+18,27205,TRUE,Comentario de Usuario18 sobre Origen,3,2024-12-03T10:33:51.652044
+20,1087192,TRUE,Comentario de Usuario20 sobre Cómo entrenar a tu dragón,5,2024-09-01T10:33:51.652044
+8,1449951,TRUE,Comentario de Usuario8 sobre Snow White,5,2024-07-06T10:33:51.652044
+15,519182,TRUE,Comentario de Usuario15 sobre Gru 4. Mi villano favorito,4,2025-01-04T10:33:51.652044
+18,1233413,TRUE,Comentario de Usuario18 sobre Los pecadores,4,2025-03-22T10:33:51.652044
+10,803796,TRUE,Comentario de Usuario10 sobre Las guerreras k-pop,3,2024-09-29T10:33:51.652044
+20,1403735,TRUE,Comentario de Usuario20 sobre లైలా,5,2024-07-27T10:33:51.652044
+8,1180648,TRUE,Comentario de Usuario8 sobre Mudbrick,5,2024-08-27T10:33:51.652044
+3,1356039,TRUE,Comentario de Usuario3 sobre Contraataque,5,2025-01-09T10:33:51.652044
+8,155,TRUE,Comentario de Usuario8 sobre El caballero oscuro,5,2024-12-26T10:33:51.652545
+1,1092073,TRUE,Comentario de Usuario1 sobre The Haunting at Saint Joseph's,5,2024-09-21T10:33:51.652545
+19,573435,TRUE,Comentario de Usuario19 sobre Bad Boys: Ride or Die,4,2024-07-09T10:33:51.652545
+15,198663,TRUE,Comentario de Usuario15 sobre El corredor del laberinto,5,2024-07-14T10:33:51.652545
+14,27205,TRUE,Comentario de Usuario14 sobre Origen,5,2025-06-03T10:33:51.652545
+12,9286,TRUE,Comentario de Usuario12 sobre Destino final 3,3,2025-06-03T10:33:51.652545
+7,552524,TRUE,Comentario de Usuario7 sobre Lilo y Stitch,4,2025-04-28T10:33:51.652545
+4,10191,TRUE,Comentario de Usuario4 sobre Cómo entrenar a tu dragón,4,2025-01-28T10:33:51.652545
+4,1241436,TRUE,Comentario de Usuario4 sobre Warfare: Tiempo de guerra,5,2025-01-18T10:33:51.652545
+6,1303162,TRUE,Comentario de Usuario6 sobre Cells at Work!,5,2025-04-30T10:33:51.652545
+17,411,TRUE,"Comentario de Usuario17 sobre Las crónicas de Narnia: El león, la bruja y el armario",4,2025-02-15T10:33:51.652545
+14,986056,TRUE,Comentario de Usuario14 sobre Thunderbolts*,4,2025-03-17T10:33:51.652545
+6,896536,TRUE,Comentario de Usuario6 sobre La Leyenda de Ochi,4,2024-12-31T10:33:51.652545
+10,1098006,TRUE,Comentario de Usuario10 sobre La fuente de la eterna juventud,5,2024-09-19T10:33:51.652545
+3,1297763,TRUE,Comentario de Usuario3 sobre Batman Ninja vs. Yakuza League,3,2025-02-22T10:33:51.652545
+2,155,TRUE,Comentario de Usuario2 sobre El caballero oscuro,4,2025-01-14T10:33:51.652545
+14,1184918,TRUE,Comentario de Usuario14 sobre Robot salvaje,5,2024-08-18T10:33:51.652545
+18,1359977,TRUE,Comentario de Usuario18 sobre Expediente Bryson: Conjuring the Cult,4,2024-11-25T10:33:51.653549
+17,1241894,TRUE,Comentario de Usuario17 sobre Woodwalkers,4,2025-01-16T10:33:51.653549
+4,968171,TRUE,Comentario de Usuario4 sobre 性教育ママ,4,2024-12-05T10:33:51.653549
+20,302946,TRUE,Comentario de Usuario20 sobre El contable,4,2024-11-05T10:33:51.653549
+5,1379587,TRUE,Comentario de Usuario5 sobre Utopia,5,2025-02-24T10:33:51.653549
+10,259872,TRUE,Comentario de Usuario10 sobre Des jours plus belles que la nuit,2,2025-06-08T10:33:51.653549
+17,1238307,TRUE,Comentario de Usuario17 sobre مسامير جونيور,4,2025-05-09T10:33:51.653549
+17,1266860,TRUE,Comentario de Usuario17 sobre Lo que quisimos ser,5,2024-12-30T10:33:51.653549
+9,1379587,TRUE,Comentario de Usuario9 sobre Utopia,3,2025-02-14T10:33:51.654055
+20,1087192,TRUE,Comentario de Usuario20 sobre Cómo entrenar a tu dragón,5,2024-08-10T10:33:51.654055
+9,1181039,TRUE,Comentario de Usuario9 sobre La tumba del rey maldito,4,2024-10-19T10:33:51.654055

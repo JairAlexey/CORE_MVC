@@ -55,6 +55,10 @@ export function AuthProvider({ children }) {
     setIsAuth(false);
   };
 
+  const updateUser = (userData) => {
+    setUser(userData);
+  };
+
   useEffect(() => {
     setLoading(true);
     if (Cookie.get("token")) {
@@ -91,6 +95,7 @@ export function AuthProvider({ children }) {
         signin,
         signout,
         loading,
+        updateUser,
       }}
     >
       {children}

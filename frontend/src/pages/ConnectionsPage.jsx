@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useConnections } from "../context/ConnectionsContext";
-import { Card, Button } from "../components/ui";
+import { Card, Button, LoadingSpinner, AIProbabilityBadge } from "../components/ui";
 
 function ConnectionsPage() {
     const { 
@@ -20,7 +20,7 @@ function ConnectionsPage() {
         generateRecommendations();
     };
 
-    if (loading) return <div className="text-center">Cargando...</div>;
+    if (loading) return <LoadingSpinner size="large" text="Cargando conexiones..." />;
 
     return (
         <div className="container mx-auto p-4">
@@ -64,25 +64,11 @@ function ConnectionsPage() {
                     </div>
                 </Card>
             ) : (
-                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {connections.map((connection, index) => (
-                        <Card key={`${connection.connected_user_id}-${index}`} className="p-4">
-                            <div className="flex items-center gap-4">
-                                <img 
-                                    src={connection.connected_user_gravatar} 
-                                    alt={connection.connected_user_name}
-                                    className="w-12 h-12 rounded-full"
-                                />
-                                <div>
-                                    <h3 className="font-bold">{connection.connected_user_name}</h3>
-                                    <p className="text-sm text-gray-300">
-                                        Compatibilidad: {connection.compatibility_score}%
-                                    </p>
-                                </div>
-                            </div>
-                        </Card>
-                    ))}
-                </div>
+                <Card className="p-4 text-center">
+                    <p className="text-gray-300">
+                        Tienes <span className="font-bold text-white">{connections.length}</span> {connections.length === 1 ? 'conexión' : 'conexiones'} con otros usuarios.
+                    </p>
+                </Card>
             )}
 
             <div className="mt-8">
@@ -91,28 +77,128 @@ function ConnectionsPage() {
                     <Card className="p-4 text-center">
                         <p className="text-gray-300">No hay recomendaciones disponibles en este momento.</p>
                         <div className="text-sm text-gray-400 mt-2">
-                            Las recomendaciones se generan cuando:
+                            <p className="mb-2">El sistema utiliza un modelo de IA para analizar las recomendaciones:</p>
                             <ul className="list-disc list-inside mt-2">
-                                <li>Tienes conexiones con otros usuarios</li>
-                                <li>Tus conexiones han visto películas que tú no</li>
-                                <li>Esas películas tienen buenas calificaciones</li>
+                                <li>Se analizan tus géneros favoritos</li>
+                                <li>Se consideran las calificaciones de tus conexiones</li>
+                                <li>Necesitas tener conexiones con otros usuarios</li>
+                                <li>Tus conexiones deben haber visto películas que tú no</li>
+                                <li>Esas películas deben tener buenas calificaciones</li>
                             </ul>
+                            <p className="mt-3 text-yellow-400">
+                                💡 <strong>Consejo:</strong> Asegúrate de tener configurados tus géneros favoritos en tu perfil.
+                            </p>
                         </div>
                     </Card>
                 ) : (
                     <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
                         {recommendations.map((recommendation) => (
-                            <Card key={`${recommendation.id}-${recommendation.recommender_name}`} className="p-4">
-                                <img 
-                                    src={
-                                        recommendation.poster_path && recommendation.poster_path.startsWith('http')
-                                            ? recommendation.poster_path // Si es un URL completo, úsalo directamente
-                                            : `https://image.tmdb.org/t/p/w500${recommendation.poster_path}` // Si no, usa el prefijo TMDB
-                                    }
-                                />
-                                <h3 className="font-bold">{recommendation.title}</h3>
-                                <p className="text-sm text-gray-300">Recomendado por: {recommendation.recommender_name}</p>
-                                <p className="text-yellow-400">{"⭐".repeat(recommendation.recommender_rating)}</p>
+                            <Card key={`${recommendation.movie_id}`} className="p-4 relative card-hover">
+                                {/* Badge de probabilidad de IA en la esquina superior derecha */}
+                                <div className="absolute top-2 right-2 z-10">
+                                    <AIProbabilityBadge prediction={recommendation.ml_prediction} />
+                                </div>
+                                
+                                {recommendation.poster_path ? (
+                                    <img 
+                                        src={recommendation.poster_path}
+                                        alt={recommendation.title}
+                                        className="w-full h-auto mb-4 rounded"
+                                        onError={(e) => {
+                                            e.target.style.display = 'none';
+                                            e.target.nextSibling.style.display = 'block';
+                                        }}
+                                    />
+                                ) : null}
+                                <div 
+                                    className="w-full h-64 bg-gray-700 mb-4 rounded flex items-center justify-center text-gray-400"
+                                    style={{ display: recommendation.poster_path ? 'none' : 'block' }}
+                                >
+                                    <span>Imagen no disponible</span>
+                                </div>
+                                
+                                <h3 className="font-bold text-lg mb-2">{recommendation.title}</h3>
+                                
+                                <p className="text-sm text-gray-300 mb-3">
+                                    Recomendada por {recommendation.recommender_count} {recommendation.recommender_count === 1 ? 'usuario' : 'usuarios'}
+                                </p>
+                                
+                                {/* Información adicional de la película */}
+                                <div className="text-xs text-gray-400 mb-3">
+                                    <p>Fecha: {new Date(recommendation.release_date).getFullYear()}</p>
+                                    {recommendation.genre_ids && recommendation.genre_ids.length > 0 && (
+                                        <p>Géneros: {recommendation.genre_ids.slice(0, 3).join(', ')}</p>
+                                    )}
+                                </div>
+                                
+                                {/* Descripción corta */}
+                                {recommendation.overview && (
+                                    <p className="text-sm text-gray-300 line-clamp-3 mb-3">
+                                        {recommendation.overview}
+                                    </p>
+                                )}
+                                
+                                {/* Detalles de la predicción de IA */}
+                                {recommendation.ml_prediction && (
+                                    <div className="mt-3 p-3 border border-gray-600 rounded-lg bg-gray-900/50 backdrop-blur-sm">
+                                        <p className="text-xs font-medium text-gray-300 mb-2">
+                                            Análisis de IA 🤖
+                                        </p>
+                                        <div className="space-y-2">
+                                            <div className="flex justify-between items-center">
+                                                <span className="text-xs text-gray-400">Probabilidad de que te guste:</span>
+                                                <span className="text-xs font-semibold text-white">
+                                                    {recommendation.ml_prediction.probability_like}%
+                                                </span>
+                                            </div>
+                                            <div className="w-full h-1.5 bg-gray-700 rounded-full overflow-hidden">
+                                                <div 
+                                                    className="h-full bg-gradient-to-r from-green-400 to-green-500 rounded-full transition-all duration-300"
+                                                    style={{ width: `${recommendation.ml_prediction.probability_like}%` }}
+                                                ></div>
+                                            </div>
+                                        </div>
+                                        <div className="mt-2 pt-2 border-t border-gray-700">
+                                            <p className="text-xs text-center text-gray-400">
+                                                {recommendation.ml_prediction.probability_like >= 80 
+                                                    ? "🎬 ¡Muy recomendada!" 
+                                                    : recommendation.ml_prediction.probability_like >= 60 
+                                                    ? "🤔 Podría gustarte" 
+                                                    : recommendation.ml_prediction.probability_like >= 40
+                                                    ? "😐 Neutral"
+                                                    : "❌ Probablemente no te guste"
+                                                }
+                                            </p>
+                                        </div>
+                                    </div>
+                                )}
+                                
+                                {/* Lista de recomendadores */}
+                                {recommendation.recommenders && recommendation.recommenders.length > 0 && (
+                                    <div className="mt-3">
+                                        <p className="text-xs text-gray-400 mb-2">Recomendada por:</p>
+                                        <div className="flex flex-wrap gap-1">
+                                            {recommendation.recommenders.slice(0, 3).map((recommender, index) => (
+                                                <div key={index} className="flex items-center gap-1 text-xs">
+                                                    <img 
+                                                        src={recommender.gravatar} 
+                                                        alt={recommender.name}
+                                                        className="w-4 h-4 rounded-full"
+                                                    />
+                                                    <span className="text-gray-300">{recommender.name}</span>
+                                                    {index < Math.min(2, recommendation.recommenders.length - 1) && (
+                                                        <span className="text-gray-500">•</span>
+                                                    )}
+                                                </div>
+                                            ))}
+                                            {recommendation.recommenders.length > 3 && (
+                                                <span className="text-xs text-gray-500">
+                                                    +{recommendation.recommenders.length - 3} más
+                                                </span>
+                                            )}
+                                        </div>
+                                    </div>
+                                )}
                             </Card>
                         ))}
                     </div>
