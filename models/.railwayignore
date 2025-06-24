@@ -1,0 +1,45 @@
+# Archivos de desarrollo y cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Archivos de datos grandes (mantener solo el modelo entrenado)
+data.csv
+generate_movie_ratings_dataset.py
+generate_fake_data.py
+generate_realistic_test_data.py
+import_fake_data.py
+
+# Archivos de test
+test_model.py
+*.test.py
+*.spec.py
+
+# Archivos de configuración local
+.env.local
+.env.development
+
+# Logs
+*.log
+
+# Archivos temporales
+.DS_Store
+Thumbs.db
+
+# Archivos de IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Archivos de git
+.git/
+.gitignore
+README.md 

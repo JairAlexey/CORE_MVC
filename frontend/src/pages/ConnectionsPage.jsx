@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useConnections } from "../context/ConnectionsContext";
 import { Card, Button, LoadingSpinner, AIProbabilityBadge } from "../components/ui";
+import { getGenreNames } from "../utils/genres";
 
 function ConnectionsPage() {
     const { 
@@ -127,7 +128,7 @@ function ConnectionsPage() {
                                 <div className="text-xs text-gray-400 mb-3">
                                     <p>Fecha: {new Date(recommendation.release_date).getFullYear()}</p>
                                     {recommendation.genre_ids && recommendation.genre_ids.length > 0 && (
-                                        <p>Géneros: {recommendation.genre_ids.slice(0, 3).join(', ')}</p>
+                                        <p>Géneros: {getGenreNames(recommendation.genre_ids.slice(0, 3))}</p>
                                     )}
                                 </div>
                                 

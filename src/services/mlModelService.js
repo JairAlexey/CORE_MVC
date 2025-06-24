@@ -1,6 +1,7 @@
 import axios from 'axios';
 
-const ML_MODEL_URL = 'http://127.0.0.1:8000';
+// URL del servicio ML separado (configurable por variable de entorno)
+const ML_MODEL_URL = process.env.ML_MODEL_URL || 'http://127.0.0.1:8000';
 
 export const predictMovieRating = async (predictionData) => {
     try {
@@ -39,6 +40,19 @@ export const predictMultipleMovies = async (moviesFeatures) => {
         console.error('❌ Error al comunicarse con el modelo de ML para predicción en lote:', error);
         console.error('❌ Detalles del error:', error.response?.data || error.message);
         throw new Error('Error al obtener predicciones del modelo');
+    }
+};
+
+// Función para verificar el estado del servicio ML
+export const checkMLServiceHealth = async () => {
+    try {
+        const response = await axios.get(`${ML_MODEL_URL}/health`, {
+            timeout: 5000
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Error verificando salud del servicio ML:', error);
+        return { status: 'ERROR', error: error.message };
     }
 };
 
