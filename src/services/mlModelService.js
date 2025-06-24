@@ -19,70 +19,21 @@ export const predictMovieRating = async (predictionData) => {
     }
 };
 
-// Nueva función para predicción en lote
-export const predictMultipleMovies = async (moviesFeatures) => {
-    console.log("🤖 predictMultipleMovies llamado con", moviesFeatures.length, "películas");
-    console.log("📊 Features de ejemplo:", moviesFeatures[0]);
-    console.log("🌐 URL del modelo ML:", ML_MODEL_URL);
-    
+export const predictMultipleMovies = async (moviesData) => {
     try {
-        const requestData = {
-            movies: moviesFeatures
-        };
-        
-        console.log("📤 Enviando datos al modelo ML:", JSON.stringify(requestData, null, 2));
-        
-        const response = await axios.post(`${ML_MODEL_URL}/predict-batch`, requestData, {
+        const response = await axios.post(`${ML_MODEL_URL}/predict-batch`, {
+            movies: moviesData
+        }, {
             headers: {
                 'Content-Type': 'application/json'
             },
-            timeout: 30000, // 30 segundos para lote
-            maxContentLength: Infinity,
-            maxBodyLength: Infinity
+            timeout: 30000 // 30 segundos de timeout para predicciones en lote
         });
-        
-        console.log("✅ Respuesta del modelo recibida:", response.status, response.statusText);
-        console.log("📊 Datos de respuesta:", JSON.stringify(response.data, null, 2));
         
         return response.data;
     } catch (error) {
-        console.error('❌ Error al comunicarse con el modelo de ML para predicción en lote:');
-        console.error('❌ URL:', ML_MODEL_URL);
-        console.error('❌ Error:', error.message);
-        console.error('❌ Status:', error.response?.status);
-        console.error('❌ Status Text:', error.response?.statusText);
-        console.error('❌ Response Data:', error.response?.data);
-        console.error('❌ Request Data:', error.config?.data);
-        
-        // Si es un error de timeout, dar información específica
-        if (error.code === 'ECONNABORTED') {
-            throw new Error('Timeout al comunicarse con el modelo ML (30s)');
-        }
-        
-        // Si es un error de red
-        if (error.code === 'ENOTFOUND' || error.code === 'ECONNREFUSED') {
-            throw new Error(`No se puede conectar al servicio ML en ${ML_MODEL_URL}`);
-        }
-        
-        // Si es un error HTTP
-        if (error.response) {
-            throw new Error(`Error HTTP ${error.response.status}: ${error.response.statusText}`);
-        }
-        
-        throw new Error(`Error al obtener predicciones del modelo: ${error.message}`);
-    }
-};
-
-// Función para verificar el estado del servicio ML
-export const checkMLServiceHealth = async () => {
-    try {
-        const response = await axios.get(`${ML_MODEL_URL}/health`, {
-            timeout: 5000
-        });
-        return response.data;
-    } catch (error) {
-        console.error('Error verificando salud del servicio ML:', error);
-        return { status: 'ERROR', error: error.message };
+        console.error('Error al comunicarse con el modelo de ML para predicciones en lote:', error);
+        throw new Error('Error al obtener predicciones en lote del modelo');
     }
 };
 
@@ -121,6 +72,7 @@ export const calculateMovieFeatures = async (pool, userId, movieId) => {
         );
         const nSharedGenres = sharedGenres.length;
         const isFavoriteGenre = nSharedGenres >= 1 ? 1 : 0;
+        const genreMatchRatio = movieGenres.length > 0 ? nSharedGenres / movieGenres.length : 0;
 
         // Calcular years_since_release
         const currentYear = new Date().getFullYear();
@@ -139,100 +91,76 @@ export const calculateMovieFeatures = async (pool, userId, movieId) => {
             }
         }
 
-        // Popularidad
-        const popularity = movie.popularity || 0;
+        // Obtener estadísticas del usuario
+        const userStatsQuery = await pool.query(`
+            SELECT 
+                AVG(rating) as avg_user_rating,
+                COUNT(*) as user_num_rated
+            FROM user_movies 
+            WHERE user_id = $1 AND rating IS NOT NULL
+        `, [userId]);
+
+        const userStats = userStatsQuery.rows[0];
+        const avgUserRating = parseFloat(userStats.avg_user_rating) || 3.5;
+        const userNumRated = parseInt(userStats.user_num_rated) || 0;
+
+        // Verificar si fue recomendada
+        const recommendationQuery = await pool.query(`
+            SELECT 1 FROM movie_recommendations 
+            WHERE receiver_id = $1 AND movie_id = $2
+        `, [userId, movieId]);
+
+        const wasRecommended = recommendationQuery.rowCount > 0 ? 1 : 0;
 
         return {
-            movie_id: movieId,
             n_shared_genres: nSharedGenres,
+            genre_match_ratio: parseFloat(genreMatchRatio.toFixed(3)),
             vote_average: movie.vote_average || 0,
             vote_count: movie.vote_count || 0,
-            is_favorite_genre: isFavoriteGenre,
+            popularity: movie.popularity || 0,
             years_since_release: yearsSinceRelease,
-            popularity: popularity
+            is_favorite_genre: isFavoriteGenre,
+            was_recommended: wasRecommended,
+            avg_user_rating: parseFloat(avgUserRating.toFixed(2)),
+            user_num_rated: userNumRated
         };
     } catch (error) {
-        console.error('Error calculando features de la película:', error);
+        console.error('Error calculando características de la película:', error);
         throw error;
     }
 };
 
-// Nueva función para calcular features de múltiples películas
 export const calculateMultipleMoviesFeatures = async (pool, userId, movieIds) => {
-    console.log("🔍 calculateMultipleMoviesFeatures llamado para usuario:", userId, "con", movieIds.length, "películas");
-    
     try {
-        // Obtener información del usuario una sola vez
-        const userQuery = await pool.query(`
-            SELECT favorite_genres 
-            FROM users 
-            WHERE id = $1
-        `, [userId]);
-
-        if (userQuery.rowCount === 0) {
-            throw new Error('Usuario no encontrado');
-        }
-
-        const userFavoriteGenres = userQuery.rows[0].favorite_genres || [];
-        console.log("👤 Géneros favoritos del usuario:", userFavoriteGenres);
-
-        // Obtener información de todas las películas de una vez
-        const placeholders = movieIds.map((_, index) => `$${index + 1}`).join(',');
-        const moviesQuery = await pool.query(`
-            SELECT id, title, genre_ids, vote_average, vote_count, release_date, popularity
-            FROM movies 
-            WHERE id IN (${placeholders})
-        `, movieIds);
-
-        console.log("📊 Películas encontradas en BD:", moviesQuery.rowCount);
-
-        const currentYear = new Date().getFullYear();
-        const moviesFeatures = [];
-
-        for (const movie of moviesQuery.rows) {
-            const movieGenres = movie.genre_ids || [];
-
-            // Calcular géneros compartidos
-            const sharedGenres = userFavoriteGenres.filter(genre => 
-                movieGenres.includes(genre)
-            );
-            const nSharedGenres = sharedGenres.length;
-            const isFavoriteGenre = nSharedGenres >= 1 ? 1 : 0;
-
-            // Calcular years_since_release
-            let yearsSinceRelease = 0;
-            if (movie.release_date) {
-                let releaseYear;
-                if (typeof movie.release_date === 'string') {
-                    releaseYear = parseInt(movie.release_date.substring(0, 4));
-                } else if (movie.release_date instanceof Date) {
-                    releaseYear = movie.release_date.getFullYear();
-                } else {
-                    releaseYear = parseInt(String(movie.release_date).substring(0, 4));
-                }
-                if (!isNaN(releaseYear)) {
-                    yearsSinceRelease = currentYear - releaseYear;
-                }
-            }
-
-            const features = {
-                movie_id: movie.id,
-                n_shared_genres: nSharedGenres,
-                vote_average: movie.vote_average || 0,
-                vote_count: movie.vote_count || 0,
-                is_favorite_genre: isFavoriteGenre,
-                years_since_release: yearsSinceRelease,
-                popularity: movie.popularity || 0
-            };
-            
-            moviesFeatures.push(features);
-            console.log(`🎬 Película ${movie.id} (${movie.title}):`, features);
-        }
-
-        console.log("✅ Features calculados para", moviesFeatures.length, "películas");
-        return moviesFeatures;
+        const featuresPromises = movieIds.map(movieId => 
+            calculateMovieFeatures(pool, userId, movieId)
+        );
+        
+        const features = await Promise.all(featuresPromises);
+        
+        return features.map((feature, index) => ({
+            movie_id: movieIds[index],
+            ...feature
+        }));
     } catch (error) {
-        console.error('❌ Error calculando features de múltiples películas:', error);
+        console.error('Error calculando características de múltiples películas:', error);
         throw error;
+    }
+};
+
+export const getModelStatus = async () => {
+    try {
+        const response = await axios.get(`${ML_MODEL_URL}/health`, {
+            timeout: 5000
+        });
+        
+        return response.data;
+    } catch (error) {
+        console.error('Error verificando estado del modelo ML:', error);
+        return {
+            status: 'ERROR',
+            model_loaded: false,
+            error: error.message
+        };
     }
 }; 
