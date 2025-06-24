@@ -132,18 +132,35 @@ export const getUserRecommendations = async (req, res) => {
             const moviesFeatures = await calculateMultipleMoviesFeatures(pool, userId, movieIds);
             console.log("✅ Features calculados para", moviesFeatures.length, "películas");
             
+            // Verificar que las features tengan los datos correctos
+            console.log("🔍 Verificando features calculados...");
+            for (let i = 0; i < Math.min(3, moviesFeatures.length); i++) {
+                console.log(`   Película ${i + 1}:`, {
+                    movie_id: moviesFeatures[i].movie_id,
+                    title: moviesFeatures[i].title || 'Sin título',
+                    n_shared_genres: moviesFeatures[i].n_shared_genres,
+                    vote_average: moviesFeatures[i].vote_average,
+                    popularity: moviesFeatures[i].popularity
+                });
+            }
+            
             console.log("🤖 Enviando features al modelo de IA...");
             // Obtener predicciones en lote del modelo
             const batchPredictions = await predictMultipleMovies(moviesFeatures);
             console.log("✅ Predicciones recibidas del modelo:", batchPredictions);
             
+            // Verificar que las predicciones tengan la estructura correcta
+            if (!batchPredictions || !batchPredictions.predictions) {
+                console.error('❌ Error: Las predicciones no tienen la estructura esperada');
+                console.error('📊 Estructura recibida:', JSON.stringify(batchPredictions, null, 2));
+                throw new Error('Estructura de predicciones inválida');
+            }
+            
             // Crear un mapa de predicciones por movie_id para acceso rápido
             const predictionsMap = {};
-            if (batchPredictions.predictions) {
-                batchPredictions.predictions.forEach(pred => {
-                    predictionsMap[pred.movie_id] = pred;
-                });
-            }
+            batchPredictions.predictions.forEach(pred => {
+                predictionsMap[pred.movie_id] = pred;
+            });
 
             // Combinar recomendaciones con predicciones
             const recommendationsWithPredictions = recommendations.rows.map(recommendation => {
@@ -155,14 +172,21 @@ export const getUserRecommendations = async (req, res) => {
             });
 
             console.log("🎉 Recomendaciones con predicciones listas:", recommendationsWithPredictions.length);
+            console.log("📊 Ejemplo de recomendación con predicción:", {
+                movie_id: recommendationsWithPredictions[0]?.movie_id,
+                title: recommendationsWithPredictions[0]?.title,
+                ml_prediction: recommendationsWithPredictions[0]?.ml_prediction
+            });
 
             return res.json({
                 recommendations: recommendationsWithPredictions,
-                total_predictions: batchPredictions.total_movies || 0
+                total_predictions: batchPredictions.total_movies || 0,
+                model_used: batchPredictions.model_used || 'unknown'
             });
 
         } catch (mlError) {
             console.error('❌ Error en predicción de ML:', mlError);
+            console.error('❌ Stack trace:', mlError.stack);
             
             // Si falla la predicción, devolver recomendaciones sin predicciones
             const recommendationsWithoutPredictions = recommendations.rows.map(recommendation => ({
@@ -172,7 +196,8 @@ export const getUserRecommendations = async (req, res) => {
 
             return res.json({
                 recommendations: recommendationsWithoutPredictions,
-                ml_error: "No se pudieron obtener predicciones del modelo de IA"
+                ml_error: `No se pudieron obtener predicciones del modelo de IA: ${mlError.message}`,
+                total_predictions: 0
             });
         }
 

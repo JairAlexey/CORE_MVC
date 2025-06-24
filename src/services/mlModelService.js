@@ -179,7 +179,7 @@ export const calculateMultipleMoviesFeatures = async (pool, userId, movieIds) =>
         // Obtener información de todas las películas de una vez
         const placeholders = movieIds.map((_, index) => `$${index + 1}`).join(',');
         const moviesQuery = await pool.query(`
-            SELECT id, genre_ids, vote_average, vote_count, release_date, popularity
+            SELECT id, title, genre_ids, vote_average, vote_count, release_date, popularity
             FROM movies 
             WHERE id IN (${placeholders})
         `, movieIds);
