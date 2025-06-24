@@ -3,6 +3,7 @@ import { useMovies } from "../context/MoviesContext";
 import { Card, Button } from "../components/ui";
 import { useNavigate } from "react-router-dom";
 import { FaSearch } from 'react-icons/fa';
+import { MdTaskAlt, MdRateReview } from 'react-icons/md';
 
 
 function UserMoviesPage() {
@@ -128,10 +129,10 @@ function UserMoviesPage() {
                             
                             {movie.watched ? (
                                 <div className="mt-2 space-y-2">
-                                    <p className="text-green-500">Vista ✓</p>
+                                    <p className="text-green-500 flex items-center gap-1"><MdTaskAlt className="inline-block" /> Marcada como vista</p>
                                     {movie.commented ? (
-                                        <p className="text-blue-500">
-                                            Ya has comentado y valorado esta película ✓
+                                        <p className="text-blue-500 flex items-center gap-1">
+                                            <MdRateReview className="inline-block" /> Ya has comentado y valorado esta película
                                         </p>
                                     ) : (
                                         <Button
@@ -148,7 +149,8 @@ function UserMoviesPage() {
                                         Desmarcar como vista
                                     </Button>
                                 </div>
-                            ) : (
+                            ) : null}
+                            {!movie.watched && (
                                 <div className="mt-2">
                                     <Button
                                         onClick={() => handleMarkAsWatched(movie.id)}

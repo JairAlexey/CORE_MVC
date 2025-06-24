@@ -108,9 +108,13 @@ class MovieService extends IMovieRepository {
 
     async getAllMovies({ userId, page, category, searchTerm }) {
         try {
-            // Obtener películas locales
+            // Obtener películas locales con estado de usuario
             let localMovies = await this.pool.query(
-                "SELECT * FROM movies WHERE is_modified = TRUE"
+                `SELECT m.*, um.watched, (um.comment IS NOT NULL) AS commented
+                 FROM movies m
+                 LEFT JOIN user_movies um ON m.id = um.movie_id AND um.user_id = $1
+                 WHERE m.is_modified = TRUE`,
+                [userId]
             );
 
             // Obtener películas de la API externa
@@ -140,6 +144,25 @@ class MovieService extends IMovieRepository {
                     allMovies.push(localMovie);
                 }
             });
+
+            // Mapeo para asegurar que watched y commented siempre sean booleanos
+            for (let i = 0; i < allMovies.length; i++) {
+                const movie = allMovies[i];
+                // Si ya tiene los campos (viene de local), sigue
+                if (typeof movie.watched !== 'undefined') continue;
+                // Si no, consulta la base de datos para ese usuario y movie.id
+                const res = await this.pool.query(
+                  'SELECT watched, (comment IS NOT NULL) AS commented FROM user_movies WHERE user_id = $1 AND movie_id = $2',
+                  [userId, movie.id]
+                );
+                if (res.rows.length > 0) {
+                  movie.watched = !!res.rows[0].watched;
+                  movie.commented = !!res.rows[0].commented;
+                } else {
+                  movie.watched = false;
+                  movie.commented = false;
+                }
+            }
 
             return {
                 movies: allMovies,
