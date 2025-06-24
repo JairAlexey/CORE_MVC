@@ -23,23 +23,53 @@ export const predictMovieRating = async (predictionData) => {
 export const predictMultipleMovies = async (moviesFeatures) => {
     console.log("🤖 predictMultipleMovies llamado con", moviesFeatures.length, "películas");
     console.log("📊 Features de ejemplo:", moviesFeatures[0]);
+    console.log("🌐 URL del modelo ML:", ML_MODEL_URL);
     
     try {
-        const response = await axios.post(`${ML_MODEL_URL}/predict-batch`, {
+        const requestData = {
             movies: moviesFeatures
-        }, {
+        };
+        
+        console.log("📤 Enviando datos al modelo ML:", JSON.stringify(requestData, null, 2));
+        
+        const response = await axios.post(`${ML_MODEL_URL}/predict-batch`, requestData, {
             headers: {
                 'Content-Type': 'application/json'
             },
-            timeout: 30000 // 30 segundos para lote
+            timeout: 30000, // 30 segundos para lote
+            maxContentLength: Infinity,
+            maxBodyLength: Infinity
         });
         
-        console.log("✅ Respuesta del modelo recibida:", response.data);
+        console.log("✅ Respuesta del modelo recibida:", response.status, response.statusText);
+        console.log("📊 Datos de respuesta:", JSON.stringify(response.data, null, 2));
+        
         return response.data;
     } catch (error) {
-        console.error('❌ Error al comunicarse con el modelo de ML para predicción en lote:', error);
-        console.error('❌ Detalles del error:', error.response?.data || error.message);
-        throw new Error('Error al obtener predicciones del modelo');
+        console.error('❌ Error al comunicarse con el modelo de ML para predicción en lote:');
+        console.error('❌ URL:', ML_MODEL_URL);
+        console.error('❌ Error:', error.message);
+        console.error('❌ Status:', error.response?.status);
+        console.error('❌ Status Text:', error.response?.statusText);
+        console.error('❌ Response Data:', error.response?.data);
+        console.error('❌ Request Data:', error.config?.data);
+        
+        // Si es un error de timeout, dar información específica
+        if (error.code === 'ECONNABORTED') {
+            throw new Error('Timeout al comunicarse con el modelo ML (30s)');
+        }
+        
+        // Si es un error de red
+        if (error.code === 'ENOTFOUND' || error.code === 'ECONNREFUSED') {
+            throw new Error(`No se puede conectar al servicio ML en ${ML_MODEL_URL}`);
+        }
+        
+        // Si es un error HTTP
+        if (error.response) {
+            throw new Error(`Error HTTP ${error.response.status}: ${error.response.statusText}`);
+        }
+        
+        throw new Error(`Error al obtener predicciones del modelo: ${error.message}`);
     }
 };
 
@@ -93,6 +123,7 @@ export const calculateMovieFeatures = async (pool, userId, movieId) => {
         const isFavoriteGenre = nSharedGenres >= 1 ? 1 : 0;
 
         // Calcular years_since_release
+        const currentYear = new Date().getFullYear();
         let yearsSinceRelease = 0;
         if (movie.release_date) {
             let releaseYear;

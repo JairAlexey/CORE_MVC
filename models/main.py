@@ -133,6 +133,8 @@ def predict_rating(request: PredictionRequest):
 @app.post("/predict-batch")
 def predict_batch_ratings(request: BatchPredictionRequest):
     try:
+        logger.info(f"📥 Recibida solicitud de predicción en lote con {len(request.movies)} películas")
+        
         features_list = []
         movie_ids = []
         
@@ -148,9 +150,13 @@ def predict_batch_ratings(request: BatchPredictionRequest):
             features_list.append(features)
             movie_ids.append(movie.movie_id)
         
+        logger.info(f"🔍 Procesando {len(features_list)} películas")
+        logger.info(f"📊 Features de ejemplo: {features_list[0] if features_list else 'No hay features'}")
+        
         results = []
         
         if model is not None:
+            logger.info("🤖 Usando modelo entrenado para predicciones")
             # Usar modelo entrenado
             input_df = pd.DataFrame(features_list)
             predictions = model.predict(input_df)
@@ -165,6 +171,7 @@ def predict_batch_ratings(request: BatchPredictionRequest):
                     "model_used": "trained"
                 })
         else:
+            logger.info("📝 Usando predicción simple como fallback")
             # Usar predicción simple
             for i, movie_id in enumerate(movie_ids):
                 prediction, prob = simple_prediction(features_list[i])
@@ -176,15 +183,30 @@ def predict_batch_ratings(request: BatchPredictionRequest):
                     "model_used": "simple"
                 })
         
-        return {
+        response_data = {
             "predictions": results,
             "total_movies": len(results),
             "model_used": "trained" if model is not None else "simple"
         }
         
+        logger.info(f"✅ Predicciones completadas: {len(results)} películas procesadas")
+        logger.info(f"📊 Respuesta de ejemplo: {results[0] if results else 'No hay resultados'}")
+        
+        return response_data
+        
     except Exception as e:
-        logger.error(f"Error en predicción en lote: {e}")
-        raise HTTPException(status_code=500, detail=f"Error en predicción en lote: {str(e)}")
+        logger.error(f"❌ Error en predicción en lote: {str(e)}")
+        logger.error(f"❌ Tipo de error: {type(e).__name__}")
+        logger.error(f"❌ Detalles completos: {e}")
+        
+        # Devolver error más informativo
+        error_detail = f"Error en predicción en lote: {str(e)}"
+        if "memory" in str(e).lower():
+            error_detail = "Error de memoria al procesar predicciones en lote"
+        elif "timeout" in str(e).lower():
+            error_detail = "Timeout al procesar predicciones en lote"
+        
+        raise HTTPException(status_code=500, detail=error_detail)
 
 if __name__ == "__main__":
     import uvicorn

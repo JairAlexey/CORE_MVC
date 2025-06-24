@@ -40,14 +40,32 @@ export const signin = async (req, res) => {
 export const signup = async (req, res, next) => {
   const { name, email, password } = req.body;
 
+  console.log("🔍 Signup intentado con:", { name, email, password: password ? "***" : "undefined" });
+
   try {
+    // Verificar si el email ya existe ANTES de intentar insertar
+    const existingUser = await pool.query("SELECT id, email FROM users WHERE email = $1", [email]);
+    
+    if (existingUser.rowCount > 0) {
+      console.log("❌ Email ya existe:", email);
+      return res.status(400).json({
+        message: "El correo ya esta registrado",
+      });
+    }
+
+    console.log("✅ Email no existe, procediendo con el registro...");
+
     const hashedPassword = await bcrypt.hash(password, 10);
     const gravatar = `https://www.gravatar.com/avatar/${md5(email)}`;
+
+    console.log("🔧 Datos preparados:", { name, email, gravatar, hashedPassword: "***" });
 
     const result = await pool.query(
       "INSERT INTO users(name, email, password, gravatar) VALUES($1, $2, $3, $4) Returning *",
       [name, email, hashedPassword, gravatar]
     );
+
+    console.log("✅ Usuario creado exitosamente:", result.rows[0].id);
 
     const token = await createAccessToken({ id: result.rows[0].id });
 
@@ -60,11 +78,18 @@ export const signup = async (req, res, next) => {
 
     return res.json(result.rows[0]);
   } catch (error) {
+    console.error("❌ Error en signup:", error);
+    console.error("❌ Error code:", error.code);
+    console.error("❌ Error message:", error.message);
+    
     if (error.code === "23505") {
       return res.status(400).json({
         message: "El correo ya esta registrado",
       });
     }
+
+    // Log del error completo para debugging
+    console.error("❌ Error completo:", JSON.stringify(error, null, 2));
 
     next(error);
   }
