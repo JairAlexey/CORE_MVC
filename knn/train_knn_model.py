@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """
 Script para entrenar el modelo KNN eficiente
-Usa datos directamente de la base de datos PostgreSQL
+Usa datos directamente de la base de datos PostgreSQL SOLO en desarrollo/local.
+En producción, FastAPI solo carga el modelo entrenado.
 """
 
 import sys
@@ -98,42 +99,38 @@ def check_dependencies():
     return True
 
 def train_knn_model():
-    """Entrenar modelo KNN con datos de la base de datos"""
+    """Entrenar modelo KNN con datos de la base de datos y guardar todo lo necesario"""
     logger.info("🤖 Entrenando modelo KNN con datos de la base de datos...")
-    
     try:
-        # Crear servicio KNN (automáticamente conecta a la BD)
+        # Crear servicio KNN (esto conecta a la BD y entrena el modelo)
         knn_service = EfficientKNNService()
-        
-        # Verificar que se cargaron los datos
         status = knn_service.get_model_status()
-        
         if not status['db_connected']:
             logger.error("❌ No se pudo conectar a la base de datos")
             return False
-        
         if not status['movies_loaded']:
             logger.error("❌ No se pudieron cargar películas desde la BD")
             return False
-        
         if not status['knn_loaded']:
             logger.error("❌ No se pudo entrenar el modelo KNN")
             return False
-        
         logger.info(f"✅ Modelo KNN entrenado exitosamente")
         logger.info(f"📊 Estadísticas del modelo:")
         logger.info(f"   - Películas cargadas: {status['total_movies']}")
         logger.info(f"   - Características: {len(status['feature_columns'])}")
         logger.info(f"   - Configuración: {status['config']}")
-        
-        # Guardar modelo
-        knn_service.save_knn_model("knn_model.pkl")
-        
-        # Cerrar conexiones
+        # Guardar modelo, scaler y DataFrame de películas en un solo archivo
+        model_data = {
+            'knn_model': knn_service.knn_model,
+            'scaler': knn_service.scaler,
+            'feature_columns': knn_service.feature_columns,
+            'movies_df': knn_service.movies_df
+        }
+        import joblib
+        joblib.dump(model_data, "knn_model.pkl")
+        logger.info("✅ Modelo KNN guardado como knn_model.pkl")
         knn_service.close()
-        
         return True
-        
     except Exception as e:
         logger.error(f"❌ Error entrenando modelo KNN: {e}")
         import traceback
@@ -180,36 +177,14 @@ def test_knn_model():
         return False
 
 def main():
-    """Función principal"""
-    logger.info("🚀 Entrenamiento del modelo KNN con datos de BD")
+    logger.info("🚀 Entrenamiento del modelo KNN SOLO en desarrollo/local")
     logger.info("=" * 60)
-    
-    # 1. Verificar dependencias
-    if not check_dependencies():
-        return False
-    
-    # 2. Verificar conexión a BD
     if not check_database_connection():
         return False
-    
-    # 3. Entrenar modelo
     if not train_knn_model():
         return False
-    
-    # 4. Probar modelo
-    if not test_knn_model():
-        logger.warning("⚠️ Las pruebas fallaron, pero el modelo se entrenó")
-    
-    logger.info("\n🎉 Entrenamiento completado exitosamente!")
-    logger.info("📁 Archivos generados:")
-    logger.info("   - knn_model.pkl (modelo entrenado)")
-    logger.info("\n📋 Próximos pasos:")
-    logger.info("   1. Iniciar API: python knn_api.py")
-    logger.info("   2. Probar integración: python test_knn_integration.py")
-    logger.info("   3. Integrar con tu sistema usando knnApiService.js")
-    
+    logger.info("🎉 Entrenamiento y guardado del modelo KNN completado")
     return True
 
 if __name__ == "__main__":
-    success = main()
-    sys.exit(0 if success else 1) 
+    main() 

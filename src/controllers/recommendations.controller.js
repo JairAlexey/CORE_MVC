@@ -254,8 +254,19 @@ export const getKNNRecommendations = async (req, res) => {
             });
         }
 
-        // Obtener recomendaciones del modelo KNN
-        const knnRecommendations = await knnService.getKNNRecommendations(userId, limit);
+        // Obtener películas vistas por el usuario para personalizar recomendaciones
+        const watchedQuery = await pool.query(`
+            SELECT movie_id 
+            FROM user_movies 
+            WHERE user_id = $1 AND watched = true
+            ORDER BY rating DESC, created_at DESC
+        `, [userId]);
+        
+        const userWatchedMovies = watchedQuery.rows.map(row => row.movie_id);
+        console.log(`📊 [KNN] Usuario ${userId} tiene ${userWatchedMovies.length} películas vistas`);
+
+        // Obtener recomendaciones del modelo KNN con las películas vistas
+        const knnRecommendations = await knnService.getKNNRecommendations(userId, limit, userWatchedMovies);
 
         if (!knnRecommendations.recommendations || knnRecommendations.recommendations.length === 0) {
             return res.json({
@@ -311,7 +322,8 @@ export const getKNNRecommendations = async (req, res) => {
                 total_movies: knnRecommendations.total_movies || 0,
                 algorithm: "K-Nearest Neighbors",
                 neighbors_used: knnRecommendations.neighbors_used || 3,
-                features_used: knnRecommendations.features_used || 7
+                features_used: knnRecommendations.features_used || 7,
+                user_watched_count: userWatchedMovies.length
             }
         });
 

@@ -40,24 +40,27 @@ class EfficientKNNService:
         self.FINAL_TOP_K = 10  # Top-K final para el usuario
         self.KNN_NEIGHBORS = 3  # Número de vecinos para KNN
         
-        # Cargar modelo si está disponible (prioridad)
-        if model_path and os.path.exists(model_path):
-            logger.info(f"📁 Cargando modelo KNN desde: {model_path}")
-            self.load_knn_model(model_path)
-        else:
-            # Intentar cargar modelo por defecto
-            default_model_path = "knn_model.pkl"
-            if os.path.exists(default_model_path):
-                logger.info(f"📁 Cargando modelo KNN por defecto: {default_model_path}")
-                self.load_knn_model(default_model_path)
+        # Solo conectar a la base de datos si estamos en desarrollo
+        if os.getenv('ENVIRONMENT') == 'development':
+            if model_path and os.path.exists(model_path):
+                logger.info(f"📁 Cargando modelo KNN desde: {model_path}")
+                self.load_knn_model(model_path)
             else:
-                logger.warning("⚠️ Archivos de modelo no encontrados, creando servicio vacío")
-                # No conectar a BD automáticamente en producción
-                # Solo conectar si es necesario para desarrollo
-                if os.getenv('ENVIRONMENT') == 'development':
-                    self.connect_database()
-                    self.load_movies_from_database()
-                    self.train_knn_model()
+                self.connect_database()
+                self.load_movies_from_database()
+                self.train_knn_model()
+        else:
+            # En producción, solo cargar el modelo entrenado
+            if model_path and os.path.exists(model_path):
+                logger.info(f"📁 Cargando modelo KNN desde: {model_path}")
+                self.load_knn_model(model_path)
+            else:
+                default_model_path = "knn_model.pkl"
+                if os.path.exists(default_model_path):
+                    logger.info(f"📁 Cargando modelo KNN por defecto: {default_model_path}")
+                    self.load_knn_model(default_model_path)
+                else:
+                    logger.warning("⚠️ Archivos de modelo no encontrados, creando servicio vacío")
     
     def connect_database(self):
         """Conectar a la base de datos PostgreSQL"""
@@ -343,62 +346,74 @@ class EfficientKNNService:
             logger.error(f"❌ Error encontrando películas similares: {e}")
             return []
 
-    def get_user_recommendations(self, user_id: int, limit: int = 10) -> List[Dict]:
-        """Obtener recomendaciones KNN para un usuario específico"""
+    def get_user_recommendations(self, user_id: int = None, limit: int = 10, user_watched_movies: list = None) -> list:
+        """Obtener recomendaciones KNN para un usuario específico o una lista de películas vistas"""
         if self.knn_model is None or self.movies_df is None:
             logger.warning("⚠️ Modelo KNN no disponible")
             return []
-        
         try:
-            # En producción, usar solo datos pre-entrenados
-            # No intentar obtener datos del usuario desde BD
-            if not self.db_connection:
-                logger.info(f"📊 Generando recomendaciones KNN para usuario {user_id} usando datos pre-entrenados")
-                return self._get_popular_movies_recommendations(limit)
-            
-            # Solo en desarrollo: obtener películas que el usuario ya ha visto
-            user_watched_movies = self._get_user_watched_movies(user_id)
-            
-            if len(user_watched_movies) == 0:
-                logger.info(f"📝 Usuario {user_id} no tiene películas vistas, recomendando películas populares")
-                return self._get_popular_movies_recommendations(limit)
-            
-            # Obtener características del usuario basadas en sus películas vistas
-            user_features = self._calculate_user_features(user_id, user_watched_movies)
-            
-            # Encontrar películas similares a las que le gustan al usuario
-            recommendations = []
-            for movie_id in user_watched_movies[:5]:  # Usar solo las primeras 5 películas
-                similar_movies = self.find_similar_movies(movie_id, top_k=limit//2)
-                recommendations.extend(similar_movies)
-            
-            # Eliminar duplicados y películas ya vistas
-            seen_movie_ids = set(user_watched_movies)
-            unique_recommendations = []
-            seen_recommended = set()
-            
-            for rec in recommendations:
-                if rec['movie_id'] not in seen_movie_ids and rec['movie_id'] not in seen_recommended:
-                    unique_recommendations.append(rec)
-                    seen_recommended.add(rec['movie_id'])
-                    if len(unique_recommendations) >= limit:
-                        break
-            
-            # Si no hay suficientes recomendaciones, agregar películas populares
-            if len(unique_recommendations) < limit:
-                popular_movies = self._get_popular_movies_recommendations(limit - len(unique_recommendations))
-                for movie in popular_movies:
-                    if movie['movie_id'] not in seen_movie_ids and movie['movie_id'] not in seen_recommended:
-                        unique_recommendations.append(movie)
-                        seen_recommended.add(movie['movie_id'])
+            # Si se recibe una lista de películas vistas, usarla
+            if user_watched_movies and len(user_watched_movies) > 0:
+                recommendations = []
+                for movie_id in user_watched_movies[:5]:  # Usar solo las primeras 5 películas
+                    similar_movies = self.find_similar_movies(movie_id, top_k=limit//2)
+                    recommendations.extend(similar_movies)
+                # Eliminar duplicados y películas ya vistas
+                seen_movie_ids = set(user_watched_movies)
+                unique_recommendations = []
+                seen_recommended = set()
+                for rec in recommendations:
+                    if rec['movie_id'] not in seen_movie_ids and rec['movie_id'] not in seen_recommended:
+                        unique_recommendations.append(rec)
+                        seen_recommended.add(rec['movie_id'])
                         if len(unique_recommendations) >= limit:
                             break
-            
-            logger.info(f"✅ {len(unique_recommendations)} recomendaciones KNN generadas para usuario {user_id}")
-            return unique_recommendations[:limit]
-            
+                # Si no hay suficientes recomendaciones, agregar populares
+                if len(unique_recommendations) < limit:
+                    popular_movies = self._get_popular_movies_recommendations(limit - len(unique_recommendations))
+                    for movie in popular_movies:
+                        if movie['movie_id'] not in seen_movie_ids and movie['movie_id'] not in seen_recommended:
+                            unique_recommendations.append(movie)
+                            seen_recommended.add(movie['movie_id'])
+                            if len(unique_recommendations) >= limit:
+                                break
+                logger.info(f"✅ {len(unique_recommendations)} recomendaciones KNN generadas para películas vistas proporcionadas")
+                return unique_recommendations[:limit]
+            # Si no se recibe lista, intentar flujo tradicional (solo en desarrollo)
+            if self.db_connection and user_id is not None:
+                user_watched_movies = self._get_user_watched_movies(user_id)
+                if len(user_watched_movies) == 0:
+                    logger.info(f"📝 Usuario {user_id} no tiene películas vistas, recomendando películas populares")
+                    return self._get_popular_movies_recommendations(limit)
+                # Igual que arriba
+                recommendations = []
+                for movie_id in user_watched_movies[:5]:
+                    similar_movies = self.find_similar_movies(movie_id, top_k=limit//2)
+                    recommendations.extend(similar_movies)
+                seen_movie_ids = set(user_watched_movies)
+                unique_recommendations = []
+                seen_recommended = set()
+                for rec in recommendations:
+                    if rec['movie_id'] not in seen_movie_ids and rec['movie_id'] not in seen_recommended:
+                        unique_recommendations.append(rec)
+                        seen_recommended.add(rec['movie_id'])
+                        if len(unique_recommendations) >= limit:
+                            break
+                if len(unique_recommendations) < limit:
+                    popular_movies = self._get_popular_movies_recommendations(limit - len(unique_recommendations))
+                    for movie in popular_movies:
+                        if movie['movie_id'] not in seen_movie_ids and movie['movie_id'] not in seen_recommended:
+                            unique_recommendations.append(movie)
+                            seen_recommended.add(movie['movie_id'])
+                            if len(unique_recommendations) >= limit:
+                                break
+                logger.info(f"✅ {len(unique_recommendations)} recomendaciones KNN generadas para usuario {user_id}")
+                return unique_recommendations[:limit]
+            # Fallback: populares
+            logger.info("📊 Recomendando películas populares (sin datos de usuario)")
+            return self._get_popular_movies_recommendations(limit)
         except Exception as e:
-            logger.error(f"❌ Error obteniendo recomendaciones para usuario {user_id}: {e}")
+            logger.error(f"❌ Error obteniendo recomendaciones: {e}")
             return self._get_popular_movies_recommendations(limit)
 
     def _get_user_watched_movies(self, user_id: int) -> List[int]:

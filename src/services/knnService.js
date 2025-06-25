@@ -9,28 +9,27 @@ class KNNService {
         });
     }
 
-    async getKNNRecommendations(userId, limit = 10) {
+    async getKNNRecommendations(userId, limit = 10, userWatchedMovies = null) {
         try {
             console.log(`🤖 [KNN] Solicitando recomendaciones para usuario ${userId}`);
-            
-            const response = await this.api.post('/recommend', {
+            const body = {
                 user_id: userId,
                 limit: limit
-            });
-
+            };
+            if (userWatchedMovies && Array.isArray(userWatchedMovies) && userWatchedMovies.length > 0) {
+                body.user_watched_movies = userWatchedMovies;
+            }
+            const response = await this.api.post('/recommendations/knn', body);
             console.log(`✅ [KNN] Recomendaciones recibidas:`, response.data);
             return response.data;
         } catch (error) {
             console.error(`❌ [KNN] Error obteniendo recomendaciones:`, error.message);
-            
             if (error.code === 'ECONNREFUSED') {
                 throw new Error('Servicio KNN no disponible. Asegúrate de que esté ejecutándose.');
             }
-            
             if (error.response) {
                 throw new Error(`Error del servicio KNN: ${error.response.data.detail || error.response.statusText}`);
             }
-            
             throw new Error(`Error de conexión con KNN: ${error.message}`);
         }
     }

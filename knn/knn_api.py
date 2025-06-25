@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException, Depends
+from fastapi import FastAPI, HTTPException, Depends, Body
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import List, Dict, Optional
@@ -88,9 +88,10 @@ class MovieSimilarity(BaseModel):
     popularity: float
 
 # Nuevos modelos para los endpoints que necesita el backend
-class KNNRecommendationRequest(BaseModel):
-    user_id: int
+class UserKNNRecommendationsRequest(BaseModel):
+    user_id: Optional[int] = None
     limit: int = 10
+    user_watched_movies: Optional[list] = None
 
 class SimilarMoviesKNNRequest(BaseModel):
     movie_id: int
@@ -130,29 +131,23 @@ def health_check():
         }
     }
 
-@app.post("/recommend")
-def get_knn_recommendations(request: KNNRecommendationRequest):
-    """Obtener recomendaciones KNN para un usuario específico"""
+@app.post("/recommendations/knn")
+def get_user_knn_recommendations(request: UserKNNRecommendationsRequest = Body(...)):
+    """Obtener recomendaciones KNN para un usuario o lista de películas vistas"""
     try:
         service = get_knn_service()
-        
-        if not service.knn_model:
-            raise HTTPException(status_code=503, detail="Modelo KNN no disponible")
-        
-        # Obtener recomendaciones KNN para el usuario
-        recommendations = service.get_user_recommendations(
+        recs = service.get_user_recommendations(
             user_id=request.user_id,
-            limit=request.limit
+            limit=request.limit,
+            user_watched_movies=request.user_watched_movies
         )
-        
         return {
             "user_id": request.user_id,
-            "recommendations": recommendations,
+            "recommendations": recs,
             "total_movies": len(service.movies_df) if service.movies_df is not None else 0,
             "neighbors_used": service.KNN_NEIGHBORS,
-            "features_used": len(service.feature_columns) if hasattr(service, 'feature_columns') else 7
+            "features_used": len(service.feature_columns)
         }
-        
     except Exception as e:
         logger.error(f"Error obteniendo recomendaciones KNN: {e}")
         raise HTTPException(status_code=500, detail=str(e))
