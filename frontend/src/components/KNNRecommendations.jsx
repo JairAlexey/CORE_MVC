@@ -63,20 +63,6 @@ const KNNRecommendations = ({ limit = 10 }) => {
                 </Card>
             )}
 
-            {/* Información del servicio KNN */}
-            {knnStatus && knnStatus.model_active && knnStatus.data && knnStatus.data.model_info && (
-                <Card className="p-4 mb-4 bg-blue-500/10 border border-blue-500">
-                    <div className="text-sm text-blue-300">
-                        <p><strong>Modelo:</strong> {knnStatus.data.model_info.algorithm || 'K-Nearest Neighbors'}</p>
-                        <p><strong>Películas en el modelo:</strong> {knnStatus.data.model_info.total_movies || 'N/A'}</p>
-                        <p><strong>Vecinos utilizados:</strong> {knnStatus.data.model_info.neighbors || 'N/A'}</p>
-                        <p><strong>Características utilizadas:</strong> {knnStatus.data.model_info.features_used || 'N/A'}</p>
-                        <p><strong>Estado del modelo:</strong> {knnStatus.data.model_info.model_loaded ? '✅ Cargado' : '❌ No cargado'}</p>
-                        <p><strong>Conexión BD:</strong> {knnStatus.data.model_info.database_connected ? '✅ Conectada' : '❌ Desconectada'}</p>
-                    </div>
-                </Card>
-            )}
-
             {/* Lista de recomendaciones */}
             {knnRecommendations.length === 0 ? (
                 <Card className="p-4 text-center">
