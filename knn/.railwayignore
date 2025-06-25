@@ -1,0 +1,61 @@
+# Archivos de desarrollo y testing
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+pip-log.txt
+pip-delete-this-directory.txt
+.tox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.log
+.git/
+.mypy_cache/
+.pytest_cache/
+.hypothesis/
+
+# Archivos de datos grandes (ya están en la BD)
+*.csv
+*.json
+*.xlsx
+*.xls
+
+# Archivos de configuración local
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+
+# Archivos de IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Archivos de sistema
+.DS_Store
+Thumbs.db
+
+# Archivos de documentación
+README.md
+*.md
+!requirements.txt
+
+# Archivos de testing
+test_*.py
+*_test.py
+quick_start.py
+
+# Archivos de desarrollo
+integrate_with_existing_system.js
+knnApiService.js 

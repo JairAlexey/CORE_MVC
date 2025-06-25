@@ -16,17 +16,17 @@ from knn_service import EfficientKNNService
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# Inicializar FastAPI
+# Crear aplicación FastAPI
 app = FastAPI(
     title="MovieMatch KNN API",
-    description="API de recomendaciones KNN eficiente para MovieMatch",
+    description="API para recomendaciones KNN de películas",
     version="1.0.0"
 )
 
-# Configurar CORS
+# Configurar CORS para Railway
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["*"],  # En producción, especificar dominios específicos
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -369,4 +369,9 @@ def get_example():
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8001) 
+    
+    # Obtener puerto de Railway o usar 8001 por defecto
+    port = int(os.getenv("PORT", 8001))
+    
+    logger.info(f"🚀 Iniciando API KNN en puerto {port}")
+    uvicorn.run(app, host="0.0.0.0", port=port) 
