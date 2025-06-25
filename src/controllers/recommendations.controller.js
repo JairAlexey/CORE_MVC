@@ -424,6 +424,13 @@ export const getSimilarMoviesKNN = async (req, res) => {
 
 export const getKNNStatus = async (req, res) => {
     try {
+        // Agregar headers para evitar caché
+        res.set({
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            'Pragma': 'no-cache',
+            'Expires': '0'
+        });
+        
         const status = await knnService.getKNNStatus();
         
         // Agregar información adicional para el frontend

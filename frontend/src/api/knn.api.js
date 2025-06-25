@@ -9,5 +9,6 @@ export const getSimilarMoviesKNNRequest = async (movieId, limit = 5) => {
 };
 
 export const getKNNStatusRequest = async () => {
-    return await axios.get("/knn/status");
+    const timestamp = new Date().getTime();
+    return await axios.get(`/knn/status?_t=${timestamp}`);
 }; 
