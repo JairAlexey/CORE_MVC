@@ -1,5 +1,6 @@
 import { pool } from "../db.js";
 import { predictMovieRating, calculateMovieFeatures, predictMultipleMovies, calculateMultipleMoviesFeatures } from "../services/mlModelService.js";
+import { knnService } from "../services/knnService.js";
 
 export const generateRecommendations = async (req, res) => {
     try {
@@ -233,6 +234,191 @@ export const getMoviePrediction = async (req, res) => {
         console.error('Error obteniendo predicción:', error);
         return res.status(500).json({ 
             errors: ["Error al obtener predicción del modelo"] 
+        });
+    }
+};
+
+export const getKNNRecommendations = async (req, res) => {
+    try {
+        const userId = req.userId;
+        const limit = parseInt(req.query.limit) || 10;
+
+        console.log(`🎯 [KNN] Solicitando recomendaciones KNN para usuario ${userId}`);
+
+        // Verificar estado del servicio KNN
+        const knnStatus = await knnService.getKNNStatus();
+        if (knnStatus.status === 'offline') {
+            return res.status(503).json({
+                error: "Servicio KNN no disponible",
+                details: knnStatus.error
+            });
+        }
+
+        // Obtener recomendaciones del modelo KNN
+        const knnRecommendations = await knnService.getKNNRecommendations(userId, limit);
+
+        if (!knnRecommendations.recommendations || knnRecommendations.recommendations.length === 0) {
+            return res.json({
+                recommendations: [],
+                message: "No se encontraron recomendaciones KNN para este usuario",
+                knn_info: {
+                    model_status: "active",
+                    total_movies: knnRecommendations.total_movies || 0,
+                    algorithm: "K-Nearest Neighbors"
+                }
+            });
+        }
+
+        // Obtener información completa de las películas recomendadas
+        const movieIds = knnRecommendations.recommendations.map(rec => rec.movie_id);
+        
+        const moviesQuery = await pool.query(`
+            SELECT 
+                m.id,
+                m.title,
+                m.overview,
+                m.genre_ids,
+                m.release_date,
+                CASE 
+                    WHEN m.poster_path IS NOT NULL AND m.poster_path != '' 
+                    THEN CONCAT('https://image.tmdb.org/t/p/w500', m.poster_path)
+                    ELSE NULL
+                END as poster_path,
+                m.vote_average,
+                m.popularity
+            FROM movies m
+            WHERE m.id = ANY($1)
+            ORDER BY m.id
+        `, [movieIds]);
+
+        // Combinar recomendaciones KNN con información de películas
+        const recommendationsWithDetails = knnRecommendations.recommendations.map(knnRec => {
+            const movieInfo = moviesQuery.rows.find(movie => movie.id === knnRec.movie_id);
+            return {
+                ...knnRec,
+                ...movieInfo,
+                knn_similarity: knnRec.similarity,
+                knn_score: knnRec.score
+            };
+        });
+
+        console.log(`✅ [KNN] ${recommendationsWithDetails.length} recomendaciones KNN procesadas`);
+
+        return res.json({
+            recommendations: recommendationsWithDetails,
+            knn_info: {
+                model_status: "active",
+                total_movies: knnRecommendations.total_movies || 0,
+                algorithm: "K-Nearest Neighbors",
+                neighbors_used: knnRecommendations.neighbors_used || 3,
+                features_used: knnRecommendations.features_used || 7
+            }
+        });
+
+    } catch (error) {
+        console.error('❌ [KNN] Error en getKNNRecommendations:', error);
+        return res.status(500).json({
+            error: "Error al obtener recomendaciones KNN",
+            details: error.message
+        });
+    }
+};
+
+export const getSimilarMoviesKNN = async (req, res) => {
+    try {
+        const { movieId } = req.params;
+        const limit = parseInt(req.query.limit) || 5;
+
+        console.log(`🔍 [KNN] Buscando películas similares a ${movieId}`);
+
+        // Verificar que la película existe
+        const movieExists = await pool.query(
+            'SELECT id, title FROM movies WHERE id = $1',
+            [movieId]
+        );
+
+        if (movieExists.rowCount === 0) {
+            return res.status(404).json({
+                error: "Película no encontrada"
+            });
+        }
+
+        // Obtener películas similares del modelo KNN
+        const similarMovies = await knnService.getSimilarMovies(movieId, limit);
+
+        if (!similarMovies.similar_movies || similarMovies.similar_movies.length === 0) {
+            return res.json({
+                similar_movies: [],
+                original_movie: movieExists.rows[0],
+                message: "No se encontraron películas similares",
+                knn_info: {
+                    model_status: "active",
+                    algorithm: "K-Nearest Neighbors"
+                }
+            });
+        }
+
+        // Obtener información completa de las películas similares
+        const similarMovieIds = similarMovies.similar_movies.map(movie => movie.movie_id);
+        
+        const moviesQuery = await pool.query(`
+            SELECT 
+                m.id,
+                m.title,
+                m.overview,
+                m.genre_ids,
+                m.release_date,
+                CASE 
+                    WHEN m.poster_path IS NOT NULL AND m.poster_path != '' 
+                    THEN CONCAT('https://image.tmdb.org/t/p/w500', m.poster_path)
+                    ELSE NULL
+                END as poster_path,
+                m.vote_average,
+                m.popularity
+            FROM movies m
+            WHERE m.id = ANY($1)
+            ORDER BY m.id
+        `, [similarMovieIds]);
+
+        // Combinar información de similitud con detalles de películas
+        const similarMoviesWithDetails = similarMovies.similar_movies.map(similarMovie => {
+            const movieInfo = moviesQuery.rows.find(movie => movie.id === similarMovie.movie_id);
+            return {
+                ...similarMovie,
+                ...movieInfo
+            };
+        });
+
+        console.log(`✅ [KNN] ${similarMoviesWithDetails.length} películas similares encontradas`);
+
+        return res.json({
+            similar_movies: similarMoviesWithDetails,
+            original_movie: movieExists.rows[0],
+            knn_info: {
+                model_status: "active",
+                algorithm: "K-Nearest Neighbors",
+                neighbors_used: similarMovies.neighbors_used || 3
+            }
+        });
+
+    } catch (error) {
+        console.error('❌ [KNN] Error en getSimilarMoviesKNN:', error);
+        return res.status(500).json({
+            error: "Error al obtener películas similares",
+            details: error.message
+        });
+    }
+};
+
+export const getKNNStatus = async (req, res) => {
+    try {
+        const status = await knnService.getKNNStatus();
+        return res.json(status);
+    } catch (error) {
+        console.error('❌ [KNN] Error obteniendo estado:', error);
+        return res.status(500).json({
+            status: 'error',
+            error: error.message
         });
     }
 };

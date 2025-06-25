@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useConnections } from "../context/ConnectionsContext";
 import { Card, Button, LoadingSpinner, AIProbabilityBadge } from "../components/ui";
+import KNNRecommendations from "../components/KNNRecommendations";
 import { getGenreNames } from "../utils/genres";
 
 function ConnectionsPage() {
@@ -72,8 +73,14 @@ function ConnectionsPage() {
                 </Card>
             )}
 
+            {/* Sección de Recomendaciones KNN */}
+            <div className="mt-8 mb-8">
+                <KNNRecommendations limit={10} />
+            </div>
+
+            {/* Sección de Recomendaciones Tradicionales */}
             <div className="mt-8">
-                <h2 className="text-2xl font-bold mb-4">Películas Recomendadas</h2>
+                <h2 className="text-2xl font-bold mb-4">Películas Recomendadas por Conexiones</h2>
                 {recommendations.length === 0 ? (
                     <Card className="p-4 text-center">
                         <p className="text-gray-300">No hay recomendaciones disponibles en este momento.</p>
