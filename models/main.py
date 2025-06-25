@@ -31,20 +31,76 @@ app.add_middleware(
 model_data = None
 try:
     # Intentar cargar el modelo mejorado primero
-    model_data = joblib.load("improved_recommender_model.pkl")
-    logger.info("✅ Modelo mejorado cargado exitosamente")
-    logger.info(f"📊 Características del modelo: {model_data['model_info']['features']}")
-    logger.info(f"🎯 Entrenado con datos reales: {model_data['model_info'].get('real_data_training', False)}")
+    loaded_model = joblib.load("improved_recommender_model.pkl")
+    
+    # Verificar si es un diccionario con metadatos o solo el modelo
+    if isinstance(loaded_model, dict) and 'model' in loaded_model:
+        # Es un diccionario con metadatos
+        model_data = loaded_model
+        logger.info("✅ Modelo mejorado cargado exitosamente (con metadatos)")
+        if 'model_info' in model_data and 'features' in model_data['model_info']:
+            logger.info(f"📊 Características del modelo: {model_data['model_info']['features']}")
+        if 'model_info' in model_data:
+            logger.info(f"🎯 Entrenado con datos reales: {model_data['model_info'].get('real_data_training', False)}")
+    else:
+        # Es solo el modelo, crear estructura compatible
+        model_data = {
+            'model': loaded_model,
+            'model_info': {
+                'type': 'RandomForest',
+                'features': ['n_shared_genres', 'genre_match_ratio', 'vote_average', 'vote_count', 
+                           'popularity', 'years_since_release', 'is_favorite_genre', 'was_recommended', 
+                           'avg_user_rating', 'user_num_rated'],
+                'improved': True,
+                'balanced': False,
+                'real_data_training': True
+            }
+        }
+        logger.info("✅ Modelo mejorado cargado exitosamente (convertido a estructura compatible)")
+        logger.info(f"📊 Características del modelo: {model_data['model_info']['features']}")
+        
 except FileNotFoundError:
     try:
         # Fallback al modelo balanceado
-        model_data = joblib.load("balanced_recommender_model.pkl")
-        logger.info("✅ Modelo balanceado cargado exitosamente")
+        loaded_model = joblib.load("balanced_recommender_model.pkl")
+        if isinstance(loaded_model, dict) and 'model' in loaded_model:
+            model_data = loaded_model
+            logger.info("✅ Modelo balanceado cargado exitosamente (con metadatos)")
+        else:
+            model_data = {
+                'model': loaded_model,
+                'model_info': {
+                    'type': 'RandomForest',
+                    'features': ['n_shared_genres', 'genre_match_ratio', 'vote_average', 'vote_count', 
+                               'popularity', 'years_since_release', 'is_favorite_genre', 'was_recommended', 
+                               'avg_user_rating', 'user_num_rated'],
+                    'improved': False,
+                    'balanced': True,
+                    'real_data_training': False
+                }
+            }
+            logger.info("✅ Modelo balanceado cargado exitosamente (convertido a estructura compatible)")
     except FileNotFoundError:
         try:
             # Fallback al modelo original
-            model_data = joblib.load("enhanced_recommender_model.pkl")
-            logger.info("✅ Modelo original cargado exitosamente")
+            loaded_model = joblib.load("enhanced_recommender_model.pkl")
+            if isinstance(loaded_model, dict) and 'model' in loaded_model:
+                model_data = loaded_model
+                logger.info("✅ Modelo original cargado exitosamente (con metadatos)")
+            else:
+                model_data = {
+                    'model': loaded_model,
+                    'model_info': {
+                        'type': 'RandomForest',
+                        'features': ['n_shared_genres', 'genre_match_ratio', 'vote_average', 'vote_count', 
+                                   'popularity', 'years_since_release', 'is_favorite_genre', 'was_recommended', 
+                                   'avg_user_rating', 'user_num_rated'],
+                        'improved': False,
+                        'balanced': False,
+                        'real_data_training': False
+                    }
+                }
+                logger.info("✅ Modelo original cargado exitosamente (convertido a estructura compatible)")
         except Exception as e:
             logger.error(f"❌ Error cargando modelos: {e}")
             model_data = None
@@ -118,6 +174,9 @@ def predict_with_model(features_list):
         # Preparar datos
         input_df = pd.DataFrame(features_list)
         
+        # Obtener el modelo de la estructura
+        model = model_data['model']
+        
         # Escalar características si el modelo tiene scaler
         if 'scaler' in model_data:
             input_df_scaled = model_data['scaler'].transform(input_df)
@@ -125,8 +184,8 @@ def predict_with_model(features_list):
             input_df_scaled = input_df
         
         # Hacer predicciones
-        predictions = model_data['model'].predict(input_df_scaled)
-        probabilities = model_data['model'].predict_proba(input_df_scaled)
+        predictions = model.predict(input_df_scaled)
+        probabilities = model.predict_proba(input_df_scaled)
         
         return predictions, probabilities
     except Exception as e:
