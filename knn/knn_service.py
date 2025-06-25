@@ -21,7 +21,7 @@ class EfficientKNNService:
     2. Usar KNN solo si hay pocas recomendaciones sociales
     3. Controlar resultado final con Top-K ranking
     
-    AHORA CONECTA DIRECTAMENTE A LA BASE DE DATOS
+    AHORA USA DATOS PRE-ENTRENADOS COMO EL MODELO RANDOMFOREST
     """
     
     def __init__(self, model_path: str = None):
@@ -40,15 +40,24 @@ class EfficientKNNService:
         self.FINAL_TOP_K = 10  # Top-K final para el usuario
         self.KNN_NEIGHBORS = 3  # Número de vecinos para KNN
         
-        # Conectar a la base de datos
-        self.connect_database()
-        
-        # Cargar modelo si está disponible
+        # Cargar modelo si está disponible (prioridad)
         if model_path and os.path.exists(model_path):
+            logger.info(f"📁 Cargando modelo KNN desde: {model_path}")
             self.load_knn_model(model_path)
         else:
-            self.load_movies_from_database()
-            self.train_knn_model()
+            # Intentar cargar modelo por defecto
+            default_model_path = "knn_model.pkl"
+            if os.path.exists(default_model_path):
+                logger.info(f"📁 Cargando modelo KNN por defecto: {default_model_path}")
+                self.load_knn_model(default_model_path)
+            else:
+                logger.warning("⚠️ Archivos de modelo no encontrados, creando servicio vacío")
+                # No conectar a BD automáticamente en producción
+                # Solo conectar si es necesario para desarrollo
+                if os.getenv('ENVIRONMENT') == 'development':
+                    self.connect_database()
+                    self.load_movies_from_database()
+                    self.train_knn_model()
     
     def connect_database(self):
         """Conectar a la base de datos PostgreSQL"""
@@ -275,17 +284,23 @@ class EfficientKNNService:
             self.movies_df = model_data['movies_df']
             
             logger.info(f"✅ Modelo KNN cargado desde {model_path}")
+            logger.info(f"📊 Datos de películas cargados: {len(self.movies_df) if self.movies_df is not None else 0} películas")
             
-            # Si no hay conexión a BD, intentar reconectar
-            if not self.db_connection and not model_data.get('db_connected', False):
-                logger.info("🔄 Reconectando a la base de datos...")
+            # No reconectar automáticamente a BD en producción
+            # Solo conectar si es explícitamente necesario para desarrollo
+            if os.getenv('ENVIRONMENT') == 'development' and not self.db_connection:
+                logger.info("🔄 Reconectando a la base de datos para desarrollo...")
                 self.connect_database()
             
         except Exception as e:
             logger.error(f"❌ Error cargando modelo KNN: {e}")
-            # Intentar cargar desde BD
-            self.load_movies_from_database()
-            self.train_knn_model()
+            # En producción, no intentar cargar desde BD automáticamente
+            if os.getenv('ENVIRONMENT') == 'development':
+                logger.info("🔄 Intentando cargar desde BD como fallback...")
+                self.load_movies_from_database()
+                self.train_knn_model()
+            else:
+                logger.warning("⚠️ Modelo KNN no disponible en producción")
     
     def find_similar_movies(self, movie_id: int, top_k: int = 3) -> List[Dict]:
         """Encontrar películas similares usando KNN"""
@@ -335,7 +350,13 @@ class EfficientKNNService:
             return []
         
         try:
-            # Obtener películas que el usuario ya ha visto
+            # En producción, usar solo datos pre-entrenados
+            # No intentar obtener datos del usuario desde BD
+            if not self.db_connection:
+                logger.info(f"📊 Generando recomendaciones KNN para usuario {user_id} usando datos pre-entrenados")
+                return self._get_popular_movies_recommendations(limit)
+            
+            # Solo en desarrollo: obtener películas que el usuario ya ha visto
             user_watched_movies = self._get_user_watched_movies(user_id)
             
             if len(user_watched_movies) == 0:
