@@ -24,11 +24,8 @@ def test_knn_service():
     print("🧪 Probando servicio KNN directamente...")
     
     try:
-        # Crear servicio KNN
-        knn_service = EfficientKNNService(
-            movies_data_path="prepared_movies_for_knn.csv",
-            model_path="knn_model.pkl"
-        )
+        # Crear servicio KNN (sin parámetros, usa el modelo por defecto)
+        knn_service = EfficientKNNService()
         
         # Verificar estado
         status = knn_service.get_model_status()
@@ -40,7 +37,7 @@ def test_knn_service():
         print(f"🎬 Películas similares encontradas: {len(similar_movies)}")
         
         for i, movie in enumerate(similar_movies, 1):
-            print(f"   {i}. {movie['title']} (similitud: {movie['similarity_score']:.3f})")
+            print(f"   {i}. {movie['title']} (similitud: {movie['similarity']:.3f})")
         
         return True
         
@@ -64,18 +61,18 @@ def test_knn_api():
         
         # Probar búsqueda de películas similares
         response = requests.post(
-            f"{KNN_API_URL}/similar-movies",
-            json={"movie_id": TEST_MOVIE_ID, "top_k": 3},
+            f"{KNN_API_URL}/similar",
+            json={"movie_id": TEST_MOVIE_ID, "limit": 3},
             timeout=10
         )
         
         if response.status_code == 200:
             data = response.json()
-            print(f"✅ Películas similares via API: {data['total_found']}")
+            print(f"✅ Películas similares via API: {len(data['similar_movies'])}")
             for movie in data['similar_movies']:
-                print(f"   - {movie['title']} (similitud: {movie['similarity_score']:.3f})")
+                print(f"   - {movie['title']} (similitud: {movie['similarity']:.3f})")
         else:
-            print(f"❌ Error en API similar-movies: {response.status_code}")
+            print(f"❌ Error en API similar: {response.status_code}")
             return False
         
         return True
