@@ -59,14 +59,39 @@ class KNNService {
     async getKNNStatus() {
         try {
             const response = await this.api.get('/health');
-            return {
-                status: 'online',
-                data: response.data
-            };
+            const data = response.data;
+            
+            // Verificar si el modelo está cargado y funcionando
+            const modelLoaded = data.model_info?.model_loaded || false;
+            const totalMovies = data.model_info?.total_movies || 0;
+            
+            if (modelLoaded && totalMovies > 0) {
+                return {
+                    status: 'online',
+                    data: {
+                        ...data,
+                        model_active: true,
+                        total_movies: totalMovies
+                    }
+                };
+            } else {
+                return {
+                    status: 'warning',
+                    data: {
+                        ...data,
+                        model_active: false,
+                        message: 'Modelo KNN cargado pero sin datos suficientes'
+                    }
+                };
+            }
         } catch (error) {
             return {
                 status: 'offline',
-                error: error.message
+                error: error.message,
+                data: {
+                    model_active: false,
+                    message: 'Servicio KNN no disponible'
+                }
             };
         }
     }

@@ -425,12 +425,24 @@ export const getSimilarMoviesKNN = async (req, res) => {
 export const getKNNStatus = async (req, res) => {
     try {
         const status = await knnService.getKNNStatus();
-        return res.json(status);
+        
+        // Agregar información adicional para el frontend
+        const responseData = {
+            ...status,
+            model_active: status.data?.model_active || false,
+            total_movies: status.data?.total_movies || 0,
+            service_status: status.status,
+            message: status.data?.message || 'Estado del servicio KNN'
+        };
+        
+        return res.json(responseData);
     } catch (error) {
         console.error('❌ [KNN] Error obteniendo estado:', error);
         return res.status(500).json({
             status: 'error',
-            error: error.message
+            model_active: false,
+            error: error.message,
+            message: 'Error obteniendo estado del servicio KNN'
         });
     }
 };

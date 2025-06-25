@@ -39,18 +39,18 @@ const KNNRecommendations = ({ limit = 10 }) => {
                 
                 {/* Badge de estado del servicio */}
                 <div className={`px-3 py-1 rounded-full text-xs font-medium ${
-                    knnStatus?.status === 'online' 
+                    knnStatus?.model_active 
                         ? 'bg-green-500 text-white' 
                         : 'bg-red-500 text-white'
                 }`}>
-                    {knnStatus?.status === 'online' ? '🟢 KNN Activo' : '🔴 KNN Inactivo'}
+                    {knnStatus?.model_active ? '🟢 KNN Activo' : '🔴 KNN Inactivo'}
                 </div>
             </div>
 
             {/* Botón para obtener recomendaciones */}
             <Button 
                 onClick={handleGetKNNRecommendations}
-                disabled={knnStatus?.status !== 'online'}
+                disabled={!knnStatus?.model_active}
                 className="mb-4"
             >
                 {knnRecommendations.length > 0 ? 'Actualizar Recomendaciones KNN' : 'Obtener Recomendaciones KNN'}
@@ -64,7 +64,7 @@ const KNNRecommendations = ({ limit = 10 }) => {
             )}
 
             {/* Información del servicio KNN */}
-            {knnStatus && knnStatus.status === 'online' && knnStatus.data && knnStatus.data.model_info && (
+            {knnStatus && knnStatus.model_active && knnStatus.data && knnStatus.data.model_info && (
                 <Card className="p-4 mb-4 bg-blue-500/10 border border-blue-500">
                     <div className="text-sm text-blue-300">
                         <p><strong>Modelo:</strong> {knnStatus.data.model_info.algorithm || 'K-Nearest Neighbors'}</p>
@@ -81,7 +81,7 @@ const KNNRecommendations = ({ limit = 10 }) => {
             {knnRecommendations.length === 0 ? (
                 <Card className="p-4 text-center">
                     <p className="text-gray-300 mb-2">
-                        {knnStatus?.status === 'online' 
+                        {knnStatus?.model_active 
                             ? "No hay recomendaciones KNN disponibles en este momento."
                             : "El servicio KNN no está disponible."
                         }
@@ -94,7 +94,7 @@ const KNNRecommendations = ({ limit = 10 }) => {
                             <li>Popularidad y fecha de lanzamiento</li>
                             <li>Características técnicas de las películas</li>
                         </ul>
-                        {knnStatus?.status !== 'online' && (
+                        {!knnStatus?.model_active && (
                             <p className="mt-3 text-yellow-400">
                                 💡 <strong>Consejo:</strong> Asegúrate de que el servicio KNN esté ejecutándose.
                             </p>
